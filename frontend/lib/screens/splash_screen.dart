@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/screens/login_screen.dart';
 
-import 'home_screen.dart';
+import 'screensResidente/home_screenResidente.dart';
 
 class SplashScreen extends StatefulWidget{
   const SplashScreen({Key? key}) : super(key : key);

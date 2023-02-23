@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screensResidente/home_screenResidente.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({Key? key}) : super(key : key);
@@ -17,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen>{
         backgroundColor: Color.fromARGB(255, 250, 248, 248),
         body: ListView(
           padding: EdgeInsets.symmetric(
-            horizontal: 30.0,
+             horizontal: 30.0,
             vertical: 90.0
           ),
           children: <Widget>[
@@ -66,7 +67,12 @@ class _LoginScreenState extends State<LoginScreen>{
                       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                       backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
                     ),
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreenResidente()),
+                      );
+                    },
                     child: Text('Iniciar Sesión',
                     style: TextStyle(
                       fontSize: 20.0,

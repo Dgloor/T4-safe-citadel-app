@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/home_screen.dart';
+import 'package:prueba/screens/screensResidente/home_screenResidente.dart';
 import 'package:prueba/screens/login_screen.dart';
 import 'package:prueba/screens/splash_screen.dart';
 
@@ -19,8 +19,13 @@ class MyApp extends StatelessWidget{
           titleLarge : TextStyle(
             fontSize: 36.0,
             fontWeight: FontWeight.bold,
-            color: Colors.green)
-        )
+            color: Colors.green),
+            titleMedium: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: Colors.black
+            ),
+        ),
       ),
     );
   }
