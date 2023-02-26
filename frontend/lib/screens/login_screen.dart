@@ -7,7 +7,42 @@ class LoginScreen extends StatefulWidget{
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
+class _Divider extends StatelessWidget{
+  const _Divider({Key? key}) : super(key: key);
+   @override
+  Widget build(BuildContext context) {
+  return Divider(
+                  height: 30.0,
+                  color: Color.fromARGB(255, 250, 248, 248), 
+                );
+  }
+}
 
+class _BtnSubmit extends StatelessWidget{
+  const _BtnSubmit({Key? key}) : super(key: key);
+   @override
+  Widget build(BuildContext context) {
+  return SizedBox(
+                  child: TextButton(
+                    style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
+                    ),
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreenResidente()),
+                      );
+                    },
+                    child: Text('Iniciar Sesión',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                    ),),
+                  ),
+                );
+  }
+}
 class _LoginScreenState extends State<LoginScreen>{
   String _usuario = "";
   String _password= "";
@@ -26,10 +61,7 @@ class _LoginScreenState extends State<LoginScreen>{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/img/logo.png'),
-                Divider(
-                  height: 30.0,
-                  color: Color.fromARGB(255, 250, 248, 248), 
-                ),
+                _Divider(),
                 TextField(
                   autofocus: true,
                   decoration: InputDecoration(
@@ -39,12 +71,8 @@ class _LoginScreenState extends State<LoginScreen>{
                   onSubmitted: (valor){
                     _usuario = valor;
                     
-                  },
-                ),
-                Divider(
-                  height: 18.0,
-                  color: Color.fromARGB(255, 250, 248, 248), 
-                ),
+                  }),
+                _Divider(),
                 TextField(
                   enableInteractiveSelection: false,
                   obscureText: true,
@@ -56,29 +84,8 @@ class _LoginScreenState extends State<LoginScreen>{
                     _password = valor;
                   },
                 ),
-                Divider(
-                  height: 35.0,
-                  color: Color.fromARGB(255, 250, 248, 248), 
-                ),
-                SizedBox(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
-                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
-                    ),
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreenResidente()),
-                      );
-                    },
-                    child: Text('Iniciar Sesión',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    ),),
-                  ),
-                ),
+                _Divider(),
+                _BtnSubmit(),
               ],
             )
           ],
