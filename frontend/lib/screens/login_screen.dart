@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/screens/screensResidente/routes.dart';
 import 'screensResidente/home_screenResidente.dart';
 
 class LoginScreen extends StatefulWidget{
@@ -32,7 +33,7 @@ class _BtnSubmit extends StatelessWidget{
                     onPressed: (){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreenResidente()),
+                        MaterialPageRoute(builder: (context) => HomeResidente()),
                       );
                     },
                     child: Text('Iniciar Sesión',
@@ -43,6 +44,8 @@ class _BtnSubmit extends StatelessWidget{
                 );
   }
 }
+
+/****WIDGET PRINCIPAL *****/
 class _LoginScreenState extends State<LoginScreen>{
   String _usuario = "";
   String _password= "";
@@ -57,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen>{
             vertical: 90.0
           ),
           children: <Widget>[
-            Column(
+            Column( 
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/img/logo.png'),
@@ -68,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen>{
                     hintText: 'Usuario',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))
                   ),
+                  style: TextStyle(fontSize: 14),
                   onSubmitted: (valor){
                     _usuario = valor;
                     
@@ -80,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen>{
                     hintText: 'Contraseña',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))
                   ),
+                  style: TextStyle(fontSize: 14),
                   onSubmitted: (valor){
                     _password = valor;
                   },
