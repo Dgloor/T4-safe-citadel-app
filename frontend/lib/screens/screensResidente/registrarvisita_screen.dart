@@ -42,6 +42,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                    style: TextStyle(fontSize: 14),
                 ),
                 SizedBox(height: 30.0),
+                /**Elección de día de visita */
                 Text('Día de visita',
                 style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,), 
@@ -70,6 +71,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 Text('Elegir hora',
                 style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,), 
+                  /**Selección de hora */
                 CupertinoButton(
                   child: Text('${dateTime.hour}:${dateTime.minute}'), 
                   onPressed: (){
@@ -90,10 +92,16 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                   }
                 ),
                 SizedBox(height: 16.0),
+                /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
                     onPressed: () {  },
-                    child: Text('Enviar'),
+                    child: Text('Aceptar'),
+                     style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),

@@ -5,7 +5,8 @@ import 'package:timezone/timezone.dart';
 import 'bottom_nav.dart';
 
 class VisitaScreenResidente extends StatefulWidget {
-  const VisitaScreenResidente({Key? key}) : super(key: key);
+  final String nombre;
+  const VisitaScreenResidente({Key? key, required this.nombre}) : super(key: key);
 
   @override
   State<VisitaScreenResidente> createState() => _VisitaScreenResidente();
@@ -149,7 +150,7 @@ class _ListView extends StatelessWidget {
 class _VisitaScreenResidente extends State<VisitaScreenResidente>
     with TickerProviderStateMixin {
 
-    String usuario = "Alan";
+  String usuario = "Alan";
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 3, vsync: this);
@@ -163,7 +164,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
             child: Column(
               children: [
                 Text(
-                  'Hola, ${usuario}!',
+                  'Hola, ${widget.nombre}',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),

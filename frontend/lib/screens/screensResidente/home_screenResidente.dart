@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/screens/screensResidente/bottom_nav.dart';
 import 'package:prueba/screens/screensResidente/routes.dart';
-
+/**Pantalla principal de la aplicación, 
+ * para permitir que los usuarios naveguen entre diferentes 
+ * páginas. */
 class HomeResidente extends StatefulWidget {
-  const HomeResidente({super.key});
+  final String? nombre;
+  const HomeResidente(this.nombre,{super.key});
 
   @override
   State<HomeResidente> createState() => _HomeResidenteState();
@@ -28,7 +31,7 @@ class _HomeResidenteState extends State<HomeResidente> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: myBN,
-      body: Routes(index:index),
+      body: widget.nombre != null ? Routes(nombre: widget.nombre!, index: index) : Container(), //Routes(nombre: widget.nombre,index:index),
     );
   }
 }

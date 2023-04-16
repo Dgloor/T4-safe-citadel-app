@@ -28,13 +28,14 @@ class _BottomNavigatorState extends State<BNavigator>{
         unselectedFontSize: 12.0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Registrar',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.format_list_bulleted),
             label: 'Visitas',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Registrar',
+          ),
+          
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
             label: 'Perfil',

@@ -8,6 +8,11 @@ class LoginScreen extends StatefulWidget{
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
+/**Variables globales */
+String _usuario = "";
+String _password= "";
+
+/**Widget para espaciado */
 class _Divider extends StatelessWidget{
   const _Divider({Key? key}) : super(key: key);
    @override
@@ -19,6 +24,7 @@ class _Divider extends StatelessWidget{
   }
 }
 
+/**Widget de botón para iniciar sesión */
 class _BtnSubmit extends StatelessWidget{
   const _BtnSubmit({Key? key}) : super(key: key);
    @override
@@ -31,9 +37,10 @@ class _BtnSubmit extends StatelessWidget{
                       backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
                     ),
                     onPressed: (){
+                      print(_textController.text);//Imprime el nombre del usuario recibido en el login
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeResidente()),
+                        MaterialPageRoute(builder: (context) => HomeResidente(_textController.text)),
                       );
                     },
                     child: Text('Iniciar Sesión',
@@ -44,12 +51,10 @@ class _BtnSubmit extends StatelessWidget{
                 );
   }
 }
-
+TextEditingController _textController  = TextEditingController(text: "");
 /****WIDGET PRINCIPAL *****/
 class _LoginScreenState extends State<LoginScreen>{
-  String _usuario = "";
-  String _password= "";
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,18 +70,23 @@ class _LoginScreenState extends State<LoginScreen>{
               children: [
                 Image.asset('assets/img/logo.png'),
                 _Divider(),
+                /**Input de usuario */
                 TextField(
+                  controller: _textController,
+                  enableInteractiveSelection: false,
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: 'Usuario',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+                    suffixIcon: Icon(Icons.person)
                   ),
                   style: TextStyle(fontSize: 14),
                   onSubmitted: (valor){
                     _usuario = valor;
-                    
+                   
                   }),
                 _Divider(),
+                /**Input de contraseña */
                 TextField(
                   enableInteractiveSelection: false,
                   obscureText: true,
@@ -87,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen>{
                   style: TextStyle(fontSize: 14),
                   onSubmitted: (valor){
                     _password = valor;
+                   
                   },
                 ),
                 _Divider(),
