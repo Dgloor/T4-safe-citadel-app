@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bottom_nav.dart';
 
 class VisitaScreenResidente extends StatefulWidget {
-  final String nombre;
-  const VisitaScreenResidente({Key? key, required this.nombre}) : super(key: key);
+  const VisitaScreenResidente({Key? key}) : super(key: key);
 
   @override
   State<VisitaScreenResidente> createState() => _VisitaScreenResidente();
@@ -149,7 +148,20 @@ class _ListView extends StatelessWidget {
 /***********Widget   principal ***********/
 class _VisitaScreenResidente extends State<VisitaScreenResidente>
     with TickerProviderStateMixin {
-
+  String nombre = "Alan" ;
+  @override
+  void initState() {
+    
+    super.initState();
+    _cargarData();
+  }
+  /**Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario */
+  _cargarData() async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        nombre =  prefs.getString("nombre") ?? "Residente";
+      });
+  }
   String usuario = "Alan";
   @override
   Widget build(BuildContext context) {
@@ -164,7 +176,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
             child: Column(
               children: [
                 Text(
-                  'Hola, ${widget.nombre}',
+                  'Hola, ${nombre}',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
