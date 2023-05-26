@@ -12,5 +12,3 @@ def create_qr():
     except:
         logging.error("Error creating Qr")
         Exception("Error creating Qr")
-
-

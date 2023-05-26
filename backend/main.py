@@ -1,9 +1,6 @@
 from fastapi.responses import UJSONResponse
-from fastapi.routing import APIRouter
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
 from src.visitor.router import router as visitor_router
 
 allow_all = ["*"]
@@ -14,8 +11,9 @@ app = FastAPI(
     description="Backend",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
-    penapi_url='/api/openapi.json',
-    default_response_class=UJSONResponse, )
+    penapi_url="/api/openapi.json",
+    default_response_class=UJSONResponse,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,7 +24,3 @@ app.add_middleware(
 )
 
 app.include_router(visitor_router, prefix="/api")
-
-
-
-

@@ -11,8 +11,10 @@ router = APIRouter()
 async def signup(user: models.User):
     try:
         user = dependencies.create_user(user)
-        return JSONResponse(content={"message": "User created successfully",
-                                     "user": user}, status_code=201)
+        return JSONResponse(
+            content={"message": "User created successfully", "user": user},
+            status_code=201,
+        )
     except:
         return JSONResponse(content={"message": "Error creating User"}, status_code=400)
 
@@ -21,8 +23,10 @@ async def signup(user: models.User):
 async def login(user: models.User):
     try:
         jwt = dependencies.get_user(user)
-        return JSONResponse(content={"message": "User logged successfully",
-                                     "token": jwt}, status_code=200)
+        return JSONResponse(
+            content={"message": "User logged successfully", "token": jwt},
+            status_code=200,
+        )
     except:
         return JSONResponse(content={"message": "Error logging User"}, status_code=400)
 
@@ -34,4 +38,3 @@ async def validate(request: Request):
     logging.info(jwt)
     user = dependencies.verify_id_token(jwt)
     return user
-

@@ -14,10 +14,11 @@ def create_user(user: models.User):
     try:
         logging.info("Creating User")
         user = auth.create_user(
-        email=user.email,
-        email_verified=False,
-        password=user.password,
-        disabled=False,)
+            email=user.email,
+            email_verified=False,
+            password=user.password,
+            disabled=False,
+        )
         return user
     except:
         logging.error("Error creating User")
@@ -28,17 +29,18 @@ def get_user(user: models.User):
     try:
         logging.info("Getting User")
         user = auth.get_user_by_email_and_password(user.email, user.password)
-        jwt = user['idToken']
+        jwt = user["idToken"]
         return jwt
     except:
         logging.error("Error getting User")
         Exception("Error getting User")
 
+
 def verify_id_token(token):
     try:
         logging.info("Verifying Token")
         decoded_token = auth.verify_id_token(token)
-        uid = decoded_token['uid']
+        uid = decoded_token["uid"]
         return uid
     except:
         logging.error("Error verifying Token")
