@@ -1,7 +1,10 @@
+"""
+Auth Router
+"""
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-import models
 import dependencies
+import models
 import logging
 
 router = APIRouter()

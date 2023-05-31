@@ -1,10 +1,11 @@
+"""
+Main file for the backend
+"""
 from fastapi.responses import UJSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.visitor.router import router as visitor_router
 
 allow_all = ["*"]
-
 
 app = FastAPI(
     title="Backend Safe Citle",
@@ -22,5 +23,3 @@ app.add_middleware(
     allow_methods=allow_all,
     allow_headers=allow_all,
 )
-
-app.include_router(visitor_router, prefix="/api")
