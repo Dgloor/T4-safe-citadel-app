@@ -1,0 +1,6 @@
+[MASTER]
+load-plugins=pylint_report
+extension-pkg-whitelist=pydantic
+
+[REPORTS]
+output-format=pylint_report.CustomJsonReporter

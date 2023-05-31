@@ -1,0 +1,5 @@
+[tool.pylint.MASTER]
+load-plugins = "pylint_report"
+
+[tool.pylint.REPORTS]
+output-format = "pylint_report.CustomJsonReporter"
