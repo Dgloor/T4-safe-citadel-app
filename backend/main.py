@@ -2,8 +2,11 @@
 Main file for the backend
 """
 from fastapi.responses import UJSONResponse
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from dependencies import get_user_token
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 allow_all = ["*"]
 
@@ -14,6 +17,9 @@ app = FastAPI(
     redoc_url="/api/redoc",
     penapi_url="/api/openapi.json",
     default_response_class=UJSONResponse,
+    # dependencies=[
+    #     Depends(get_user_token),
+    # ],
 )
 
 app.add_middleware(
@@ -23,3 +29,13 @@ app.add_middleware(
     allow_methods=allow_all,
     allow_headers=allow_all,
 )
+
+
+@app.get(
+    "/user",
+)
+async def get_user(request: Request):
+    """
+    Get the user from the request
+    """
+    return JSONResponse({"user": request.state.user})
