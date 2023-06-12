@@ -1,21 +1,26 @@
+"""
+Main file for the backend
+"""
 from fastapi.responses import UJSONResponse
-from fastapi.routing import APIRouter
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from dependencies import get_user_token
+from fastapi import Request
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import HTTPException
-from src.visitor.router import router as visitor_router
 
 allow_all = ["*"]
-
 
 app = FastAPI(
     title="Backend Safe Citle",
     description="Backend",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
-    penapi_url='/api/openapi.json',
-    default_response_class=UJSONResponse, )
+    penapi_url="/api/openapi.json",
+    default_response_class=UJSONResponse,
+    # dependencies=[
+    #     Depends(get_user_token),
+    # ],
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,8 +30,12 @@ app.add_middleware(
     allow_headers=allow_all,
 )
 
-app.include_router(visitor_router, prefix="/api")
 
-
-
-
+@app.get(
+    "/user",
+)
+async def get_user(request: Request):
+    """
+    Get the user from the request
+    """
+    return JSONResponse({"user": request.state.user})

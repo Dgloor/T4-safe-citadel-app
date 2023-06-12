@@ -1,5 +1,5 @@
 import models
-import database
+import config.database as database
 import logging
 
 
@@ -9,8 +9,6 @@ def create_qr():
         logging.info("Creating Qr")
         database.db.child("qr").push(qr.dict())
         return qr
-    except:
-        logging.error("Error creating Qr")
+    except Exception as e:
+        logging.error("Error creating Qr", e)
         Exception("Error creating Qr")
-
-
