@@ -1,0 +1,151 @@
+from typing import Optional
+from pydantic import BaseModel, UUID4
+from datetime import datetime
+from enum import Enum
+import uuid
+
+
+class VisitState(str, Enum):
+    PENDING = "PENDING"
+    REGISTERED = "REGISTERED"
+    CANCELLED = "CANCELLED"
+    EXPIRED = "EXPIRED"
+
+
+class UserBase(BaseModel):
+    name: str
+    role: str
+    username: str
+
+
+class UserCreate(UserBase):
+    pass
+
+
+class User(UserBase):
+    id: UUID4 = uuid.uuid4()
+    created_date: datetime = datetime.now()
+    updated_date: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
+
+
+class VisitBase(BaseModel):
+    date: datetime
+    state: VisitState = VisitState.PENDING
+    visitor_id: UUID4
+    guard_id: UUID4
+    additional_info: Optional[dict] = None
+    qr_id: UUID4
+    user_id: UUID4
+
+
+class VisitCreate(VisitBase):
+    pass
+
+
+class Visit(VisitBase):
+    id: UUID4 = uuid.uuid4()
+    created_date: datetime = datetime.now()
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class Visitor(BaseModel):
+    id: UUID4 = uuid.uuid4()
+    created_at: datetime = datetime.now()
+    updated_at: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
+
+
+class VisitorBase(Visit):
+    pass
+
+
+class VisitorCreate(VisitorBase):
+    pass
+
+
+class FrequentVisitorBase(BaseModel):
+    visitor_id: UUID4
+
+
+class FrequentVisitorCreate(FrequentVisitorBase):
+    pass
+
+
+class FrequentVisitor(FrequentVisitorBase):
+    id: UUID4 = uuid.uuid4()
+
+    class Config:
+        orm_mode = True
+
+
+class GuardBase(BaseModel):
+    user_id: UUID4
+
+
+class GuardCreate(GuardBase):
+    pass
+
+
+class Guard(GuardBase):
+    id: UUID4 = uuid.uuid4()
+
+    class Config:
+        orm_mode = True
+
+
+class ResidenceBase(BaseModel):
+    address: str
+    information: Optional[dict] = None
+    resident_id: UUID4
+
+
+class ResidenceCreate(ResidenceBase):
+    pass
+
+
+class Residence(ResidenceBase):
+    id: UUID4 = uuid.uuid4()
+    created_date: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
+
+
+class ResidentBase(UserBase):
+    phone: str
+    residence_id: UUID4
+
+
+class ResidentCreate(ResidentBase):
+    pass
+
+
+class Resident(ResidentBase):
+    id: UUID4 = uuid.uuid4()
+
+    class Config:
+        orm_mode = True
+
+
+class QrBase(BaseModel):
+    code: str = str(uuid.uuid4())
+
+
+class Qr(QrBase):
+    id: UUID4 = uuid.uuid4()
+    created_date: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
+
+
+class QrCreate(Qr):
+    pass

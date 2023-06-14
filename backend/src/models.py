@@ -14,19 +14,6 @@ class VisitState(Enum):
     EXPIRED = "EXPIRED"
 
 
-class Visit(Base):
-    __tablename__ = "visit"
-    __table_args__ = {"extend_existing": True}
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    created_date = Column(DateTime, default=datetime.now)
-    date = Column(DateTime, nullable=False)
-    state = Column(String, default=VisitState.PENDING)
-    visitor_id = Column(UUID(as_uuid=True), ForeignKey("visitor.id"))
-    guard_id = Column(UUID(as_uuid=True), ForeignKey("guard.id"))
-    additional_info = Column(JSON, nullable=True)
-    qr_id = Column(UUID(as_uuid=True), ForeignKey("qr.id"))
-
-
 class User(Base):
     __tablename__ = "user"
     __table_args__ = {"extend_existing": True}
@@ -38,10 +25,25 @@ class User(Base):
     username = Column(String, nullable=False)
 
 
+class Visit(Base):
+    __tablename__ = "visit"
+    __table_args__ = {"extend_existing": True}
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    created_date = Column(DateTime, default=datetime.now)
+    date = Column(DateTime, nullable=False)
+    state = Column(String, default=VisitState.PENDING)
+    visitor_id = Column(UUID(as_uuid=True), ForeignKey("visitor.id"))
+    guard_id = Column(UUID(as_uuid=True), ForeignKey("guard.id"))
+    additional_info = Column(JSON, nullable=True)
+    qr_id = Column(UUID(as_uuid=True), ForeignKey("qr.id"))
+    resident_id = Column(UUID(as_uuid=True), ForeignKey("resident.id"))
+
+
 class Visitor(Base):
     __tablename__ = "visitor"
     __table_args__ = {"extend_existing": True}
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    name = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
 
@@ -67,8 +69,6 @@ class Residence(Base):
     address = Column(String, nullable=False)
     created_date = Column(DateTime, default=datetime.now)
     information = Column(JSON, nullable=True)
-    resident_id = Column(UUID(as_uuid=True), ForeignKey("resident.id", use_alter=True))
-    resident = relationship("Resident", back_populates="residence", post_update=True)
 
 
 class Resident(User):
@@ -77,7 +77,12 @@ class Resident(User):
     id = Column(UUID(as_uuid=True), ForeignKey("user.id"), primary_key=True)
     phone = Column(String, nullable=False)
     residence_id = Column(UUID(as_uuid=True), ForeignKey("residence.id"))
-    residence = relationship("Residence", back_populates="resident", post_update=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    residence = relationship("Residence", foreign_keys=[residence_id])
+    user = relationship("User", foreign_keys=[user_id])
+    __mapper_args__ = {
+        "inherit_condition": id == User.id  # Ajusta la condición de herencia aquí
+    }
 
 
 class Qr(Base):
