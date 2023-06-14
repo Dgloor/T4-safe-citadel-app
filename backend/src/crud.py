@@ -3,11 +3,12 @@ from pydantic import BaseModel
 from typing import Type
 from config.database import Base
 from src import models, schema
+from datetime import datetime
+import uuid
 
 
 def create_model(db: Session, model_schema: Type[BaseModel], model: Type[Base]):
     db_model = model(**model_schema.dict())
-    print(db_model)
     db.add(db_model)
     db.commit()
     db.refresh(db_model)
@@ -15,11 +16,21 @@ def create_model(db: Session, model_schema: Type[BaseModel], model: Type[Base]):
 
 
 # CREATE
-def create_visitor(db: Session, visitor: schema.VisitorCreate):
-    return create_model(db, visitor, models.Visitor)
+def create_visitor(db: Session, name: str):
+    while True:
+        new_id = uuid.uuid4()
+        existing_visitor = db.query(models.Visitor).filter_by(id=new_id).first()
+        if existing_visitor is None:
+            visitor = models.Visitor(id=new_id, name=name)
+            db.add(visitor)
+            db.commit()
+            return visitor
 
 
-def create_visit(db: Session, visit: schema.VisitCreate):
+def create_visit(db: Session, name: str, date: datetime, visit: schema.VisitCreate):
+    visit.qr_id = create_qr(db).id
+    visit.visitor_id = create_visitor(db, name).id
+    visit.date = date
     return create_model(db, visit, models.Visit)
 
 
@@ -45,8 +56,15 @@ def create_residence(db: Session, residence: schema.ResidenceCreate):
     return create_model(db, residence, models.Residence)
 
 
-def create_qr(db: Session, qr: schema.QrCreate):
-    return create_model(db, qr, models.QR)
+def create_qr(db: Session):
+    while True:
+        new_id = uuid.uuid4()
+        existing_qr = db.query(models.Qr).filter_by(id=new_id).first()
+        if existing_qr is None:
+            qr = models.Qr(id=new_id)
+            db.add(qr)
+            db.commit()
+            return qr
 
 
 # READ

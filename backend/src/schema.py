@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, UUID4
 from datetime import datetime
 from enum import Enum
@@ -32,13 +32,13 @@ class User(UserBase):
 
 
 class VisitBase(BaseModel):
-    date: datetime
-    state: VisitState = VisitState.PENDING
-    visitor_id: UUID4
-    guard_id: UUID4
-    additional_info: Optional[dict] = None
-    qr_id: UUID4
-    user_id: UUID4
+    date: Union[datetime, None] = None
+    state: str = VisitState.PENDING
+    visitor_id: Union[UUID4, None] = None
+    guard_id: Union[UUID4, None] = None
+    additional_info: Union[dict, None] = None
+    qr_id: Union[UUID4, None] = None
+    resident_id: Union[UUID4, None] = None
 
 
 class VisitCreate(VisitBase):
@@ -48,27 +48,26 @@ class VisitCreate(VisitBase):
 class Visit(VisitBase):
     id: UUID4 = uuid.uuid4()
     created_date: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
+
+
+class VisitorBase(BaseModel):
     name: str
-
-    class Config:
-        orm_mode = True
-
-
-class Visitor(BaseModel):
-    id: UUID4 = uuid.uuid4()
-    created_at: datetime = datetime.now()
-    updated_at: datetime = datetime.now()
-
-    class Config:
-        orm_mode = True
-
-
-class VisitorBase(Visit):
-    pass
 
 
 class VisitorCreate(VisitorBase):
     pass
+
+
+class Visitor(VisitorBase):
+    id: UUID4 = uuid.uuid4()
+    created_date: datetime = datetime.now()
+    updated_date: datetime = datetime.now()
+
+    class Config:
+        orm_mode = True
 
 
 class FrequentVisitorBase(BaseModel):
