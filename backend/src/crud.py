@@ -25,35 +25,7 @@ def create_visitor(db: Session, name: str):
             db.add(visitor)
             db.commit()
             return visitor
-
-
-def create_visit(db: Session, name: str, date: datetime, visit: schema.VisitCreate):
-    visit.qr_id = create_qr(db).id
-    visit.visitor_id = create_visitor(db, name).id
-    visit.date = date
-    return create_model(db, visit, models.Visit)
-
-
-def create_frequent_visitor(
-    db: Session, frequent_visitor: schema.FrequentVisitorCreate
-):
-    return create_model(db, frequent_visitor, models.FrequentVisitor)
-
-
-def create_guard(db: Session, guard: schema.GuardCreate):
-    return create_model(db, guard, models.Guard)
-
-
-def create_user(db: Session, user: schema.UserCreate):
-    return create_model(db, user, models.User)
-
-
-def create_resident(db: Session, resident: schema.ResidentCreate):
-    return create_model(db, resident, models.Resident)
-
-
-def create_residence(db: Session, residence: schema.ResidenceCreate):
-    return create_model(db, residence, models.Residence)
+        return existing_visitor
 
 
 def create_qr(db: Session):
@@ -65,82 +37,64 @@ def create_qr(db: Session):
             db.add(qr)
             db.commit()
             return qr
+        return existing_qr
 
 
-# READ
-def get_visitor(db: Session, visitor_id: str):
-    return db.query(models.Visitor).filter(models.Visitor.id == visitor_id).first()
+def create_visit(db: Session, name: str, date: datetime, visit: schema.VisitCreate):
+    visit.qr_id = create_qr(db).id
+    visit.visitor_id = create_visitor(db, name).id
+    visit.date = date
+    return create_model(db, visit, models.Visit)
 
 
-def get_visit(db: Session, visit_id: str):
-    return db.query(models.Visit).filter(models.Visit.id == visit_id).first()
+def create_residence(db: Session, address: str, resident_id: uuid.UUID):
+    while True:
+        new_id = uuid.uuid4()
+        existing_residence = db.query(models.Residence).filter_by(id=new_id).first()
+        if existing_residence is None:
+            residence = models.Residence(
+                id=new_id, address=address, resident_id=resident_id
+            )
+            db.add(residence)
+            db.commit()
+            return residence
+        return existing_residence
 
 
-def get_frequent_visitor(db: Session, frequent_visitor_id: str):
-    return (
-        db.query(models.FrequentVisitor)
-        .filter(models.FrequentVisitor.id == frequent_visitor_id)
-        .first()
+def create_user(db: Session, user: schema.UserCreate):
+    while True:
+        new_id = uuid.uuid4()
+        existing_user = db.query(models.User).filter_by(id=new_id).first()
+        if existing_user is None:
+            user = models.User(id=new_id, **user.dict())
+            db.add(user)
+            db.commit()
+            return user
+        return existing_user
+
+
+def create_resident(db: Session, address: str, resident: schema.ResidentCreate):
+    user = schema.UserCreate(
+        role="resident",
+        name=resident.name,
+        username=resident.username,
     )
-
-
-def get_guard(db: Session, guard_id: str):
-    return db.query(models.Guard).filter(models.Guard.id == guard_id).first()
-
-
-def get_user(db: Session, user_id: str):
-    return db.query(models.User).filter(models.User.id == user_id).first()
-
-
-def get_resident(db: Session, resident_id: str):
-    return db.query(models.Resident).filter(models.Resident.id == resident_id).first()
-
-
-def get_residence(db: Session, residence_id: str):
-    return (
-        db.query(models.Residence).filter(models.Residence.id == residence_id).first()
+    user = create_user(
+        db,
+        user=user,
     )
+    user_id = user.id
+    resident.user_id = user_id
+    resident = create_model(db, resident, models.Resident)
+    create_residence(db=db, address=address, resident_id=resident.id)
+    return resident
 
 
-def get_qr(db: Session, qr_id: str):
-    return db.query(models.QR).filter(models.QR.id == qr_id).first()
-
-
-# DELETEL
-
-
-def delete_visitor(db: Session, visitor_id: str):
-    db.query(models.Visitor).filter(models.Visitor.id == visitor_id).delete()
-    db.commit()
-
-
-def delete_visit(db: Session, visit_id: str):
-    db.query(models.Visit).filter(models.Visit.id == visit_id).delete()
-    db.commit()
-
-
-def delete_frequent_visitor(db: Session, frequent_visitor_id: str):
-    db.query(models.FrequentVisitor).filter(
-        models.FrequentVisitor.id == frequent_visitor_id
-    ).delete()
-    db.commit()
-
-
-def delete_guard(db: Session, guard_id: str):
-    db.query(models.Guard).filter(models.Guard.id == guard_id).delete()
-    db.commit()
-
-
-def delete_user(db: Session, user_id: str):
-    db.query(models.User).filter(models.User.id == user_id).delete()
-    db.commit()
-
-
-def delete_resident(db: Session, resident_id: str):
-    db.query(models.Resident).filter(models.Resident.id == resident_id).delete()
-    db.commit()
-
-
-def delete_residence(db: Session, residence_id: str):
-    db.query(models.Residence).filter(models.Residence.id == residence_id).delete()
-    db.commit()
+def get_visit_states():
+    list_visits_state = [
+        schema.VisitState.PENDING,
+        schema.VisitState.REGISTERED,
+        schema.VisitState.CANCELLED,
+        schema.VisitState.EXPIRED,
+    ]
+    return {"visit_state": list_visits_state}

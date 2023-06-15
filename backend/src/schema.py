@@ -5,6 +5,11 @@ from enum import Enum
 import uuid
 
 
+class AuthDetails(BaseModel):
+    username: str
+    password: str
+
+
 class VisitState(str, Enum):
     PENDING = "PENDING"
     REGISTERED = "REGISTERED"
@@ -120,7 +125,7 @@ class Residence(ResidenceBase):
 
 class ResidentBase(UserBase):
     phone: str
-    residence_id: UUID4
+    user_id: Optional[UUID4] = None
 
 
 class ResidentCreate(ResidentBase):
