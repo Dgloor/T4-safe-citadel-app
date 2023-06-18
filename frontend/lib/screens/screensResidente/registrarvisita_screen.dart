@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-
-=======
 import 'package:prueba/screens/screensResidente/TimePicker.dart';
 import 'package:prueba/screens/screensResidente/bottom_nav.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -13,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart';
->>>>>>> parteAlan
 class RegistrarVisita extends StatefulWidget {
   const RegistrarVisita({super.key});
 
@@ -63,14 +59,9 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 ),
                 SizedBox(height: 30.0),
                 TextField(
-<<<<<<< HEAD
-                  decoration: InputDecoration(
-                      hintText: 'Nombre del visitante 10',
-=======
                   controller: controller,
                   decoration: InputDecoration(
                       hintText: 'Nombre del visitante',
->>>>>>> parteAlan
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
                   style: TextStyle(fontSize: 14),
@@ -139,10 +130,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
-<<<<<<< HEAD
-                    onPressed: () {},
-                    child: Text('Aceptar'),
-=======
                     onPressed: () {
                         if (controller.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -157,15 +144,10 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                      
                     },
                     child: Text('Registrar Visita'),
->>>>>>> parteAlan
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
-<<<<<<< HEAD
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.green), // Cambiar el color del botón
-=======
                       backgroundColor:
                           MaterialStateProperty.all<Color>(Colors.green),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -173,7 +155,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
->>>>>>> parteAlan
                     ),
                   ),
                 ),
@@ -194,8 +175,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
     );
   }
 }
-<<<<<<< HEAD
-=======
 
 _widgetQRCode(BuildContext context, Visita visita) {
   var uuid = Uuid();
@@ -249,4 +228,3 @@ Visita crearVisita() {
   );
   return miVisita;
 }
->>>>>>> parteAlan
