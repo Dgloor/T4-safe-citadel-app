@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prueba/screens/screensResidente/routes.dart';
 import 'screensResidente/home_screenResidente.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:prueba/utils/globals.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({Key? key}) : super(key : key);
@@ -59,6 +60,7 @@ TextEditingController _textController  = TextEditingController(text: ""); /**Con
 _guardarData() async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString("nombre", _textController.text);
+  nombreResidente = _textController.text;
 }
 
 
