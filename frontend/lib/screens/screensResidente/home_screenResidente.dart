@@ -5,8 +5,7 @@ import 'package:prueba/screens/screensResidente/routes.dart';
  * para permitir que los usuarios naveguen entre diferentes 
  * páginas. */
 class HomeResidente extends StatefulWidget {
-  final String? nombre;
-  const HomeResidente(this.nombre,{super.key});
+  const HomeResidente({super.key});
 
   @override
   State<HomeResidente> createState() => _HomeResidenteState();
@@ -31,7 +30,7 @@ class _HomeResidenteState extends State<HomeResidente> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: myBN,
-      body: widget.nombre != null ? Routes(nombre: widget.nombre!, index: index) : Container(), //Routes(nombre: widget.nombre,index:index),
+      body: Routes(index:index),
     );
   }
 }

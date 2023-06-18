@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/screens/screensResidente/routes.dart';
 import 'screensResidente/home_screenResidente.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({Key? key}) : super(key : key);
@@ -37,10 +38,11 @@ class _BtnSubmit extends StatelessWidget{
                       backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Cambiar el color del botón
                     ),
                     onPressed: (){
-                      print(_textController.text);//Imprime el nombre del usuario recibido en el login
+                      _guardarData();
+                      //print(_textController.text);//Imprime el nombre del usuario recibido en el login
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeResidente(_textController.text)),
+                        MaterialPageRoute(builder: (context) => HomeResidente()),
                       );
                     },
                     child: Text('Iniciar Sesión',
@@ -51,7 +53,15 @@ class _BtnSubmit extends StatelessWidget{
                 );
   }
 }
-TextEditingController _textController  = TextEditingController(text: "");
+TextEditingController _textController  = TextEditingController(text: ""); /**Controlador para guardar data de input usuario */
+
+/**Guardar el nombre de usuario en almacenamiento interno */
+_guardarData() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString("nombre", _textController.text);
+}
+
+
 /****WIDGET PRINCIPAL *****/
 class _LoginScreenState extends State<LoginScreen>{
   
