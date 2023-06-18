@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bottom_nav.dart';
+import 'package:prueba/utils/globals.dart';
 
 class VisitaScreenResidente extends StatefulWidget {
   const VisitaScreenResidente({Key? key}) : super(key: key);
@@ -11,40 +14,44 @@ class VisitaScreenResidente extends StatefulWidget {
   State<VisitaScreenResidente> createState() => _VisitaScreenResidente();
 }
 
+List<String> visitasIngresadas = [
+  "María Solís",
+  "Anthony Cruz",
+  "Xavier Mendoza",
+  "José Mendoza",
+  "Franklin Cevallos",
+  "Andy Gutierrez",
+  "Jonathan Zavala",
+];
+List<String> visitasPendientes = [
+  "Alberto Suarez",
+  "Ana Perez",
+  "Jaime Rodriguez",
+  "Carlos Freire"
+];
+List<String> visitasAnuladas = [
+  "José Hurtado",
+];
 
-class _InputBuscarVisita extends StatelessWidget{
+class _InputBuscarVisita extends StatelessWidget {
   _InputBuscarVisita({Key? key}) : super(key: key);
-  List<String> visitas = ["Maria", "Pepe", "Jaime"];
-   @override
+  @override
   Widget build(BuildContext context) {
-  return Container(
+    return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
-                            style: TextStyle(fontSize: 12),
-                            decoration: InputDecoration(
-                              hintText: 'Buscar visita',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 73, 70, 70)
-                                        .withOpacity(0.5)),
-                              ),
-                              prefixIcon: Icon(Icons.search),
-                            ),
-                          ),
-          
-          Expanded(
-            child: ListView.builder(
-              itemCount: visitas.length,
-              itemBuilder: (BuildContext context, int index) {
-                final nombreVisita = visitas[index];
-                return ListTile(
-                  title: Text(nombreVisita),
-                  leading: Icon(Icons.person));
-              },
+            style: TextStyle(fontSize: 12),
+            decoration: InputDecoration(
+              hintText: 'Buscar visita',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                    color: Color.fromARGB(255, 73, 70, 70).withOpacity(0.5)),
+              ),
+              prefixIcon: Icon(Icons.search),
             ),
           ),
         ],
@@ -53,79 +60,145 @@ class _InputBuscarVisita extends StatelessWidget{
   }
 }
 
-
-class  _ContainerVisitaIngresada extends StatelessWidget{
+class _ContainerVisitaIngresada extends StatefulWidget {
   const _ContainerVisitaIngresada({Key? key}) : super(key: key);
-   @override
+  @override
+  State<_ContainerVisitaIngresada> createState() =>
+      _ContainerVisitaIngresadaState();
+}
+
+class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
+  List<dynamic> users = [];
+  void fetchUser() async {
+    const url = 'https://randomuser.me/api/?results=5';
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
+    final body = response.body;
+    final json = jsonDecode(body);
+    setState(() {
+      users = json['results'];
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-  return Container(
-    
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), 
-                          ),
-                        ],
-                        border: Border.all(
-                            color: Colors.grey.withOpacity(0.5), width: 5),
-                      ),
-                      child: _InputBuscarVisita(),
-                      
-                    );
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3),
+            ),
+          ],
+          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TextButton(
+              child: Text(
+                'Hacer fetch',
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Colors.green), // Cambiar el color del botón
+              ),
+              onPressed: () {
+                fetchUser();
+                print(users);
+              }),
+          // _InputBuscarVisita(),
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: visitasIngresadas.length,
+          //     itemBuilder: (BuildContext context, int index) {
+          //       final nombreVisita = visitasIngresadas[index];
+          //       return ListTile(
+          //           title: Text(nombreVisita), leading: Icon(Icons.person));
+          //     },
+          //   ),
+          // ),
+        ]));
   }
 }
-class _ContainerVisitaAnulada extends StatelessWidget{
+
+class _ContainerVisitaAnulada extends StatelessWidget {
   const _ContainerVisitaAnulada({Key? key}) : super(key: key);
-   @override
+  @override
   Widget build(BuildContext context) {
-  return Container(
-                     
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), 
-                          ),
-                        ],
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(0.5),
-                          width: 5,
-                        ),
-                      ),
-                      child: _InputBuscarVisita(),
-                    );
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.5),
+          width: 5,
+        ),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _InputBuscarVisita(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: visitasAnuladas.length,
+            itemBuilder: (BuildContext context, int index) {
+              final nombreVisita = visitasAnuladas[index];
+              return ListTile(
+                  title: Text(nombreVisita), leading: Icon(Icons.person));
+            },
+          ),
+        ),
+      ]),
+    );
   }
 }
-class _ContainerVisitaPendiente extends StatelessWidget{
+
+class _ContainerVisitaPendiente extends StatelessWidget {
   const _ContainerVisitaPendiente({Key? key}) : super(key: key);
-   @override
+  @override
   Widget build(BuildContext context) {
-  return Container(
-                    
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), 
-                          ),
-                        ],
-                        border: Border.all(
-                          color: Colors.grey.withOpacity(0.5),
-                          width: 5,
-                        ),
-                      ),
-                      child: _InputBuscarVisita(),
-                    );
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.5),
+          width: 5,
+        ),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _InputBuscarVisita(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: visitasPendientes.length,
+            itemBuilder: (BuildContext context, int index) {
+              final nombreVisita = visitasPendientes[index];
+              return ListTile(
+                  title: Text(nombreVisita), leading: Icon(Icons.person));
+            },
+          ),
+        ),
+      ]),
+    );
   }
 }
 
@@ -134,7 +207,7 @@ class _ListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  ListView(
+    return ListView(
       padding: const EdgeInsets.all(8),
       children: <Widget>[
         Text('List 1'),
@@ -148,23 +221,25 @@ class _ListView extends StatelessWidget {
 /***********Widget   principal ***********/
 class _VisitaScreenResidente extends State<VisitaScreenResidente>
     with TickerProviderStateMixin {
-  String nombre = "Alan" ;
+  String nombre = "";
   @override
   void initState() {
-    
     super.initState();
     _cargarData();
   }
+
   /**Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario */
-  _cargarData() async{
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        nombre =  prefs.getString("nombre") ?? "Residente";
-      });
+  void _cargarData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nombre = nombreResidente;
+    });
   }
-  String usuario = "Alan";
+
+  String usuario = "";
   @override
   Widget build(BuildContext context) {
+    print("Nombre: ${nombre}");
     TabController _tabController = TabController(length: 3, vsync: this);
     return Scaffold(
       body: SingleChildScrollView(
@@ -205,8 +280,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
                 Container(
                   width: double.maxFinite,
                   height: 450,
-                  child: TabBarView(controller: _tabController, 
-                  children: [
+                  child: TabBarView(controller: _tabController, children: [
                     _ContainerVisitaIngresada(),
                     _ContainerVisitaPendiente(),
                     _ContainerVisitaAnulada()
@@ -220,4 +294,3 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
     );
   }
 }
-

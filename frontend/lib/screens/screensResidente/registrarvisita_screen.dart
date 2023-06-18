@@ -1,12 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 
+=======
+import 'package:prueba/screens/screensResidente/TimePicker.dart';
+import 'package:prueba/screens/screensResidente/bottom_nav.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'dart:convert';
+import 'package:prueba/model/visita.dart';
+import 'package:prueba/utils/globals.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:http/http.dart';
+>>>>>>> parteAlan
 class RegistrarVisita extends StatefulWidget {
   const RegistrarVisita({super.key});
 
   @override
   State<RegistrarVisita> createState() => _RegistrarVisitaState();
 }
+
+String residente = nombreResidente;
+String nombreVisita = "";
 
 class _RegistrarVisitaState extends State<RegistrarVisita> {
   final _formKey = GlobalKey<FormState>();
@@ -15,8 +31,18 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   bool _showConfirmation = false;
   int _value = 0;
   DateTime dateTime = DateTime.now();
+  _cargarData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      residente = prefs.getString("nombre") ?? "N.A";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("Nombre en registrar: ${residente}");
+    TextEditingController controller = TextEditingController();
+    Visita visita;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 248, 248),
       body: SingleChildScrollView(
@@ -37,8 +63,14 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 ),
                 SizedBox(height: 30.0),
                 TextField(
+<<<<<<< HEAD
                   decoration: InputDecoration(
                       hintText: 'Nombre del visitante 10',
+=======
+                  controller: controller,
+                  decoration: InputDecoration(
+                      hintText: 'Nombre del visitante',
+>>>>>>> parteAlan
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
                   style: TextStyle(fontSize: 14),
@@ -107,14 +139,41 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
+<<<<<<< HEAD
                     onPressed: () {},
                     child: Text('Aceptar'),
+=======
+                    onPressed: () {
+                        if (controller.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Ingrese nombre de visita')));
+                        }else{
+                             setState(() {
+                        nombreVisita = controller.text;
+                      });
+                      Visita visita = crearVisita();
+                      _widgetQRCode(context, visita);
+                        } 
+                     
+                    },
+                    child: Text('Registrar Visita'),
+>>>>>>> parteAlan
                     style: ButtonStyle(
                       fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
+<<<<<<< HEAD
                       backgroundColor: MaterialStateProperty.all<Color>(
                           Colors.green), // Cambiar el color del botón
+=======
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+>>>>>>> parteAlan
                     ),
                   ),
                 ),
@@ -135,3 +194,59 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
     );
   }
 }
+<<<<<<< HEAD
+=======
+
+_widgetQRCode(BuildContext context, Visita visita) {
+  var uuid = Uuid();
+  String qrData = uuid.v4();  
+  showModalBottomSheet(
+      backgroundColor: Color.fromARGB(255, 251, 250, 239),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      context: context,
+      builder: (context) {
+        return Container(
+            height: 650, // Establece la altura deseada aquí
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: QrImageView(
+                      data: qrData,
+                      version: QrVersions.auto,
+                      size: 300.0,
+                    )),
+                Text(
+                  'Enviar código QR al visitante',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    //Share.share('');
+                  },
+                  child: Text('Compartir'),
+                ),
+              ],
+            ));
+      });
+}
+
+Visita crearVisita() {
+  Visita miVisita = Visita(
+    nombre: nombreVisita,
+    fechaVisita: DateTime.now(),
+    fechaCreacion: DateTime.now(),
+    residente: residente,
+  );
+  return miVisita;
+}
+>>>>>>> parteAlan
