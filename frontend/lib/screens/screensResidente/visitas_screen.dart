@@ -79,6 +79,10 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
       users = json['results'];
     });
   }
+  @override
+  void initState() {
+    fetchUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,34 +100,33 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
           border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          TextButton(
-              child: Text(
-                'Hacer fetch',
-                style: TextStyle(
-                  fontSize: 20.0,
-                ),
-              ),
-              style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Colors.green), // Cambiar el color del botón
-              ),
-              onPressed: () {
-                fetchUser();
-                print(users);
-              }),
-          // _InputBuscarVisita(),
-          // Expanded(
-          //   child: ListView.builder(
-          //     itemCount: visitasIngresadas.length,
-          //     itemBuilder: (BuildContext context, int index) {
-          //       final nombreVisita = visitasIngresadas[index];
-          //       return ListTile(
-          //           title: Text(nombreVisita), leading: Icon(Icons.person));
-          //     },
-          //   ),
-          // ),
+          // TextButton(
+          //     child: Text(
+          //       'Hacer fetch',
+          //       style: TextStyle(
+          //         fontSize: 20.0,
+          //       ),
+          //     ),
+          //     style: ButtonStyle(
+          //       fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+          //       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          //       backgroundColor: MaterialStateProperty.all<Color>(
+          //           Colors.green), // Cambiar el color del botón
+          //     ),
+          //     onPressed: () {
+          //       print(users);
+          //     }),
+          _InputBuscarVisita(),
+          Expanded(
+            child: ListView.builder(
+              itemCount: visitasIngresadas.length,
+              itemBuilder: (BuildContext context, int index) {
+                final nombreVisita = visitasIngresadas[index];
+                return ListTile(
+                    title: Text(nombreVisita), leading: Icon(Icons.person));
+              },
+            ),
+          ),
         ]));
   }
 }

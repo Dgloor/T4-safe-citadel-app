@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart';
+
 class RegistrarVisita extends StatefulWidget {
   const RegistrarVisita({super.key});
 
@@ -27,6 +28,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   bool _showConfirmation = false;
   int _value = 0;
   DateTime dateTime = DateTime.now();
+  TextEditingController controller = TextEditingController();
   _cargarData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -37,7 +39,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   @override
   Widget build(BuildContext context) {
     print("Nombre en registrar: ${residente}");
-    TextEditingController controller = TextEditingController();
+
     Visita visita;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 248, 248),
@@ -131,17 +133,17 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                        if (controller.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Ingrese nombre de visita')));
-                        }else{
-                             setState(() {
-                        nombreVisita = controller.text;
-                      });
-                      Visita visita = crearVisita();
-                      _widgetQRCode(context, visita);
-                        } 
-                     
+                      if (controller.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Ingrese nombre de visita')));
+                      } else {
+                        print("Nombre de visita: ${controller.text}");
+                        setState(() {
+                          nombreVisita = controller.text;
+                        });
+                        Visita visita = crearVisita();
+                        _widgetQRCode(context, visita);
+                      }
                     },
                     child: Text('Registrar Visita'),
                     style: ButtonStyle(
@@ -159,14 +161,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                   ),
                 ),
                 SizedBox(height: 16.0),
-                if (_showConfirmation)
-                  Text(
-                    'Gracias por enviar el formulario, $_name ($_email)',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
               ],
             ),
           ),
@@ -178,7 +172,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
 
 _widgetQRCode(BuildContext context, Visita visita) {
   var uuid = Uuid();
-  String qrData = uuid.v4();  
+  String qrData = uuid.v4();
   showModalBottomSheet(
       backgroundColor: Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
