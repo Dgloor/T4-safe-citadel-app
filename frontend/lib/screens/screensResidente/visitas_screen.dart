@@ -68,7 +68,6 @@ class _ContainerVisitaIngresada extends StatefulWidget {
 }
 
 class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
-  List<dynamic> users = [];
   void fetchUser() async {
     const url = 'https://randomuser.me/api/?results=5';
     final uri = Uri.parse(url);
@@ -81,6 +80,7 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
   }
   @override
   void initState() {
+    super.initState();
     fetchUser();
   }
 
@@ -100,22 +100,6 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
           border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // TextButton(
-          //     child: Text(
-          //       'Hacer fetch',
-          //       style: TextStyle(
-          //         fontSize: 20.0,
-          //       ),
-          //     ),
-          //     style: ButtonStyle(
-          //       fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
-          //       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          //       backgroundColor: MaterialStateProperty.all<Color>(
-          //           Colors.green), // Cambiar el color del botón
-          //     ),
-          //     onPressed: () {
-          //       print(users);
-          //     }),
           _InputBuscarVisita(),
           Expanded(
             child: ListView.builder(

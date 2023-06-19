@@ -20,6 +20,7 @@ class RegistrarVisita extends StatefulWidget {
 
 String residente = nombreResidente;
 String nombreVisita = "";
+const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
 
 class _RegistrarVisitaState extends State<RegistrarVisita> {
   final _formKey = GlobalKey<FormState>();
@@ -27,6 +28,8 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   String? _email;
   bool _showConfirmation = false;
   int _value = 0;
+
+  final List<bool> _selectedDay = <bool>[true, false];
   DateTime dateTime = DateTime.now();
   TextEditingController controller = TextEditingController();
   _cargarData() async {
@@ -63,54 +66,52 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 TextField(
                   controller: controller,
                   decoration: InputDecoration(
-                      hintText: 'Nombre del visitante',
+                      hintText: 'Nombre',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
                   style: TextStyle(fontSize: 14),
                 ),
                 SizedBox(height: 30.0),
-                /**Elección de día de visita */
+                /**Elección de día de visita */ 
                 Text(
                   'Día de visita',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
-                Row(
-                  children: [
-                    Radio(
-                      value: 1,
-                      groupValue: _value,
-                      onChanged: (value) {
-                        setState(() {
-                          _value = value as int;
-                        });
-                      },
+
+                ///
+                ToggleButtons(
+                    onPressed: (int index) {
+                      setState(() {
+                        // The button that is tapped is set to true, and the others to false.
+                        for (int i = 0; i < _selectedDay.length; i++) {
+                          _selectedDay[i] = i == index;
+                        }
+                        _value = index;
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    selectedBorderColor: Color.fromARGB(255, 31, 89, 42),
+                    selectedColor: Colors.white,
+                    fillColor: Colors.green,
+                    color: Colors.black,
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 160.0,
                     ),
-                    Text('Hoy')
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                      value: 2,
-                      groupValue: _value,
-                      onChanged: (value) {
-                        setState(() {
-                          _value = value as int;
-                        });
-                      },
+                    isSelected: _selectedDay,
+                    children: opcionesDias
                     ),
-                    Text('Mañana')
-                  ],
-                ),
+                SizedBox(height: 30.0),
                 Text(
-                  'Elegir hora',
+                  'Hora de llegada',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
                 /**Selección de hora */
                 CupertinoButton(
                     child: Text('${dateTime.hour}:${dateTime.minute}'),
+                    color: Colors.green,
                     onPressed: () {
                       showCupertinoModalPopup(
                           context: context,
@@ -128,7 +129,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                                 ),
                               ));
                     }),
-                SizedBox(height: 16.0),
+                SizedBox(height: 50.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
@@ -138,6 +139,14 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                             content: Text('Ingrese nombre de visita')));
                       } else {
                         print("Nombre de visita: ${controller.text}");
+                        print("Dia" + _value.toString());
+                        DateTime fechaVisita = DateTime.now();
+                        if(_value == 0){
+                          fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, dateTime.hour, dateTime.minute);                      
+                        }else if(_value == 1){
+                          fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, dateTime.hour, dateTime.minute);
+                        }
+                        print("Fecha visita: " + fechaVisita.toString());
                         setState(() {
                           nombreVisita = controller.text;
                         });
@@ -151,7 +160,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
+                          MaterialStateProperty.all<Color>(Color.fromARGB(255, 75, 130, 77)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
