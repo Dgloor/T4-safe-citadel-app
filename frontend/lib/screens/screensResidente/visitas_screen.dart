@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bottom_nav.dart';
+import 'package:uuid/uuid.dart';
 import 'package:prueba/utils/globals.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class VisitaScreenResidente extends StatefulWidget {
   const VisitaScreenResidente({Key? key}) : super(key: key);
@@ -78,6 +80,7 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
       users = json['results'];
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -180,7 +183,29 @@ class _ContainerVisitaPendiente extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               final nombreVisita = visitasPendientes[index];
               return ListTile(
-                  title: Text(nombreVisita), leading: Icon(Icons.person));
+                  title: Text(nombreVisita), 
+                  leading: Icon(Icons.person),
+                  trailing: PopupMenuButton<_MenuOptions>(
+                   itemBuilder: (BuildContext context) => <PopupMenuEntry<_MenuOptions>>[
+                  const PopupMenuItem(
+                    child: Text('Ver QR'),
+                    value: _MenuOptions.verQR
+                  ),
+                  const PopupMenuItem(
+                    child: Text('Anular'),
+                    value: _MenuOptions.anular
+                  ),
+                ],
+                onSelected: (value) {
+                  switch(value){
+                    case _MenuOptions.verQR:
+                      _widgetQRCode(context);
+                      break;
+                    case _MenuOptions.anular:
+                      break;
+                  }
+                }
+                  ));
             },
           ),
         ),
@@ -189,6 +214,50 @@ class _ContainerVisitaPendiente extends StatelessWidget {
   }
 }
 
+
+enum _MenuOptions { verQR, anular }
+_widgetQRCode(BuildContext context) {
+   var uuid = Uuid();
+  String qrData = uuid.v4();
+  showModalBottomSheet(
+      backgroundColor: Color.fromARGB(255, 251, 250, 239),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      context: context,
+      builder: (context) {
+        return Container(
+            height: 650, // Establece la altura deseada aquí
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: QrImageView(
+                      data: qrData,
+                      version: QrVersions.auto,
+                      size: 300.0,
+                    )),
+                Text(
+                  'Enviar código QR al visitante',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    //Share.share('');
+                  },
+                  child: Text('Compartir'),
+                ),
+              ],
+            ));
+      });
+}
 class _ListView extends StatelessWidget {
   const _ListView({Key? key}) : super(key: key);
 

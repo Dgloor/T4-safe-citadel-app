@@ -137,16 +137,24 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                       if (controller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Ingrese nombre de visita')));
-                      } else {
+                      }
+                      else if(_value == 0 && (dateTime.hour < DateTime.now().hour && dateTime.minute < DateTime.now().minute)){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Hora de visita no válida')));
+                      } 
+                      else {
                         print("Nombre de visita: ${controller.text}");
                         print("Dia" + _value.toString());
                         DateTime fechaVisita = DateTime.now();
+                        DateTime fechaCreacion = DateTime.now();
+                        
                         if(_value == 0){
                           fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, dateTime.hour, dateTime.minute);                      
                         }else if(_value == 1){
                           fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, dateTime.hour, dateTime.minute);
                         }
                         print("Fecha visita: " + fechaVisita.toString());
+                        print("Fecha creacion: " + fechaCreacion.toString());
                         setState(() {
                           nombreVisita = controller.text;
                         });
