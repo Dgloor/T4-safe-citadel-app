@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/screensResidente/routes.dart';
 import 'screensResidente/home_screenResidente.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prueba/utils/globals.dart';
@@ -11,23 +10,23 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-/**Variables globales */
+///Variables globales
 String _usuario = "";
 String _password = "";
 
-/**Widget para espaciado */
+///Widget para espaciado
 class _Divider extends StatelessWidget {
   const _Divider({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Divider(
+    return const Divider(
       height: 30.0,
       color: Color.fromARGB(255, 250, 248, 248),
     );
   }
 }
 
-/**Widget de botón para iniciar sesión */
+///Widget de botón para iniciar sesión con validación de campos
 class _BtnSubmit extends StatelessWidget {
   const _BtnSubmit({Key? key}) : super(key: key);
   @override
@@ -35,7 +34,7 @@ class _BtnSubmit extends StatelessWidget {
     return SizedBox(
       child: TextButton(
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+          fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           backgroundColor: MaterialStateProperty.all<Color>(
               Colors.green), // Cambiar el color del botón
@@ -43,16 +42,16 @@ class _BtnSubmit extends StatelessWidget {
         onPressed: () {
           if (_usuario.isEmpty || _password.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Ingrese usuario y contraseña')));
+                const SnackBar(content: Text('Ingrese usuario y contraseña')));
           } else {
             _guardarData();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeResidente()),
+              MaterialPageRoute(builder: (context) => const HomeResidente()),
             );
           }
         },
-        child: Text(
+        child:const Text(
           'Iniciar Sesión',
           style: TextStyle(
             fontSize: 20.0,
@@ -66,7 +65,7 @@ class _BtnSubmit extends StatelessWidget {
 TextEditingController _textController = TextEditingController(text: "");
 /**Controlador para guardar data de input usuario */
 
-/**Guardar el nombre de usuario en almacenamiento interno */
+///Guardar el nombre de usuario en almacenamiento interno */
 _guardarData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (_textController.text.isNotEmpty) {
@@ -75,20 +74,20 @@ _guardarData() async {
   }
 }
 
-/****WIDGET PRINCIPAL *****/
+///WIDGET PRINCIPAL *****/
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 248, 248),
+      backgroundColor: const Color.fromARGB(255, 250, 248, 248),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 90.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 90.0),
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset('assets/img/logo.png'),
-              _Divider(),
+              const _Divider(),
               /**Input de usuario */
               TextField(
                   controller: _textController,
@@ -98,12 +97,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: 'Usuario',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0)),
-                      suffixIcon: Icon(Icons.person)),
-                  style: TextStyle(fontSize: 14),
+                      suffixIcon:const Icon(Icons.person)),
+                  style: const TextStyle(fontSize: 14),
                   onSubmitted: (valor) {
                     _usuario = valor;
                   }),
-              _Divider(),
+              const _Divider(),
               /**Input de contraseña */
               TextField(
                 enableInteractiveSelection: false,
@@ -112,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Contraseña',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0))),
-                style: TextStyle(fontSize: 14),
+                style:const TextStyle(fontSize: 14),
                 onSubmitted: (valor) {
                   _password = valor;
                 },

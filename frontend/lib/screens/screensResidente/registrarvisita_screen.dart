@@ -1,15 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/screensResidente/TimePicker.dart';
-import 'package:prueba/screens/screensResidente/bottom_nav.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:convert';
 import 'package:prueba/model/visita.dart';
 import 'package:prueba/utils/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:http/http.dart';
 
 class RegistrarVisita extends StatefulWidget {
   const RegistrarVisita({super.key});
@@ -24,9 +18,6 @@ const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
 
 class _RegistrarVisitaState extends State<RegistrarVisita> {
   final _formKey = GlobalKey<FormState>();
-  String? _name;
-  String? _email;
-  bool _showConfirmation = false;
   int _value = 0;
 
   final List<bool> _selectedDay = <bool>[true, false];
@@ -41,14 +32,12 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
 
   @override
   Widget build(BuildContext context) {
-    print("Nombre en registrar: ${residente}");
-
-    Visita visita;
+    print("Nombre en registrar: $residente");
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 248, 248),
+      backgroundColor: const Color.fromARGB(255, 250, 248, 248),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 30.0,
             vertical: 60.0,
           ),
@@ -62,28 +51,25 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                   style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 TextField(
                   controller: controller,
                   decoration: InputDecoration(
                       hintText: 'Nombre',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 /**Elección de día de visita */ 
                 Text(
                   'Día de visita',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
-
-                ///
                 ToggleButtons(
                     onPressed: (int index) {
                       setState(() {
-                        // The button that is tapped is set to true, and the others to false.
                         for (int i = 0; i < _selectedDay.length; i++) {
                           _selectedDay[i] = i == index;
                         }
@@ -91,7 +77,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                       });
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    selectedBorderColor: Color.fromARGB(255, 31, 89, 42),
+                    selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
                     selectedColor: Colors.white,
                     fillColor: Colors.green,
                     color: Colors.black,
@@ -102,7 +88,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                     isSelected: _selectedDay,
                     children: opcionesDias
                     ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 Text(
                   'Hora de llegada',
                   style: Theme.of(context).textTheme.titleMedium,
@@ -110,7 +96,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 ),
                 /**Selección de hora */
                 CupertinoButton(
-                    child: Text('${dateTime.hour}:${dateTime.minute}'),
                     color: Colors.green,
                     onPressed: () {
                       showCupertinoModalPopup(
@@ -128,8 +113,10 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                                   ),
                                 ),
                               ));
-                    }),
-                SizedBox(height: 50.0),
+                    },
+                    child: Text('${dateTime.hour}:${dateTime.minute}'),
+                    ),
+                const SizedBox(height: 50.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
@@ -138,7 +125,9 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Ingrese nombre de visita')));
                       }
-                      else if(_value == 0 && (dateTime.hour < DateTime.now().hour && dateTime.minute < DateTime.now().minute)){
+                      else if(_value == 0 
+                              && (dateTime.hour < DateTime.now().hour 
+                              && dateTime.minute < DateTime.now().minute)){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Hora de visita no válida')));
                       } 
@@ -149,9 +138,9 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                         DateTime fechaCreacion = DateTime.now();
                         
                         if(_value == 0){
-                          fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, dateTime.hour, dateTime.minute);                      
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, dateTime.hour, dateTime.minute);                      
                         }else if(_value == 1){
-                          fechaVisita = new DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, dateTime.hour, dateTime.minute);
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, dateTime.hour, dateTime.minute);
                         }
                         print("Fecha visita: " + fechaVisita.toString());
                         print("Fecha creacion: " + fechaCreacion.toString());
@@ -162,22 +151,22 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                         _widgetQRCode(context, visita);
                       }
                     },
-                    child: Text('Registrar Visita'),
                     style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+                      fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Color.fromARGB(255, 75, 130, 77)),
+                          MaterialStateProperty.all<Color>(const Color.fromARGB(255, 75, 130, 77)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
                     ),
+                    child: const Text('Registrar Visita')
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
@@ -188,10 +177,9 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
 }
 
 _widgetQRCode(BuildContext context, Visita visita) {
-  var uuid = Uuid();
-  String qrData = uuid.v4();
+  String qrData = "";
   showModalBottomSheet(
-      backgroundColor: Color.fromARGB(255, 251, 250, 239),
+      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -208,12 +196,11 @@ _widgetQRCode(BuildContext context, Visita visita) {
                     padding: const EdgeInsets.all(16.0),
                     child: QrImageView(
                       data: qrData,
-                      version: QrVersions.auto,
                       size: 300.0,
                     )),
                 Text(
                   'Enviar código QR al visitante',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),

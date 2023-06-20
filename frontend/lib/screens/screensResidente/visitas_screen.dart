@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'bottom_nav.dart';
-import 'package:uuid/uuid.dart';
 import 'package:prueba/utils/globals.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -36,7 +32,7 @@ List<String> visitasAnuladas = [
 ];
 
 class _InputBuscarVisita extends StatelessWidget {
-  _InputBuscarVisita({Key? key}) : super(key: key);
+  const _InputBuscarVisita({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,15 +41,15 @@ class _InputBuscarVisita extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
             decoration: InputDecoration(
               hintText: 'Buscar visita',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(
-                    color: Color.fromARGB(255, 73, 70, 70).withOpacity(0.5)),
+                    color: const Color.fromARGB(255, 73, 70, 70).withOpacity(0.5)),
               ),
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
             ),
           ),
         ],
@@ -97,20 +93,20 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
               color: Colors.white.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
           border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _InputBuscarVisita(),
+          const _InputBuscarVisita(),
           Expanded(
             child: ListView.builder(
               itemCount: visitasIngresadas.length,
               itemBuilder: (BuildContext context, int index) {
                 final nombreVisita = visitasIngresadas[index];
                 return ListTile(
-                    title: Text(nombreVisita), leading: Icon(Icons.person));
+                    title: Text(nombreVisita), leading: const Icon(Icons.person));
               },
             ),
           ),
@@ -130,7 +126,7 @@ class _ContainerVisitaAnulada extends StatelessWidget {
             color: Colors.white.withOpacity(0.5),
             spreadRadius: 5,
             blurRadius: 7,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(
@@ -139,14 +135,14 @@ class _ContainerVisitaAnulada extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _InputBuscarVisita(),
+        const _InputBuscarVisita(),
         Expanded(
           child: ListView.builder(
             itemCount: visitasAnuladas.length,
             itemBuilder: (BuildContext context, int index) {
               final nombreVisita = visitasAnuladas[index];
               return ListTile(
-                  title: Text(nombreVisita), leading: Icon(Icons.person));
+                  title: Text(nombreVisita), leading: const Icon(Icons.person));
             },
           ),
         ),
@@ -167,7 +163,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
             color: Colors.white.withOpacity(0.5),
             spreadRadius: 5,
             blurRadius: 7,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(
@@ -176,7 +172,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _InputBuscarVisita(),
+        const _InputBuscarVisita(),
         Expanded(
           child: ListView.builder(
             itemCount: visitasPendientes.length,
@@ -184,16 +180,16 @@ class _ContainerVisitaPendiente extends StatelessWidget {
               final nombreVisita = visitasPendientes[index];
               return ListTile(
                   title: Text(nombreVisita), 
-                  leading: Icon(Icons.person),
+                  leading: const Icon(Icons.person),
                   trailing: PopupMenuButton<_MenuOptions>(
                    itemBuilder: (BuildContext context) => <PopupMenuEntry<_MenuOptions>>[
                   const PopupMenuItem(
-                    child: Text('Ver QR'),
-                    value: _MenuOptions.verQR
+                    value: _MenuOptions.verQR,
+                    child: Text('Ver QR')
                   ),
                   const PopupMenuItem(
+                    value: _MenuOptions.anular,
                     child: Text('Anular'),
-                    value: _MenuOptions.anular
                   ),
                 ],
                 onSelected: (value) {
@@ -217,10 +213,9 @@ class _ContainerVisitaPendiente extends StatelessWidget {
 
 enum _MenuOptions { verQR, anular }
 _widgetQRCode(BuildContext context) {
-   var uuid = Uuid();
-  String qrData = uuid.v4();
+  String qrData = "";
   showModalBottomSheet(
-      backgroundColor: Color.fromARGB(255, 251, 250, 239),
+      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -237,44 +232,28 @@ _widgetQRCode(BuildContext context) {
                     padding: const EdgeInsets.all(16.0),
                     child: QrImageView(
                       data: qrData,
-                      version: QrVersions.auto,
                       size: 300.0,
                     )),
-                Text(
+                const Text(
                   'Enviar código QR al visitante',
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
                     //Share.share('');
                   },
-                  child: Text('Compartir'),
+                  child: const Text('Compartir'),
                 ),
               ],
             ));
       });
 }
-class _ListView extends StatelessWidget {
-  const _ListView({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: <Widget>[
-        Text('List 1'),
-        Text('List 2'),
-        Text('List 3'),
-      ],
-    );
-  }
-}
-
-/***********Widget   principal ***********/
+///Widget   principal
 class _VisitaScreenResidente extends State<VisitaScreenResidente>
     with TickerProviderStateMixin {
   String nombre = "";
@@ -284,7 +263,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
     _cargarData();
   }
 
-  /**Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario */
+  ///Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario
   void _cargarData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -295,48 +274,47 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
   String usuario = "";
   @override
   Widget build(BuildContext context) {
-    print("Nombre: ${nombre}");
-    TabController _tabController = TabController(length: 3, vsync: this);
+    TabController tabController = TabController(length: 3, vsync: this);
     return Scaffold(
       body: SingleChildScrollView(
           child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 60.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 60.0),
             alignment: Alignment.topLeft,
             child: Column(
               children: [
                 Text(
-                  'Hola, ${nombre}',
+                  'Hola, $nombre',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Container(
                   child: TabBar(
-                    controller: _tabController,
+                    controller: tabController,
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      color: Color.fromARGB(255, 33, 128, 72),
+                      color: const Color.fromARGB(255, 33, 128, 72),
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     unselectedLabelStyle:
-                        TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                    tabs: [
+                        const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    tabs: const [
                       Tab(text: "Ingresada"),
                       Tab(text: "Pendiente"),
                       Tab(text: "Anulada")
                     ],
-                    labelColor: Color.fromARGB(255, 214, 221, 214),
-                    unselectedLabelColor: Color.fromARGB(255, 81, 173, 85),
-                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    labelColor: const Color.fromARGB(255, 214, 221, 214),
+                    unselectedLabelColor: const Color.fromARGB(255, 81, 173, 85),
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Container(
                   width: double.maxFinite,
                   height: 450,
-                  child: TabBarView(controller: _tabController, children: [
+                  child: TabBarView(controller: tabController, children:const [
                     _ContainerVisitaIngresada(),
                     _ContainerVisitaPendiente(),
                     _ContainerVisitaAnulada()
