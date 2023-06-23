@@ -40,16 +40,16 @@ class _BtnSubmit extends StatelessWidget {
               Colors.green), // Cambiar el color del botón
         ),
         onPressed: () {
-          if (_usuario.isEmpty || _password.isEmpty) {
+         /* if (_usuario.isEmpty || _password.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ingrese usuario y contraseña')));
-          } else {
+                const SnackBar(content: Text('Ingrese usuario y contraseña')));*/
+         // } else {
             _guardarData();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const HomeResidente()),
             );
-          }
+          //}
         },
         child:const Text(
           'Iniciar Sesión',

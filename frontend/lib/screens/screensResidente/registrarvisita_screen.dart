@@ -198,19 +198,19 @@ _widgetQRCode(BuildContext context, Visita visita) {
                       data: qrData,
                       size: 300.0,
                     )),
-                Text(
+                const Text(
                   'Enviar código QR al visitante',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
                     //Share.share('');
                   },
-                  child: Text('Compartir'),
+                  child: const Text('Compartir'),
                 ),
               ],
             ));
