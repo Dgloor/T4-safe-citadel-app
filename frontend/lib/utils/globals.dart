@@ -1,3 +1,0 @@
-// globals.dart
-String nombreResidente = "";
-
