@@ -4,7 +4,6 @@ import 'package:prueba/screens/complete_profile/complete_profile_screen.dart';
 import 'package:prueba/screens/details/details_screen.dart';
 import 'package:prueba/screens/forgot_password/forgot_password_screen.dart';
 import 'package:prueba/screens/home/home_screen.dart';
-import 'package:prueba/screens/login_success/login_success_screen.dart';
 import 'package:prueba/screens/otp/otp_screen.dart';
 import 'package:prueba/screens/profile/profile_screen.dart';
 import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
@@ -19,7 +18,6 @@ final Map<String, WidgetBuilder> routes = {
   SplashScreen.routeName: (context) => SplashScreen(),
   SignInScreen.routeName: (context) => SignInScreen(),
   ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
-  LoginSuccessScreen.routeName: (context) => LoginSuccessScreen(),
   SignUpScreen.routeName: (context) => SignUpScreen(),
   CompleteProfileScreen.routeName: (context) => CompleteProfileScreen(),
   OtpScreen.routeName: (context) => OtpScreen(),
