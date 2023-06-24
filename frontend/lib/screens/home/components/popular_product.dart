@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/components/product_card.dart';
 import 'package:prueba/models/Product.dart';
+import 'package:prueba/models/User.dart';
 
 import '../../../size_config.dart';
 import 'section_title.dart';
@@ -13,7 +14,7 @@ class PopularProducts extends StatelessWidget {
         Padding(
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-          child: SectionTitle(title: "Popular Products", press: () {}),
+          child: SectionTitle(title: "Visitas Registradas", press: () {}),
         ),
         SizedBox(height: getProportionateScreenWidth(20)),
         SingleChildScrollView(
@@ -21,7 +22,7 @@ class PopularProducts extends StatelessWidget {
           child: Row(
             children: [
               ...List.generate(
-                demoProducts.length,
+                demoUsers.length,
                 (index) {
                   if (demoProducts[index].isPopular)
                     return ProductCard(product: demoProducts[index]);

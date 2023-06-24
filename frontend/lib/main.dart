@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/routes.dart';
+import 'package:prueba/screens/home/home_screen.dart';
 import 'package:prueba/screens/profile/profile_screen.dart';
 import 'package:prueba/screens/splash/splash_screen.dart';
 import 'package:prueba/theme.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: theme(),
       // home: SplashScreen(),
       // We use routeName so that we dont need to remember the name
-      initialRoute: SplashScreen.routeName,
+      initialRoute: HomeScreen.routeName,
       routes: routes,
     );
   }
