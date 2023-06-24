@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prueba/utils/globals.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
+import 'package:prueba/utils/environment.dart';
 class VisitaScreenResidente extends StatefulWidget {
   const VisitaScreenResidente({Key? key}) : super(key: key);
 
@@ -58,6 +58,22 @@ class _InputBuscarVisita extends StatelessWidget {
   }
 }
 
+Future getToken() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString("token") ?? "N.A";
+  return token;
+}
+void _getVisits() async{
+  String token = await getToken();
+  var response = await http.get(Uri.parse(getVisits),
+          headers: {"Content-Type": "application/json",
+                    "Authorization": 'Bearer $token'
+          });
+  var jsonResponse = jsonDecode(response.body);
+  if(response.statusCode == 200){
+    //print("Visitas: ${jsonResponse['visits']}");
+  }
+}
 class _ContainerVisitaIngresada extends StatefulWidget {
   const _ContainerVisitaIngresada({Key? key}) : super(key: key);
   @override
@@ -66,21 +82,9 @@ class _ContainerVisitaIngresada extends StatefulWidget {
 }
 
 class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
-  void fetchUser() async {
-    const url = 'https://randomuser.me/api/?results=5';
-    final uri = Uri.parse(url);
-    final response = await http.get(uri);
-    final body = response.body;
-    final json = jsonDecode(body);
-    setState(() {
-      users = json['results'];
-    });
-  }
-
   @override
   void initState() {
-    super.initState();
-    fetchUser();
+    super.initState();   
   }
 
   @override
@@ -252,24 +256,38 @@ _widgetQRCode(BuildContext context) {
             ));
       });
 }
+Future _getUser() async{
+  String token = await getToken();
+  var response = await http.get(Uri.parse(getUser),
+          headers: {"Content-Type": "application/json",
+                    "Authorization": 'Bearer $token'
+          });
+  var jsonResponse = jsonDecode(response.body);
+  if(response.statusCode == 200){
+    return(jsonResponse['user']['name']);
+    
+  }else{
+    return "";
+  }
 
+}
+String nombre = "";
 ///Widget   principal
 class _VisitaScreenResidente extends State<VisitaScreenResidente>
     with TickerProviderStateMixin {
-  String nombre = "";
+  
   @override
   void initState() {
     super.initState();
-    _cargarData();
+    setNombre();
   }
-
-  ///Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario
-  void _cargarData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void setNombre() async{
+    String nombreRes = await _getUser();
     setState(() {
-      nombre = nombreResidente;
+      nombre = nombreRes;
     });
   }
+  ///Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario
 
   String usuario = "";
   @override
@@ -285,7 +303,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
             child: Column(
               children: [
                 Text(
-                  'Hola, $nombre',
+                  'Bienvenido, $nombre',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),

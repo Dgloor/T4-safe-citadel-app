@@ -3,33 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:prueba/model/visita.dart';
 import 'package:prueba/utils/globals.dart';
+import 'package:prueba/utils/environment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 class RegistrarVisita extends StatefulWidget {
   const RegistrarVisita({super.key});
 
   @override
   State<RegistrarVisita> createState() => _RegistrarVisitaState();
 }
-
+///Variables
 String residente = nombreResidente;
 String nombreVisita = "";
+TextEditingController nombreVisitacontroller = TextEditingController();
 const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
-
+DateTime fechaVisita = DateTime.now();
+String qrID = "";
 class _RegistrarVisitaState extends State<RegistrarVisita> {
   final _formKey = GlobalKey<FormState>();
   int _value = 0;
 
   final List<bool> _selectedDay = <bool>[true, false];
-  DateTime dateTime = DateTime.now();
-  TextEditingController controller = TextEditingController();
-  _cargarData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      residente = prefs.getString("nombre") ?? "N.A";
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     print("Nombre en registrar: $residente");
@@ -53,7 +49,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                 ),
                 const SizedBox(height: 30.0),
                 TextField(
-                  controller: controller,
+                  controller: nombreVisitacontroller,
                   decoration: InputDecoration(
                       hintText: 'Nombre',
                       border: OutlineInputBorder(
@@ -104,51 +100,51 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                                 height: 250,
                                 child: SizedBox(
                                   child: CupertinoDatePicker(
-                                    initialDateTime: dateTime,
+                                    initialDateTime: fechaVisita,
                                     mode: CupertinoDatePickerMode.time,
-                                    onDateTimeChanged: (dateTime) =>
+                                    onDateTimeChanged: (dateTimeChanged) =>
                                         setState(() {
-                                      this.dateTime = dateTime;
+                                      fechaVisita = dateTimeChanged;
                                     }),
                                   ),
                                 ),
                               ));
                     },
-                    child: Text('${dateTime.hour}:${dateTime.minute}'),
+                    child: Text('${fechaVisita.hour}:${fechaVisita.minute}'),
                     ),
                 const SizedBox(height: 50.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      if (controller.text.isEmpty) {
+                      if (nombreVisitacontroller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Ingrese nombre de visita')));
                       }
                       else if(_value == 0 
-                              && (dateTime.hour < DateTime.now().hour 
-                              && dateTime.minute < DateTime.now().minute)){
+                              && (fechaVisita.hour < DateTime.now().hour 
+                              && fechaVisita.minute < DateTime.now().minute)){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Hora de visita no válida')));
                       } 
                       else {
-                        print("Nombre de visita: ${controller.text}");
+                        print("Nombre de visita: ${nombreVisitacontroller.text}");
                         print("Dia" + _value.toString());
                         DateTime fechaVisita = DateTime.now();
                         DateTime fechaCreacion = DateTime.now();
                         
                         if(_value == 0){
-                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, dateTime.hour, dateTime.minute);                      
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
                         }else if(_value == 1){
-                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, dateTime.hour, dateTime.minute);
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
                         }
                         print("Fecha visita: " + fechaVisita.toString());
                         print("Fecha creacion: " + fechaCreacion.toString());
                         setState(() {
-                          nombreVisita = controller.text;
+                          nombreVisita = nombreVisitacontroller.text;
                         });
-                        Visita visita = crearVisita();
-                        _widgetQRCode(context, visita);
+                        //registrarVisita(nombreVisita,fechaVisita);
+                        _widgetQRCode(context);
                       }
                     },
                     style: ButtonStyle(
@@ -176,8 +172,8 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   }
 }
 
-_widgetQRCode(BuildContext context, Visita visita) {
-  String qrData = "";
+_widgetQRCode(BuildContext context) {
+  String qrData = "Abuelaaaa";
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -225,4 +221,30 @@ Visita crearVisita() {
     residente: residente,
   );
   return miVisita;
+}
+
+Future getToken() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String token = prefs.getString("refresh_token") ?? "N.A";
+  return token;
+}
+
+Future registrarVisita() async{
+  print("Registrando visita................");
+  String token = await getToken();
+  var reqParams = {
+    "name": nombreVisitacontroller.text,
+    "date": fechaVisita.toString(),
+  };
+  var response = await http.post(Uri.parse(postVisit)
+  .replace(queryParameters: reqParams),headers: {"Content-Type": "application/json",
+                    "Authorization": 'Bearer $token'
+          });
+  if(response.statusCode == 200){
+    var jsonResponse = jsonDecode(response.body);
+    return jsonResponse['qr_id'];
+  }else{
+    print("Error al registrar visita");m 
+  }
+  
 }

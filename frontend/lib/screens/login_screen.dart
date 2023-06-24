@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screensResidente/home_screenResidente.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:prueba/utils/globals.dart';
+import 'package:prueba/utils/environment.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,10 +12,11 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-///Variables globales
+///Variables
 String _usuario = "";
 String _password = "";
-
+TextEditingController _userController = TextEditingController();
+TextEditingController _passwordController = TextEditingController();
 ///Widget para espaciado
 class _Divider extends StatelessWidget {
   const _Divider({Key? key}) : super(key: key);
@@ -26,13 +29,48 @@ class _Divider extends StatelessWidget {
   }
 }
 
+bool isLoading = false;
+late SharedPreferences prefs;
+void initSharedPref() async {
+  prefs = await SharedPreferences.getInstance();
+}
+
 ///Widget de botón para iniciar sesión con validación de campos
 class _BtnSubmit extends StatelessWidget {
-  const _BtnSubmit({Key? key}) : super(key: key);
+  _BtnSubmit({Key? key, required this.context}) : super(key: key);
+  final BuildContext context;
+
+  void _loginUser() async {
+    if (_userController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      var reqBody = {
+        "username": _userController.text,
+        "password": _passwordController.text
+      };
+      var response = await http.post(Uri.parse(postLogin),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(reqBody));
+      var jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        var token = jsonResponse['token'];
+        var refreshToken = jsonResponse['refresh_token'];
+        prefs.setString('token', token);
+        prefs.setString('refresh_token', refreshToken);
+        isLoading = false;
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeResidente(token: token)));
+      } else {
+        print('Error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: TextButton(
+      child: ElevatedButton(
         style: ButtonStyle(
           fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -40,42 +78,32 @@ class _BtnSubmit extends StatelessWidget {
               Colors.green), // Cambiar el color del botón
         ),
         onPressed: () {
-         /* if (_usuario.isEmpty || _password.isEmpty) {
+          /*if (_usuario.isEmpty || _password.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ingrese usuario y contraseña')));*/
-         // } else {
-            _guardarData();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeResidente()),
-            );
-          //}
+                const SnackBar(content: Text('Ingrese usuario y contraseña')));
+          } else {*/
+          initSharedPref();
+          _loginUser();
+          // }
         },
-        child:const Text(
-          'Iniciar Sesión',
-          style: TextStyle(
-            fontSize: 20.0,
-          ),
-        ),
+        child: isLoading
+            ? CircularProgressIndicator(color: Colors.white)
+            : const Text(
+                'Iniciar Sesión',
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
       ),
     );
   }
 }
 
-TextEditingController _textController = TextEditingController(text: "");
-/**Controlador para guardar data de input usuario */
 
-///Guardar el nombre de usuario en almacenamiento interno */
-_guardarData() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (_textController.text.isNotEmpty) {
-    prefs.setString("nombre", _textController.text);
-    nombreResidente = _textController.text;
-  }
-}
 
 ///WIDGET PRINCIPAL *****/
 class _LoginScreenState extends State<LoginScreen> {
+  bool passToggle = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,34 +118,43 @@ class _LoginScreenState extends State<LoginScreen> {
               const _Divider(),
               /**Input de usuario */
               TextField(
-                  controller: _textController,
-                  enableInteractiveSelection: false,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                      hintText: 'Usuario',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      suffixIcon:const Icon(Icons.person)),
-                  style: const TextStyle(fontSize: 14),
-                  onSubmitted: (valor) {
-                    _usuario = valor;
-                  }),
+                controller: _userController,
+                enableInteractiveSelection: false,
+                autofocus: true,
+                decoration: InputDecoration(
+                    hintText: 'Usuario',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    prefixIcon: const Icon(Icons.person)),
+                style: const TextStyle(fontSize: 14),
+              ),
               const _Divider(),
               /**Input de contraseña */
               TextField(
+                controller: _passwordController,
                 enableInteractiveSelection: false,
-                obscureText: true,
+                obscureText: !passToggle,
                 decoration: InputDecoration(
                     hintText: 'Contraseña',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0))),
-                style:const TextStyle(fontSize: 14),
-                onSubmitted: (valor) {
-                  _password = valor;
-                },
+                        borderRadius: BorderRadius.circular(20.0)),
+                    prefixIcon: const Icon(Icons.lock),
+                    suffix: InkWell(
+                      onTap: (){
+                        setState((){
+                          passToggle = !passToggle;
+                          setState((){
+                            
+                          });
+                        });
+                      },
+                      child: Icon(passToggle ? Icons.visibility : Icons.visibility_off),
+                    )),
+                    
+                style: const TextStyle(fontSize: 14),
               ),
               _Divider(),
-              _BtnSubmit(),
+              _BtnSubmit(context: context),
             ],
           )
         ],
