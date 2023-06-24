@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
-
+import 'package:prueba/models/User.dart';
 class WelcomeBanner extends StatelessWidget {
   const WelcomeBanner({
     Key? key,
@@ -9,6 +9,11 @@ class WelcomeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User user = User(
+      id:1,
+      name: "Johan Sebastian",
+      image: "assets/images/Profile Image.png",
+    );
     return Container(
       // height: 90,
       width: double.infinity,
@@ -27,7 +32,7 @@ class WelcomeBanner extends StatelessWidget {
           children: [
             TextSpan(text: "Hola,\n"),
             TextSpan(
-              text: "Cashback 20%",
+              text: user.name,
               style: TextStyle(
                 fontSize: getProportionateScreenWidth(24),
                 fontWeight: FontWeight.bold,

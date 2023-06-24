@@ -1,13 +1,13 @@
 class User {
   final int id;
-  final String nombre;
+  final String name;
   final String image;
 
 
   User({
     required this.id,
     required this.image,
-    required this.nombre,
+    required this.name,
   });
 }
 
@@ -17,25 +17,25 @@ List<User> demoUsers = [
     id: 1,
     image: 
       "assets/images/profile.png",
-     nombre: "Juan",
+     name: "Juan",
   ),
   User(
     id: 2,
     image: 
       "assets/images/profile.png",
-     nombre: "Juan",
+     name: "Juan",
 ),
   User(
     id: 3,
      image: 
       "assets/images/profile.png",
-     nombre: "Juan",
+     name: "Juan",
 ),
   User(
     id: 4,
     image: 
       "assets/images/profile.png",
-     nombre: "Juan",
+     name: "Juan",
 ),
 ];
 
