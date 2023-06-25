@@ -29,6 +29,7 @@ class _Body extends State<Body> {
 
   void getTokenAndFetchUserData() async {
   String token = text;
+  print(token);
   try {
     User userData = await Api.getUserData(token);
     UserSingleton.user = userData;
