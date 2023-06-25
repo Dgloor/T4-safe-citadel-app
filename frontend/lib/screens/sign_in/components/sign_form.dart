@@ -122,8 +122,10 @@ class _SignFormState extends State<SignForm> {
   }
 
   TextFormField buildPasswordFormField() {
+    bool passToggle = false;
     return TextFormField(
-      obscureText: true,
+      obscureText: !passToggle,
+      enableInteractiveSelection: false,
       onSaved: (newValue) => password = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -143,13 +145,13 @@ class _SignFormState extends State<SignForm> {
         }
         return null;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Contraseña",
         hintText: "Ingrese su contraseña",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+        prefixIcon: Icon(Icons.lock),
       ),
     );
   }
@@ -184,7 +186,7 @@ class _SignFormState extends State<SignForm> {
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+        prefixIcon: const Icon(Icons.person),
       ),
     );
   }
