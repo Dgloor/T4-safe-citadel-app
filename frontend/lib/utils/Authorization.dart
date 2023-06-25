@@ -1,60 +1,168 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:prueba/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:prueba/constants.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:prueba/models/User.dart';
+final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
-class Authentication {
-  Dio api= new Dio();
-  String? accessToken;
-  final _storage = new FlutterSecureStorage();
-  String? refreshToken;
-  Api() {
-    api.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
-      if (!options.path.contains('http')) {
-        options.path = APIAUTH + options.path;
-      }
-      options.headers['Authorization'] = 'Bearer $accessToken';
-      return handler.next(options);
-    }, onError: (DioError error, handler) async {
-        // todo: will finish this
-      return handler.next(error);
-    }));
-    
+class ApiClient {
+  late final Dio _dio;
+  late final FlutterSecureStorage _secureStorage;
+
+  ApiClient() {
+    _dio = Dio();
+    _secureStorage = FlutterSecureStorage();
+    _setupInterceptors();
   }
 
+  void _setupInterceptors() {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final accessToken = await _loadAccessToken();
+          options.headers['Authorization'] = 'Bearer $accessToken';
+          return handler.next(options);
+        },
+        onResponse: (response, handler) async {
+          if (response.statusCode == 401) {
+            // Token expired, refresh it and retry the request
+            final newAccessToken = await _refreshAccessToken();
+            final options = response.requestOptions;
+            options.headers['Authorization'] = 'Bearer $newAccessToken';
+            final refreshedResponse= await _dio.request(options.path, options: options.data);
+            return handler.resolve(refreshedResponse);
+          }
+          return handler.next(response);
+        },
+        onError: (error, handler) {
+          return handler.next(error);
+        },
+      ),
+    );
+  }
 
+  Future<String> _loadAccessToken() async {
+    // Check if the access token is stored locally
+    final localAccessToken = await _secureStorage.read(key: 'access_token');
 
+    if (localAccessToken != null) {
+      return localAccessToken;
+    }
 
+    // Request a new access token
+    final newAccessToken = await _refreshAccessToken();
 
+    return newAccessToken;
+  }
 
-  static Future<String> authenticate(
-    String? username,
-    String? password,
-  ) async {
-    var url = Uri.parse(APIAUTH);
-    print(username);
-    print(password);
-    var requestBody = jsonEncode({
-      "username": username,
-      "password": password,
-    });
-    var basicAuth = 'Basic ' + base64Encode(utf8.encode('admin:password'));
+  Future<String> _refreshAccessToken() async {
+    // Get the refresh token from cache or local storage
+    final refreshToken = await _secureStorage.read(key: 'refresh_token');
 
-    var headers = {'Content-Type': 'application/json', 'authorization': basicAuth};
-      var response = await http.post(url, headers: headers,body: requestBody);
+    // Send a request to the token refresh endpoint to get a new access token
+    final url = 'https://safecitadel-d78923a86078.herokuapp.com/api/refresh';
+    final queryParams = {
+      'token': refreshToken,
+    };
+    final basicAuth = 'Basic ' + base64Encode(utf8.encode('admin:password'));
+
+    try {
+      final response = await _dio.get(
+        url,
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': basicAuth,
+        }),
+        queryParameters: queryParams,
+      );
+
       if (response.statusCode == 200) {
-        var responseData = jsonDecode(response.body);
-        var token = responseData['token'];
-        var refreshToken = responseData['refresh_token'];
-        // Aquí puedes realizar acciones con los datos recibidos
+        final responseData = jsonDecode(response.data);
+        final newAccessToken = responseData['access_token'];
+        final tokenType = responseData['token_type'];
 
-        return token;
-      } else {
-        throw Exception('Credenciales inválidas. Inténtalo de nuevo.');
+        // Store the new access token locally
+        await _secureStorage.write(key: 'access_token', value: newAccessToken);
+
+        return newAccessToken;
       }
+    } catch (e) {
+      throw Exception('Failed to refresh access token');
+    }
+
+    throw Exception('Failed to refresh access token');
   }
+
+  // Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+  //   final options = Options(
+  //     method: requestOptions.method,
+  //     headers: requestOptions.headers,
+  //   );
+  //   return ApiClient.request<dynamic>(requestOptions.path,
+  //       data: requestOptions.data,
+  //       queryParameters: requestOptions.queryParameters,
+  //       options: options);
+  // }
+
+
+    Future<String> authenticate(String? username, String? password) async {
+    final url = Uri.parse(APIAUTH);
+    final requestBody = jsonEncode({
+      'username': username,
+      'password': password,
+    });
+    final basicAuth = 'Basic ' + base64Encode(utf8.encode('admin:password'));
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': basicAuth,
+        },
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final accessToken = responseData['token'];
+        final refreshToken = responseData['refresh_token'];
+
+        // Store the access token and refresh token locally
+        await _secureStorage.write(key: 'access_token', value: accessToken);
+        await _secureStorage.write(key: 'refresh_token', value: refreshToken);
+
+        return accessToken;
+      }
+    } catch (e) {
+      throw Exception('Failed to authenticate');
+    }
+
+    throw Exception('Failed to authenticate');
+  }
+
+   Future<User> getUserData() async {
+    final url = Uri.parse(APIUSER);
+    String token = await _loadAccessToken();
+    print("imprimiendo token");
+    print(token);
+    var headers = {"Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      print(response.body);
+      // La solicitud fue exitosa, puedes obtener la respuesta
+      var responseData = jsonDecode( response.body);
+      
+      return User.fromJson(responseData['user']);
+    } else {
+      print(response.body);
+      // Ocurrió un error en la solicitud
+      throw Exception('No es posible cargar los datos del usuario.');
+    }
+  }
+
 }
-
-

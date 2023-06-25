@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/screens/sign_in/sign_in_screen.dart';
+import 'package:prueba/utils/Persistence.dart';
 
 import '../../../size_config.dart';
 import 'categories.dart';
@@ -25,17 +27,14 @@ class _Body extends State<Body> {
   }
 
   void getTokenAndFetchUserData() async {
-  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
-  String token = prefs.getToken();
-  print('Token: $token');
   try {
-    User userData = await Api.getUserData(token);
+    User userData = await ApiGlobal.api.getUserData();
     UserSingleton.user = userData;
     setState(() {
       user = userData;
     });
   } catch (error) {
-    print('Error al obtener los datos del usuario: $error');
+    Navigator.pushNamed(context, SignInScreen.routeName);
   }
 }
 
