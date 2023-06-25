@@ -9,11 +9,6 @@ class WelcomeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = User(
-      id:1,
-      name: "Johan Sebastian",
-      image: "assets/images/Profile Image.png",
-    );
     return Container(
       // height: 90,
       width: double.infinity,
@@ -32,7 +27,7 @@ class WelcomeBanner extends StatelessWidget {
           children: [
             TextSpan(text: "Hola,\n"),
             TextSpan(
-              text: user.name,
+              text: UserSingleton.user.name,
               style: TextStyle(
                 fontSize: getProportionateScreenWidth(24),
                 fontWeight: FontWeight.bold,

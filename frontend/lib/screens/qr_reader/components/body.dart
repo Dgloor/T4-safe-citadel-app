@@ -3,8 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:prueba/constants.dart';
+import 'package:prueba/screens/register/register_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-
+import '../../../size_config.dart';
+import '../../../components/default_button.dart';
 void main() => runApp(const MaterialApp(home: Body()));
 
 class Body extends StatelessWidget {
@@ -13,9 +16,25 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Verificar Visita')),
-      body: Center(
-        child: ElevatedButton(
+      appBar: AppBar(title: const Text('Registrar Visita')),
+      body: //crear una columna con 3 elementos: una imagen, un boton, otro boton. Uno debajo de otro centrados
+          Column(
+            //centrar la columna  
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //imagen
+           Align(
+              alignment: Alignment.bottomCenter,
+              child:Image.asset(
+            'assets/images/qr.png',
+            height: 300,
+            width: 300,
+          ),
+          ),
+          SizedBox(height: getProportionateScreenWidth(20)),
+          //boton
+           ElevatedButton(
+            style:buttonStyle,
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const QRViewExample(),
@@ -23,6 +42,14 @@ class Body extends StatelessWidget {
           },
           child: const Text('Escanear Código QR'),
         ),
+          //boton
+          DefaultButton(
+            press: () {
+              Navigator.pushNamed(context, RegisterScreen.routeName);
+            },
+            text:  'Registrar Visita',
+          ),
+        ],
       ),
     );
   }
@@ -130,9 +157,9 @@ class _QRViewExampleState extends State<QRViewExample> {
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
           borderColor: Colors.green,
-          borderRadius: 10,
-          borderLength: 30,
-          borderWidth: 10,
+          borderRadius: 15,
+          borderLength: 40,
+          borderWidth: 20,
           cutOutSize: scanArea),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );

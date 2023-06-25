@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/components/no_account_text.dart';
 import 'package:prueba/components/socal_card.dart';
+import 'package:prueba/screens/home/home_screen.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
@@ -30,7 +31,18 @@ class Body extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
-                SignForm(),
+                SignForm(
+                  onLoginSuccess: (token) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                            text: token,
+                          ),
+                        ));
+                    ;
+                  },
+                ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
                 SizedBox(height: getProportionateScreenHeight(20)),
                 NoAccountText(),

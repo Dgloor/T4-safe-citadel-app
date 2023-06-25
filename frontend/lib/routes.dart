@@ -7,6 +7,7 @@ import 'package:prueba/screens/home/home_screen.dart';
 import 'package:prueba/screens/otp/otp_screen.dart';
 import 'package:prueba/screens/profile/profile_screen.dart';
 import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
+import 'package:prueba/screens/register/register_screen.dart';
 import 'package:prueba/screens/sign_in/sign_in_screen.dart';
 import 'package:prueba/screens/splash/splash_screen.dart';
 
@@ -26,4 +27,5 @@ final Map<String, WidgetBuilder> routes = {
   CartScreen.routeName: (context) => CartScreen(),
   ProfileScreen.routeName: (context) => ProfileScreen(),
   QRScreen.routeName: (context) => QRScreen(),
+  RegisterScreen.routeName: (context) => RegisterScreen(),
 };

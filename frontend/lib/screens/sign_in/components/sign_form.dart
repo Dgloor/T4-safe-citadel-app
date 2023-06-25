@@ -3,12 +3,14 @@ import 'package:prueba/components/custom_surfix_icon.dart';
 import 'package:prueba/components/form_error.dart';
 import 'package:prueba/helper/keyboard.dart';
 import 'package:prueba/screens/forgot_password/forgot_password_screen.dart';
-import 'package:prueba/screens/home/home_screen.dart';
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
+import 'package:prueba/utils/Authorization.dart';
 
 class SignForm extends StatefulWidget {
+  final Function onLoginSuccess;
+  SignForm({required this.onLoginSuccess});
   @override
   _SignFormState createState() => _SignFormState();
 }
@@ -18,6 +20,7 @@ class _SignFormState extends State<SignForm> {
   String? email;
   String? password;
   bool? remember = false;
+  String _errorMessage = '';
   final List<String?> errors = [];
 
   void addError({String? error}) {
@@ -34,54 +37,75 @@ class _SignFormState extends State<SignForm> {
       });
   }
 
+  void _handleLogin() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      // if all are valid then go to success screen
+      KeyboardUtil.hideKeyboard(context);
+    }
+    Authentication.authenticate(email, password).then((token) {
+      // Llamada exitosa
+      widget.onLoginSuccess(token);
+    }).catchError((error) {
+      // Llamada fallida
+      print(error.toString());
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        children: [
-          buildEmailFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          buildPasswordFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value;
-                  });
-                },
+      child: Column(children: [
+        buildEmailFormField(),
+        SizedBox(height: getProportionateScreenHeight(30)),
+        buildPasswordFormField(),
+        SizedBox(height: getProportionateScreenHeight(30)),
+        Row(
+          children: [
+            Checkbox(
+              value: remember,
+              activeColor: kPrimaryColor,
+              onChanged: (value) {
+                setState(() {
+                  remember = value;
+                });
+              },
+            ),
+            Text("Recordarme"),
+            Spacer(),
+            GestureDetector(
+              onTap: () =>
+                  Navigator.pushNamed(context, ForgotPasswordScreen.routeName),
+              child: Text(
+                "Olvidé mi contraseña",
+                style: TextStyle(decoration: TextDecoration.underline),
               ),
-              Text("Recordarme"),
-              Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
-                child: Text(
-                  "Olvidé mi contraseña",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              )
-            ],
-          ),
-          FormError(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(20)),
-          DefaultButton(
-            text: "Continuar",
-            press: () {
+            )
+          ],
+        ),
+        FormError(errors: errors),
+        SizedBox(height: getProportionateScreenHeight(20)),
+        DefaultButton(
+          press:  () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 // if all are valid then go to success screen
                 KeyboardUtil.hideKeyboard(context);
-                Navigator.pushNamed(context, HomeScreen.routeName);
+                _handleLogin();
               }
             },
+          text: 'Iniciar sesión',
           ),
-        ],
-      ),
+        if (_errorMessage.isNotEmpty)
+          Text(
+            _errorMessage,
+            style: TextStyle(color: Colors.red),
+          ),
+      ]),
     );
   }
 
@@ -92,7 +116,7 @@ class _SignFormState extends State<SignForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
-        } else if (value.length >= 8) {
+        } else if (value.length >= 7) {
           removeError(error: kShortPassError);
         }
         return null;
@@ -101,15 +125,15 @@ class _SignFormState extends State<SignForm> {
         if (value!.isEmpty) {
           addError(error: kPassNullError);
           return "";
-        } else if (value.length < 8) {
+        } else if (value.length < 7) {
           addError(error: kShortPassError);
           return "";
         }
         return null;
       },
       decoration: InputDecoration(
-        labelText: "Password",
-        hintText: "Enter your password",
+        labelText: "Contraseña",
+        hintText: "Ingrese su contraseña",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -125,24 +149,26 @@ class _SignFormState extends State<SignForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);
-        } else if (emailValidatorRegExp.hasMatch(value)) {
-          removeError(error: kInvalidEmailError);
-        }
+        } 
+        // else if (emailValidatorRegExp.hasMatch(value)) {
+        //   removeError(error: kInvalidEmailError);
+        // }
         return null;
       },
       validator: (value) {
         if (value!.isEmpty) {
           addError(error: kEmailNullError);
           return "";
-        } else if (!emailValidatorRegExp.hasMatch(value)) {
-          addError(error: kInvalidEmailError);
-          return "";
-        }
+        } 
+        // else if (!emailValidatorRegExp.hasMatch(value)) {
+        //   addError(error: kInvalidEmailError);
+        //   return "";
+        // }
         return null;
       },
       decoration: InputDecoration(
-        labelText: "Email",
-        hintText: "Enter your email",
+        labelText: "Usuario",
+        hintText: "Ingrese su usuario",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
