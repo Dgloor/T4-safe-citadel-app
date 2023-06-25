@@ -16,7 +16,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrar Visita')),
+      appBar: AppBar(title: const Text('Escanear Código QR')),
       body: //crear una columna con 3 elementos: una imagen, un boton, otro boton. Uno debajo de otro centrados
           Column(
             //centrar la columna  
