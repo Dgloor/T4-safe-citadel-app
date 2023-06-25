@@ -12,24 +12,9 @@ class VisitaScreenResidente extends StatefulWidget {
   State<VisitaScreenResidente> createState() => _VisitaScreenResidente();
 }
 
-List<String> visitasIngresadas = [
-  "María Solís",
-  "Anthony Cruz",
-  "Xavier Mendoza",
-  "José Mendoza",
-  "Franklin Cevallos",
-  "Andy Gutierrez",
-  "Jonathan Zavala",
-];
-List<String> visitasPendientes = [
-  "Alberto Suarez",
-  "Ana Perez",
-  "Jaime Rodriguez",
-  "Carlos Freire"
-];
-List<String> visitasAnuladas = [
-  "José Hurtado",
-];
+List<dynamic> visitasIngresadas = [];
+List<dynamic> visitasPendientes = [];
+List<dynamic> visitasAnuladas = [];
 
 class _InputBuscarVisita extends StatelessWidget {
   const _InputBuscarVisita({Key? key}) : super(key: key);
@@ -63,30 +48,10 @@ Future getToken() async{
   String token = prefs.getString("token") ?? "N.A";
   return token;
 }
-void _getVisits() async{
-  String token = await getToken();
-  var response = await http.get(Uri.parse(getVisits),
-          headers: {"Content-Type": "application/json",
-                    "Authorization": 'Bearer $token'
-          });
-  var jsonResponse = jsonDecode(response.body);
-  if(response.statusCode == 200){
-    //print("Visitas: ${jsonResponse['visits']}");
-  }
-}
-class _ContainerVisitaIngresada extends StatefulWidget {
-  const _ContainerVisitaIngresada({Key? key}) : super(key: key);
-  @override
-  State<_ContainerVisitaIngresada> createState() =>
-      _ContainerVisitaIngresadaState();
-}
 
-class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
-  @override
-  void initState() {
-    super.initState();   
-  }
 
+class _ContainerVisitaIngresada extends StatelessWidget {
+   const _ContainerVisitaIngresada({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -98,17 +63,17 @@ class _ContainerVisitaIngresadaState extends State<_ContainerVisitaIngresada> {
               spreadRadius: 5,
               blurRadius: 7,
               offset: const Offset(0, 3),
-            ),
+            ), 
           ],
           border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const _InputBuscarVisita(),
           Expanded(
             child: ListView.builder(
               itemCount: visitasIngresadas.length,
               itemBuilder: (BuildContext context, int index) {
-                final nombreVisita = visitasIngresadas[index];
+              final visita = visitasIngresadas[index]; 
+              final nombreVisita = visita['visitor']['name'];
                 return ListTile(
                     title: Text(nombreVisita), leading: const Icon(Icons.person));
               },
@@ -139,12 +104,12 @@ class _ContainerVisitaAnulada extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const _InputBuscarVisita(),
         Expanded(
           child: ListView.builder(
             itemCount: visitasAnuladas.length,
             itemBuilder: (BuildContext context, int index) {
-              final nombreVisita = visitasAnuladas[index];
+              final visita = visitasAnuladas[index]; 
+              final nombreVisita = visita['visitor']['name'];
               return ListTile(
                   title: Text(nombreVisita), leading: const Icon(Icons.person));
             },
@@ -157,6 +122,7 @@ class _ContainerVisitaAnulada extends StatelessWidget {
 
 class _ContainerVisitaPendiente extends StatelessWidget {
   const _ContainerVisitaPendiente({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -176,12 +142,13 @@ class _ContainerVisitaPendiente extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const _InputBuscarVisita(),
         Expanded(
           child: ListView.builder(
             itemCount: visitasPendientes.length,
             itemBuilder: (BuildContext context, int index) {
-              final nombreVisita = visitasPendientes[index];
+              final visita = visitasPendientes[index]; 
+              final nombreVisita = visita['visitor']['name'];
+              final visitID = visita['id'];
               return ListTile(
                   title: Text(nombreVisita), 
                   leading: const Icon(Icons.person),
@@ -199,7 +166,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                 onSelected: (value) {
                   switch(value){
                     case _MenuOptions.verQR:
-                      _widgetQRCode(context);
+                      _widgetQRCode(context,visitID);
                       break;
                     case _MenuOptions.anular:
                       break;
@@ -216,8 +183,11 @@ class _ContainerVisitaPendiente extends StatelessWidget {
 
 
 enum _MenuOptions { verQR, anular }
-_widgetQRCode(BuildContext context) {
-  String qrData = "";
+String  qr_id = "";
+_widgetQRCode(BuildContext context, String visitID) async{
+  _getVisitID(visitID);
+  print("visita seleccionada: "+visitID);
+  print("Este es el QRid: " + qr_id);
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -235,7 +205,7 @@ _widgetQRCode(BuildContext context) {
                 Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: QrImageView(
-                      data: qrData,
+                      data: qr_id,
                       size: 300.0,
                     )),
                 const Text(
@@ -257,6 +227,7 @@ _widgetQRCode(BuildContext context) {
       });
 }
 Future _getUser() async{
+   print("entra getuser");
   String token = await getToken();
   var response = await http.get(Uri.parse(getUser),
           headers: {"Content-Type": "application/json",
@@ -265,11 +236,21 @@ Future _getUser() async{
   var jsonResponse = jsonDecode(response.body);
   if(response.statusCode == 200){
     return(jsonResponse['user']['name']);
-    
   }else{
     return "";
   }
+}
 
+Future _getVisitID(String visitID) async{
+  String token = await getToken();
+  var response = await http.get(Uri.parse(getVisitID + visitID),
+          headers: {"Content-Type": "application/json",
+                    "Authorization": 'Bearer $token'
+          });
+  var jsonResponse = jsonDecode(response.body);
+  if(response.statusCode == 200){
+    qr_id = jsonResponse['qr_id']; 
+  }
 }
 String nombre = "";
 ///Widget   principal
@@ -280,13 +261,32 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
   void initState() {
     super.initState();
     setNombre();
+    _getVisits();
   }
+  void _getVisits() async{
+  String token = await getToken();
+  var response = await http.get(Uri.parse(getVisits),
+          headers: {"Content-Type": "application/json",
+                    "Authorization": 'Bearer $token'
+          });
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      setState(() {
+        visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
+        visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
+        visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
+      });
+    }
+ 
+}
   void setNombre() async{
+    print("entra setNombre");
     String nombreRes = await _getUser();
     setState(() {
       nombre = nombreRes;
     });
   }
+
   ///Cargar variables de almacenamiento interno, en este caso obtengo el nombre del usuario
 
   String usuario = "";

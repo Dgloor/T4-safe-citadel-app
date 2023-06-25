@@ -119,7 +119,7 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                     onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Ingrese nombre de visita')));
+                            content: Text('Ingrese nombre de la visita')));
                       }
                       else if(_value == 0 
                               && (fechaVisita.hour < DateTime.now().hour 
@@ -143,7 +143,6 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                         setState(() {
                           nombreVisita = nombreVisitacontroller.text;
                         });
-                        //registrarVisita(nombreVisita,fechaVisita);
                         _widgetQRCode(context);
                       }
                     },
@@ -172,8 +171,8 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
   }
 }
 
-_widgetQRCode(BuildContext context) {
-  String qrData = "Abuelaaaa";
+_widgetQRCode(BuildContext context) async {
+  String qrData = await registrarVisita();
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -211,16 +210,7 @@ _widgetQRCode(BuildContext context) {
               ],
             ));
       });
-}
-
-Visita crearVisita() {
-  Visita miVisita = Visita(
-    nombre: nombreVisita,
-    fechaVisita: DateTime.now(),
-    fechaCreacion: DateTime.now(),
-    residente: residente,
-  );
-  return miVisita;
+      nombreVisitacontroller.text = "";
 }
 
 Future getToken() async{
@@ -230,7 +220,6 @@ Future getToken() async{
 }
 
 Future registrarVisita() async{
-  print("Registrando visita................");
   String token = await getToken();
   var reqParams = {
     "name": nombreVisitacontroller.text,
@@ -244,7 +233,6 @@ Future registrarVisita() async{
     var jsonResponse = jsonDecode(response.body);
     return jsonResponse['qr_id'];
   }else{
-    print("Error al registrar visita");m 
+    print("Error al registrar visita");
   }
-  
 }

@@ -13,6 +13,7 @@ class Visita {
     required this.residente,
   });
   
+  
   Map<String, dynamic> toMap() {
     return {
       'nombre': nombre,
