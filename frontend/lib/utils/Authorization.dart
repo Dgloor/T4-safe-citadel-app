@@ -1,7 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:prueba/constants.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class Authentication {
+  Dio api= new Dio();
+  String? accessToken;
+  final _storage = new FlutterSecureStorage();
+  String? refreshToken;
+  Api() {
+    api.interceptors
+        .add(InterceptorsWrapper(onRequest: (options, handler) async {
+      if (!options.path.contains('http')) {
+        options.path = APIAUTH + options.path;
+      }
+      options.headers['Authorization'] = 'Bearer $accessToken';
+      return handler.next(options);
+    }, onError: (DioError error, handler) async {
+        // todo: will finish this
+      return handler.next(error);
+    }));
+    
+  }
+
+
+
+
+
+
   static Future<String> authenticate(
     String? username,
     String? password,
