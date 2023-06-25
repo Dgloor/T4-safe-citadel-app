@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prueba/screens/screensResidente/bottom_nav.dart';
 import 'package:prueba/screens/screensResidente/routes.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+
 /**Pantalla principal de la aplicación, 
  * para permitir que los usuarios naveguen entre diferentes 
  * páginas. */
