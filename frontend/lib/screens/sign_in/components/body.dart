@@ -28,7 +28,7 @@ class Body extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Inicia Sesión con tu correo y contraseña",
+                  "Inicia Sesión con tu Usuario y contraseña",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
