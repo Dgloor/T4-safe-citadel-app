@@ -8,19 +8,16 @@ import 'popular_product.dart';
 import 'special_offers.dart';
 import '/models/User.dart';
 import 'package:prueba/utils/Information.dart';
-
+import '../../../utils/persistencia.dart';
 class Body extends StatefulWidget {
-  final String text;
 
-  Body({required this.text});
   @override
-  _Body createState() => _Body(text:text);
+  _Body createState() => _Body();
 }
 
 class _Body extends State<Body> {
   User? user;
-  String text;
-  _Body({required this.text});
+  _Body();
   @override
   void initState() {
     super.initState();
@@ -28,8 +25,9 @@ class _Body extends State<Body> {
   }
 
   void getTokenAndFetchUserData() async {
-  String token = text;
-  print(token);
+  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
+  String token = prefs.getToken();
+  print('Token: $token');
   try {
     User userData = await Api.getUserData(token);
     UserSingleton.user = userData;

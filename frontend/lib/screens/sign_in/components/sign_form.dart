@@ -7,7 +7,7 @@ import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
 import 'package:prueba/utils/Authorization.dart';
-
+import 'package:prueba/utils/Persistencia.dart';
 class SignForm extends StatefulWidget {
   final Function onLoginSuccess;
   SignForm({required this.onLoginSuccess});
@@ -16,13 +16,22 @@ class SignForm extends StatefulWidget {
 }
 
 class _SignFormState extends State<SignForm> {
+  late SharedPreferencesUtil prefsUtil ;
+
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
   bool? remember = false;
   String _errorMessage = '';
   final List<String?> errors = [];
-
+ @override
+  void initState() {
+    super.initState();
+    initializeSharedPreferences();
+  }
+  void initializeSharedPreferences() async {
+    prefsUtil = await SharedPreferencesUtil.getInstance();
+  }
   void addError({String? error}) {
     if (!errors.contains(error))
       setState(() {
@@ -45,7 +54,10 @@ class _SignFormState extends State<SignForm> {
     }
     Authentication.authenticate(email, password).then((token) {
       // Llamada exitosa
-      widget.onLoginSuccess(token);
+      print(token);
+      prefsUtil.saveToken(token);
+      widget.onLoginSuccess();
+      
     }).catchError((error) {
       // Llamada fallida
       print(error.toString());

@@ -32,16 +32,8 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
                 SignForm(
-                  onLoginSuccess: (t) {
-                    print(t);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                            token: t,
-                          ),
-                        ));
-                    ;
+                  onLoginSuccess: () {
+                    Navigator.pushNamed(context, HomeScreen.routeName);
                   },
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),

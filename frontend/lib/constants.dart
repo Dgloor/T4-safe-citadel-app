@@ -57,5 +57,6 @@ final buttonStyle= ButtonStyle(
     // textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20)), // Cambia el estilo del texto del botón
   );
 
-const String APIAUTH="https://safecitadel-d78923a86078.herokuapp.com/api/login";
-const String APIUSER="https://safecitadel-d78923a86078.herokuapp.com/api/user";
+const String APIAUTH="https://safecitadel-d78923a86078.herokuapp.com/api/login/";
+const String APIUSER="https://safecitadel-d78923a86078.herokuapp.com/api/user/";
+
