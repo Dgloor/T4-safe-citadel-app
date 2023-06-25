@@ -33,15 +33,15 @@ class Body extends StatelessWidget {
           ),
           SizedBox(height: getProportionateScreenWidth(20)),
           //boton
-           ElevatedButton(
-            style:buttonStyle,
-          onPressed: () {
+           DefaultButton(
+          press: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const QRViewExample(),
             ));
           },
-          child: const Text('Escanear Código QR'),
+          text: 'Escanear Código QR',
         ),
+         SizedBox(height: getProportionateScreenWidth(20)),
           //boton
           DefaultButton(
             press: () {
@@ -148,7 +148,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
-        ? 150.0
+        ? 200.0
         : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
@@ -158,8 +158,8 @@ class _QRViewExampleState extends State<QRViewExample> {
       overlay: QrScannerOverlayShape(
           borderColor: Colors.green,
           borderRadius: 15,
-          borderLength: 40,
-          borderWidth: 20,
+          borderLength: 45,
+          borderWidth: 25,
           cutOutSize: scanArea),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
