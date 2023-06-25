@@ -59,4 +59,5 @@ final buttonStyle= ButtonStyle(
 
 const String APIAUTH="https://safecitadel-d78923a86078.herokuapp.com/api/login/";
 const String APIUSER="https://safecitadel-d78923a86078.herokuapp.com/api/user/";
+const String APIPOSTVISIT="https://safecitadel-d78923a86078.herokuapp.com/api/visit/";
 

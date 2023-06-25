@@ -26,5 +26,19 @@ class Api {
     }
   }
 
+  static Future<String> postVisit(String token, Map<String, dynamic> reqParams) async{
+    var uri = Uri.parse(APIPOSTVISIT);
+    var response = await http.post((uri)
+    .replace(queryParameters: reqParams),headers: {"Content-Type": "application/json",
+                      "Authorization": 'Bearer $token'
+            });
+    if(response.statusCode == 200){
+      var jsonResponse = jsonDecode(response.body);
+      return jsonResponse['qr_id'];
+    }else{
+      print("Error al registrar visita");
+      throw Exception('No es posible registrar visita.');
+    }
+}
   
 }

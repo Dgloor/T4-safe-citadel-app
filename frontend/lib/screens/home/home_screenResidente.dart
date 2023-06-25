@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/screensResidente/bottom_nav.dart';
-import 'package:prueba/screens/screensResidente/routes.dart';
+import 'components/bottom_nav.dart';
+import 'package:prueba/screens/home/components/routes.dart';
 
 /**Pantalla principal de la aplicación, 
  * para permitir que los usuarios naveguen entre diferentes 
