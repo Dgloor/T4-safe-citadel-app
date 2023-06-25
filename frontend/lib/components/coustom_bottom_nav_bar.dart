@@ -6,6 +6,7 @@ import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
 
 import '../constants.dart';
 import '../enums.dart';
+import '../screens/register/register_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   const CustomBottomNavBar({
@@ -50,9 +51,14 @@ class CustomBottomNavBar extends StatelessWidget {
                     Navigator.pushNamed(context, HomeScreen.routeName),
               ),
               IconButton(
-                icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
+                icon: Icon(Icons.qr_code_scanner_rounded),
                 onPressed:() =>
                     Navigator.pushNamed(context, QRScreen.routeName),
+              ),
+              IconButton(
+                icon: Icon(Icons.app_registration),
+                onPressed:() =>
+                    Navigator.pushNamed(context, RegisterScreen.routeName),
               ),
               IconButton(
                 icon: SvgPicture.asset(
