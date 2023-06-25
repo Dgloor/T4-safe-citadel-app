@@ -68,12 +68,14 @@ List<User> demoUsers = [
 const String description =
     "Usuario de prueba";
 class UserSingleton {
-  static User user=
-      User(
+  static User user = User(
     id: "1",
-    image: 
-      "assets/images/profile.png",
-     name: "PRUEBA",
-    role: "RESIDENTE"
-  ) ;
+    image: "assets/images/profile.png",
+    name: "PRUEBA",
+    role: "RESIDENTE",
+  );
+
+  static bool isGUARD() {
+    return user.role == "GUARD";
+  }
 }

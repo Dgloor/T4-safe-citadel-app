@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/components/custom_surfix_icon.dart';
 import 'package:prueba/components/form_error.dart';
 import 'package:prueba/helper/keyboard.dart';
 import 'package:prueba/screens/forgot_password/forgot_password_screen.dart';
+import 'package:prueba/screens/home/home_screen.dart';
+import 'package:prueba/utils/Persistence.dart';
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
 import 'package:prueba/utils/Authorization.dart';
 import 'package:prueba/utils/Persistencia.dart';
-class SignForm extends StatefulWidget {
-  final Function onLoginSuccess;
-  SignForm({required this.onLoginSuccess});
-  @override
-  _SignFormState createState() => _SignFormState();
-}
+import 'package:prueba/models/User.dart';
 
-class _SignFormState extends State<SignForm> {
-  late SharedPreferencesUtil prefsUtil ;
+class SignForm extends StatelessWidget {
+  late SharedPreferencesUtil prefsUtil;
 
   final _formKey = GlobalKey<FormState>();
   String? email;
@@ -24,47 +20,21 @@ class _SignFormState extends State<SignForm> {
   bool? remember = false;
   String _errorMessage = '';
   final List<String?> errors = [];
- @override
+  @override
   void initState() {
-    super.initState();
     initializeSharedPreferences();
   }
+
   void initializeSharedPreferences() async {
     prefsUtil = await SharedPreferencesUtil.getInstance();
   }
+
   void addError({String? error}) {
-    if (!errors.contains(error))
-      setState(() {
-        errors.add(error);
-      });
+    if (!errors.contains(error)) errors.add(error);
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error))
-      setState(() {
-        errors.remove(error);
-      });
-  }
-
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      // if all are valid then go to success screen
-      KeyboardUtil.hideKeyboard(context);
-    }
-    Authentication.authenticate(email, password).then((token) {
-      // Llamada exitosa
-      print(token);
-      prefsUtil.saveToken(token);
-      widget.onLoginSuccess();
-      
-    }).catchError((error) {
-      // Llamada fallida
-      print(error.toString());
-      setState(() {
-        _errorMessage = error.toString();
-      });
-    });
+    if (errors.contains(error)) errors.remove(error);
   }
 
   @override
@@ -82,9 +52,7 @@ class _SignFormState extends State<SignForm> {
               value: remember,
               activeColor: kPrimaryColor,
               onChanged: (value) {
-                setState(() {
-                  remember = value;
-                });
+                remember = value;
               },
             ),
             Text("Recordarme"),
@@ -102,16 +70,28 @@ class _SignFormState extends State<SignForm> {
         FormError(errors: errors),
         SizedBox(height: getProportionateScreenHeight(20)),
         DefaultButton(
-          press:  () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                // if all are valid then go to success screen
-                KeyboardUtil.hideKeyboard(context);
-                _handleLogin();
-              }
-            },
+          press: () {
+            final apiClient = ApiGlobal.api;
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              // if all are valid then go to success screen
+              KeyboardUtil.hideKeyboard(context);
+            }
+            apiClient.authenticate(email, password).then((_) {
+              apiClient.getUserData().then((userData) {
+                UserSingleton.user = userData;
+                Future.delayed(Duration(seconds: 4), () {
+                  Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+                });
+              }).catchError((error) {
+                _errorMessage = error.toString();
+              });
+            }).catchError((error) {
+              _errorMessage = error.toString();
+            });
+          },
           text: 'Iniciar sesión',
-          ),
+        ),
         if (_errorMessage.isNotEmpty)
           Text(
             _errorMessage,
@@ -163,7 +143,7 @@ class _SignFormState extends State<SignForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kEmailNullError);
-        } 
+        }
         // else if (emailValidatorRegExp.hasMatch(value)) {
         //   removeError(error: kInvalidEmailError);
         // }
@@ -173,7 +153,7 @@ class _SignFormState extends State<SignForm> {
         if (value!.isEmpty) {
           addError(error: kEmailNullError);
           return "";
-        } 
+        }
         // else if (!emailValidatorRegExp.hasMatch(value)) {
         //   addError(error: kInvalidEmailError);
         //   return "";

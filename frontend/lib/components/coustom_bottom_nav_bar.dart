@@ -7,8 +7,9 @@ import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
 import '../constants.dart';
 import '../enums.dart';
 import '../screens/register/register_screen.dart';
-
+import 'package:prueba/models/User.dart'; 
 class CustomBottomNavBar extends StatelessWidget {
+
   const CustomBottomNavBar({
     Key? key,
     required this.selectedMenu,
@@ -50,11 +51,14 @@ class CustomBottomNavBar extends StatelessWidget {
                 onPressed: () =>
                     Navigator.pushNamed(context, HomeScreen.routeName),
               ),
-              IconButton(
+              Visibility(
+                visible: UserSingleton.isGUARD(),
+                child: IconButton(
                 icon: Icon(Icons.qr_code_scanner_rounded),
                 onPressed:() =>
                     Navigator.pushNamed(context, QRScreen.routeName),
-              ),
+              ),)
+              ,
               IconButton(
                 icon: Icon(Icons.app_registration),
                 onPressed:() =>

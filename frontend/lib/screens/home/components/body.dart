@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:prueba/screens/sign_in/sign_in_screen.dart';
+import 'package:prueba/utils/Persistence.dart';
 
 import '../../../size_config.dart';
 import '../../visitors/visitor_screen.dart';
@@ -23,23 +25,9 @@ class _Body extends State<Body> {
   @override
   void initState() {
     super.initState();
-    getTokenAndFetchUserData();
   }
 
-  void getTokenAndFetchUserData() async {
-  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
-  String token = prefs.getToken();
-  print('Token: $token');
-  try {
-    User userData = await Api.getUserData(token);
-    UserSingleton.user = userData;
-    setState(() {
-      user = userData;
-    });
-  } catch (error) {
-    print('Error al obtener los datos del usuario: $error');
-  }
-}
+ 
 
   @override
   Widget build(BuildContext context) {
