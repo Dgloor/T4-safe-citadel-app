@@ -43,12 +43,6 @@ class Body extends StatelessWidget {
         ),
          SizedBox(height: getProportionateScreenWidth(20)),
           //boton
-          DefaultButton(
-            press: () {
-              Navigator.pushNamed(context, RegisterScreen.routeName);
-            },
-            text:  'Registrar Visita',
-          ),
         ],
       ),
     );

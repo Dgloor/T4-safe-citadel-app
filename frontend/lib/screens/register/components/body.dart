@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'TimePicker.dart';
-import 'bottom_nav.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart';
-import 'package:prueba/models/user.dart';
+import 'package:prueba/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:prueba/utils/Information.dart';
+import '../../../utils/Persistencia.dart';
 class Body extends StatefulWidget {
   const Body({super.key});
 
@@ -18,14 +17,14 @@ class Body extends StatefulWidget {
 
 String residente = "Juan Perez";
 String nombreVisita = "";
-
+TextEditingController nombreVisitacontroller = TextEditingController();
+DateTime fechaVisita = DateTime.now();
+const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
 class _BodyState extends State<Body> {
   final _formKey = GlobalKey<FormState>();
-  String? _name;
-  String? _email;
-  bool _showConfirmation = false;
   int _value = 0;
-  DateTime dateTime = DateTime.now();
+  
+  final List<bool> _selectedDay = <bool>[true, false];
   _cargarData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -35,7 +34,6 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    print("Nombre en registrar: ${residente}");
     TextEditingController controller = TextEditingController();
 
     return Scaffold(
@@ -58,9 +56,9 @@ class _BodyState extends State<Body> {
                 ),
                 SizedBox(height: 30.0),
                 TextField(
-                  controller: controller,
+                   controller: nombreVisitacontroller,
                   decoration: InputDecoration(
-                      hintText: 'Nombre del visitante',
+                      hintText: 'Nombre',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
                   style: TextStyle(fontSize: 14),
@@ -72,75 +70,87 @@ class _BodyState extends State<Body> {
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
-                Row(
-                  children: [
-                    Radio(
-                      value: 1,
-                      groupValue: _value,
-                      onChanged: (value) {
-                        setState(() {
-                          _value = value as int;
-                        });
-                      },
+               ToggleButtons(
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < _selectedDay.length; i++) {
+                          _selectedDay[i] = i == index;
+                        }
+                        _value = index;
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
+                    selectedColor: Colors.white,
+                    fillColor: Colors.green,
+                    color: Colors.black,
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 160.0,
                     ),
-                    Text('Hoy')
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                      value: 2,
-                      groupValue: _value,
-                      onChanged: (value) {
-                        setState(() {
-                          _value = value as int;
-                        });
-                      },
+                    isSelected: _selectedDay,
+                    children: opcionesDias
                     ),
-                    Text('Mañana')
-                  ],
-                ),
+                const SizedBox(height: 30.0),
                 Text(
-                  'Elegir hora',
+                  'Seleccionar hora esperada',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
                 /**Selección de hora */
                 CupertinoButton(
-                    child: Text('${dateTime.hour}:${dateTime.minute}'),
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) => SizedBox(
-                                height: 250,
-                                child: SizedBox(
-                                  child: CupertinoDatePicker(
-                                    initialDateTime: dateTime,
-                                    mode: CupertinoDatePickerMode.time,
-                                    onDateTimeChanged: (dateTime) =>
-                                        setState(() {
-                                      this.dateTime = dateTime;
-                                    }),
-                                  ),
+                  color: Colors.green,
+                  child: Text('${fechaVisita.hour}:${fechaVisita.minute}'),
+                  onPressed: () {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (BuildContext context) => SizedBox(
+                              height: 250,
+                              child: SizedBox(
+                                child: CupertinoDatePicker(
+                                  initialDateTime: fechaVisita,
+                                  mode: CupertinoDatePickerMode.time,
+                                  onDateTimeChanged: (dateTime) =>
+                                      setState(() {
+                                    fechaVisita = dateTime;
+                                  }),
                                 ),
-                              ));
-                    }),
+                              ),
+                            ));
+                  }),
                 SizedBox(height: 16.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
-                    onPressed: () {
-                        if (controller.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Ingrese nombre de visita')));
-                        }else{
-                             setState(() {
-                        nombreVisita = controller.text;
-                      });
-                      User visita = crearVisita();
-                      _widgetQRCode(context, visita);
-                        } 
-                     
+                   onPressed: () {
+                      if (nombreVisitacontroller.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Ingrese nombre de la visita')));
+                      }
+                      else if(_value == 0 
+                              && (fechaVisita.hour < DateTime.now().hour 
+                              && fechaVisita.minute < DateTime.now().minute)){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Hora de visita no válida')));
+                      } 
+                      else {
+                        print("Nombre de visita: ${nombreVisitacontroller.text}");
+                        print("Dia" + _value.toString());
+                        DateTime fechaVisita = DateTime.now();
+                        DateTime fechaCreacion = DateTime.now();
+                        
+                        if(_value == 0){
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
+                        }else if(_value == 1){
+                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
+                        }
+                        print("Fecha visita: " + fechaVisita.toString());
+                        print("Fecha creacion: " + fechaCreacion.toString());
+                        setState(() {
+                          nombreVisita = nombreVisitacontroller.text;
+                        });
+                        _widgetQRCode(context);
+                      }
                     },
                     child: Text('Registrar Visita'),
                     style: ButtonStyle(
@@ -158,14 +168,6 @@ class _BodyState extends State<Body> {
                   ),
                 ),
                 SizedBox(height: 16.0),
-                if (_showConfirmation)
-                  Text(
-                    'Gracias por enviar el formulario, $_name ($_email)',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
               ],
             ),
           ),
@@ -175,11 +177,26 @@ class _BodyState extends State<Body> {
   }
 }
 
-_widgetQRCode(BuildContext context, User visita) {
-  var uuid = Uuid();
-  String qrData = uuid.v4();  
+
+  Future getTokenAndPostVisit() async {
+  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
+   var reqParams = {
+    "name": nombreVisitacontroller.text,
+    "date": fechaVisita.toString(),
+  };
+  String token = prefs.getToken();
+  try {
+    return await Api.postVisit(token,reqParams);
+  } catch (error) {
+    print('Error al obtener los datos del usuario: $error');
+  }
+}
+
+
+_widgetQRCode(BuildContext context) async {
+  String qrData = await getTokenAndPostVisit();
   showModalBottomSheet(
-      backgroundColor: Color.fromARGB(255, 251, 250, 239),
+      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -196,34 +213,24 @@ _widgetQRCode(BuildContext context, User visita) {
                     padding: const EdgeInsets.all(16.0),
                     child: QrImageView(
                       data: qrData,
-                      version: QrVersions.auto,
                       size: 300.0,
                     )),
-                Text(
+                const Text(
                   'Enviar código QR al visitante',
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
                     //Share.share('');
                   },
-                  child: Text('Compartir'),
+                  child: const Text('Compartir'),
                 ),
               ],
             ));
       });
-}
-
-User crearVisita() {
-  User miVisita = User(
-    id: "1",
-    name: nombreVisita,
-    image: 'assets/images/visita.png',
-    role: 'Visita',
-  );
-  return miVisita;
+      nombreVisitacontroller.text = "";
 }

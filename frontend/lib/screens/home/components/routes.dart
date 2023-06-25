@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/screensResidente/perfil_screen.dart';
-import 'package:prueba/screens/screensResidente/registrarvisita_screen.dart';
-import 'package:prueba/screens/screensResidente/visitas_screen.dart';
+import 'perfil_screen.dart';
+import 'registrarvisita_screen.dart';
+import 'visitas_screen.dart';
  ///Se definen las rutas utilizadas en el home_screenResidente mediante una lista de widgets
  class Routes extends StatelessWidget {
   final int index;
