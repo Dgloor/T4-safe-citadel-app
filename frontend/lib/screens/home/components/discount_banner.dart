@@ -25,7 +25,7 @@ class WelcomeBanner extends StatelessWidget {
         TextSpan(
           style: TextStyle(color: Colors.white),
           children: [
-            TextSpan(text: "Hola,\n"),
+            TextSpan(text: "Bienvenido,\n"),
             TextSpan(
               text: UserSingleton.user.name,
               style: TextStyle(
