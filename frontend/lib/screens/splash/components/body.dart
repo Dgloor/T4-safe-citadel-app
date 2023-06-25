@@ -16,17 +16,17 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "text": "Bienvenido a Citadel",
-      "image": "assets/images/splash_1.png"
+      "text": "Bienvenido a SafeCitadel",
+      "image": "assets/images/logo.png"
     },
     {
       "text":
           "Tu ciudadela cada vez más segura",
-      "image": "assets/images/splash_2.png"
+      "image": "assets/images/img1.jpg"
     },
     {
-      "text": "Conoce a tus vecinos y sus visitas",
-      "image": "assets/images/splash_3.png"
+      "text": "Administre sus visitas de manera más eficiente",
+      "image": "assets/images/img2.jpg"
     },
   ];
   @override

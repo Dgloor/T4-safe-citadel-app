@@ -12,7 +12,6 @@ import 'special_offers.dart';
 import '/models/User.dart';
 import 'package:prueba/utils/Information.dart';
 import '../../../utils/persistencia.dart';
-
 class Body extends StatefulWidget {
 
   @override
@@ -32,20 +31,21 @@ class _Body extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: VisitaScreen()
-        //  Column(
-        //   children: [
-        //     // SizedBox(height: getProportionateScreenHeight(20)),
-        //     // HomeHeader(),
-        //     // SizedBox(height: getProportionateScreenWidth(10)),
-        //     // WelcomeBanner(),
-        //     ,
-        //     //Categories(),
-        //     //SpecialOffers(),
-        //     // SizedBox(height: getProportionateScreenWidth(30)),
-        //     // SizedBox(height: getProportionateScreenWidth(30)),
-        //   ],
-        // ),
+      child: VisitaScreen()
+      // SingleChildScrollView(
+      //   child: Column(
+      //     children: [
+      //       SizedBox(height: getProportionateScreenHeight(20)),
+      //       HomeHeader(),
+      //       SizedBox(height: getProportionateScreenWidth(10)),
+      //       WelcomeBanner(),
+      //       //Categories(),
+      //       //SpecialOffers(),
+      //       SizedBox(height: getProportionateScreenWidth(30)),
+      //       SizedBox(height: getProportionateScreenWidth(30)),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

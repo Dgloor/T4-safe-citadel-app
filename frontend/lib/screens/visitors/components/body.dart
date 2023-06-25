@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:prueba/utils/Persistence.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:prueba/utils/Information.dart';
 import '../../../utils/Persistencia.dart';
@@ -90,7 +90,6 @@ class _ContainerVisitaAnulada extends StatelessWidget {
 
 class _ContainerVisitaPendiente extends StatelessWidget {
   const _ContainerVisitaPendiente({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -200,26 +199,35 @@ _widgetQRCode(BuildContext context, String visitID) async{
 ///Widget   principal
 class _Body extends State<Body>
     with TickerProviderStateMixin {
+  final apiClient = ApiGlobal.api;
+  String _errorMessage = '';
   @override
   void initState() {
     super.initState();
-    getTokenAndGetVisits();
-  }
-
-  void getTokenAndGetVisits() async {
-  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
-  String token = prefs.getToken();
-  try {
-    var jsonResponse = await Api.getVisits(token);
-    setState(() {
+    apiClient.getVisits().then((jsonResponse) {
+      setState(() {
         visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
         visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
         visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
       });
-  } catch (error) {
-    print('Error al obtener las visitas: $error');
+    }).catchError((error) {
+      _errorMessage = error.toString();
+    });
   }
-}
+//   void getTokenAndGetVisits() async {
+//   SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
+//   String token = prefs.getToken();
+//   try {
+//     var jsonResponse = await Api.getVisits(token);
+//     setState(() {
+//         visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
+//         visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
+//         visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
+//       });
+//   } catch (error) {
+//     print('Error al obtener las visitas: $error');
+//   }
+// }
 
   String usuario = "";
   @override

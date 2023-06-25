@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:prueba/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:prueba/utils/Information.dart';
+import '../../../utils/Persistence.dart';
 import '../../../utils/Persistencia.dart';
 class Body extends StatefulWidget {
   const Body({super.key});
@@ -35,7 +36,6 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     TextEditingController controller = TextEditingController();
-
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 248, 248),
       body: SingleChildScrollView(
@@ -140,9 +140,15 @@ class _BodyState extends State<Body> {
                         DateTime fechaCreacion = DateTime.now();
                         
                         if(_value == 0){
-                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
+                          setState((){
+                            fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
+                          });
+                          
                         }else if(_value == 1){
-                          fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
+                          setState((){
+                             fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
+                          });
+
                         }
                         print("Fecha visita: " + fechaVisita.toString());
                         print("Fecha creacion: " + fechaCreacion.toString());
@@ -179,14 +185,15 @@ class _BodyState extends State<Body> {
 
 
   Future getTokenAndPostVisit() async {
-  SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
+  final apiClient = ApiGlobal.api;
+  String _errorMessage = "";
    var reqParams = {
     "name": nombreVisitacontroller.text,
     "date": fechaVisita.toString(),
   };
-  String token = prefs.getToken();
   try {
-    return await Api.postVisit(token,reqParams);
+    var qriID = await apiClient.postVisit(reqParams);
+    return qriID;
   } catch (error) {
     print('Error al obtener los datos del usuario: $error');
   }

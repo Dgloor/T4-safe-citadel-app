@@ -146,8 +146,6 @@ class ApiClient {
    Future<User> getUserData() async {
     final url = Uri.parse(APIUSER);
     String token = await _loadAccessToken();
-    print("imprimiendo token");
-    print(token);
     var headers = {"Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
@@ -164,5 +162,34 @@ class ApiClient {
       throw Exception('No es posible cargar los datos del usuario.');
     }
   }
-
+  Future<dynamic> getVisits() async {
+    var uri = Uri.parse(APIGETVISITS);
+    String token = await _loadAccessToken();
+    var header =  {
+      "Content-Type": "application/json",
+      "Authorization": 'Bearer $token'
+    };
+    var response = await http.get(uri, headers: header);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }else{
+      print("Error al registrar visita");
+      throw Exception('No es posible registrar visita.');
+    }
+  }
+  Future<dynamic> postVisit(Map<String, dynamic> reqParams) async {
+   var uri = Uri.parse(APIPOSTVISIT);
+    String token = await _loadAccessToken();
+    var response = await http.post((uri)
+    .replace(queryParameters: reqParams),headers: {"Content-Type": "application/json",
+                      "Authorization": 'Bearer $token'
+            });
+    if(response.statusCode == 200){
+      var jsonResponse = jsonDecode(response.body);
+      return jsonResponse['qr_id'];
+    }else{
+      print("Error al registrar visita");
+      throw Exception('No es posible registrar visita.');
+    }
+  }
 }
