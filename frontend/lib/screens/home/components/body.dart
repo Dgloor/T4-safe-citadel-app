@@ -23,20 +23,9 @@ class _Body extends State<Body> {
   @override
   void initState() {
     super.initState();
-    getTokenAndFetchUserData();
   }
 
-  void getTokenAndFetchUserData() async {
-  try {
-    User userData = await ApiGlobal.api.getUserData();
-    UserSingleton.user = userData;
-    setState(() {
-      user = userData;
-    });
-  } catch (error) {
-    Navigator.pushNamed(context, SignInScreen.routeName);
-  }
-}
+ 
 
   @override
   Widget build(BuildContext context) {

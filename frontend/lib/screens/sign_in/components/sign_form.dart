@@ -9,7 +9,7 @@ import '../../../constants.dart';
 import '../../../size_config.dart';
 import 'package:prueba/utils/Authorization.dart';
 import 'package:prueba/utils/Persistencia.dart';
-
+import 'package:prueba/models/User.dart';
 
 class SignForm extends StatelessWidget {
   late SharedPreferencesUtil prefsUtil;
@@ -78,7 +78,14 @@ class SignForm extends StatelessWidget {
               KeyboardUtil.hideKeyboard(context);
             }
             apiClient.authenticate(email, password).then((_) {
-              Navigator.pushNamed(context, HomeScreen.routeName);
+              apiClient.getUserData().then((userData) {
+                UserSingleton.user = userData;
+                Future.delayed(Duration(seconds: 4), () {
+                  Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+                });
+              }).catchError((error) {
+                _errorMessage = error.toString();
+              });
             }).catchError((error) {
               _errorMessage = error.toString();
             });
