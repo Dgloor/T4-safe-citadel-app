@@ -24,23 +24,26 @@ Safe Citadel App is a mobile application for visitor management in a residential
 To run the Safe Citadel App, follow these steps:
 
 1. Clone the mobile app repository:
+
    ```
-   git clone https://github.com/your-username/safe-citadel-app.git
+   git clone https://github.com/Dgloor/T4-safe-citadel-app.git
    ```
 
 2. Backend setup:
+
    - Clone the backend repository in a separate directory:
      ```
-     git clone https://github.com/josephinoo/backend.git
+     git clone https://github.com/josephinoo/T4-safe-citadel-app-backend.git
      ```
    - Follow the specific configuration and installation instructions provided in the backend repository to set up and run the backend for the application.
 
 3. Mobile app setup:
+
    - Install Flutter by following the official [installation guide](https://flutter.dev/docs/get-started/install).
    - Connect a mobile device or start an emulator.
    - Navigate to the cloned mobile app directory:
      ```
-     cd safe-citadel-app/mobile
+     cd safe-citadel-app/frontend
      ```
    - Install the dependencies:
      ```
