@@ -33,7 +33,7 @@ To run the Safe Citadel App, follow these steps:
 
    - Clone the backend repository in a separate directory:
      ```
-     git clone https://github.com/josephinoo/T4-safe-citadel-app-backend.git
+     git clone https://github.com/josephinoo/T4-safe-citadel-backend.git
      ```
    - Follow the specific configuration and installation instructions provided in the backend repository to set up and run the backend for the application.
 
