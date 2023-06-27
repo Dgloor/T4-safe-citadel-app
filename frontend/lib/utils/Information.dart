@@ -26,44 +26,4 @@ class Api {
     }
   }
 
-  static Future<String> postVisit(String token, Map<String, dynamic> reqParams) async{
-    var uri = Uri.parse(APIPOSTVISIT);
-    var response = await http.post((uri)
-    .replace(queryParameters: reqParams),headers: {"Content-Type": "application/json",
-                      "Authorization": 'Bearer $token'
-            });
-    if(response.statusCode == 200){
-      var jsonResponse = jsonDecode(response.body);
-      return jsonResponse['qr_id'];
-    }else{
-      print("Error al registrar visita");
-      throw Exception('No es posible registrar visita.');
-    }
-  }
-  static Future<dynamic> getVisits(String token) async {
-    var uri = Uri.parse(APIGETVISITS);
-    var header =  {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer $token'
-    };
-    var response = await http.get(uri, headers: header);
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    }else{
-      print("Error al registrar visita");
-      throw Exception('No es posible registrar visita.');
-    }
-  }
-
-//   Future _getVisitID(String visitID) async{
-//   String token = await getToken();
-//   var response = await http.get(Uri.parse(getVisitID + visitID),
-//           headers: {"Content-Type": "application/json",
-//                     "Authorization": 'Bearer $token'
-//           });
-//   var jsonResponse = jsonDecode(response.body);
-//   if(response.statusCode == 200){
-//     qr_id = jsonResponse['qr_id']; 
-//   }
-// }
 }

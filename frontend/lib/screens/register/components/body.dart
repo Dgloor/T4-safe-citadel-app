@@ -8,7 +8,7 @@ import 'package:prueba/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:prueba/utils/Information.dart';
 import '../../../utils/Persistence.dart';
-import '../../../utils/Persistencia.dart';
+
 class Body extends StatefulWidget {
   const Body({super.key});
 
@@ -16,8 +16,7 @@ class Body extends StatefulWidget {
   State<Body> createState() => _BodyState();
 }
 
-String residente = "Juan Perez";
-String nombreVisita = "";
+
 TextEditingController nombreVisitacontroller = TextEditingController();
 DateTime fechaVisita = DateTime.now();
 const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
@@ -26,16 +25,10 @@ class _BodyState extends State<Body> {
   int _value = 0;
   
   final List<bool> _selectedDay = <bool>[true, false];
-  _cargarData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      residente = prefs.getString("nombre") ?? "N.A";
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 248, 248),
       body: SingleChildScrollView(
@@ -56,7 +49,8 @@ class _BodyState extends State<Body> {
                 ),
                 SizedBox(height: 30.0),
                 TextField(
-                   controller: nombreVisitacontroller,
+                  key : Key("visitorNameField"),
+                  controller: nombreVisitacontroller,
                   decoration: InputDecoration(
                       hintText: 'Nombre',
                       border: OutlineInputBorder(
@@ -71,26 +65,27 @@ class _BodyState extends State<Body> {
                   textAlign: TextAlign.left,
                 ),
                ToggleButtons(
-                    onPressed: (int index) {
-                      setState(() {
-                        for (int i = 0; i < _selectedDay.length; i++) {
-                          _selectedDay[i] = i == index;
-                        }
-                        _value = index;
-                      });
-                    },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
-                    selectedColor: Colors.white,
-                    fillColor: Colors.green,
-                    color: Colors.black,
-                    constraints: const BoxConstraints(
-                      minHeight: 40.0,
-                      minWidth: 160.0,
-                    ),
-                    isSelected: _selectedDay,
-                    children: opcionesDias
-                    ),
+                key : Key("selectedDay"),
+                onPressed: (int index) {
+                  setState(() {
+                    for (int i = 0; i < _selectedDay.length; i++) {
+                      _selectedDay[i] = i == index;
+                    }
+                    _value = index;
+                  });
+                },
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
+                selectedColor: Colors.white,
+                fillColor: Colors.green,
+                color: Colors.black,
+                constraints: const BoxConstraints(
+                  minHeight: 40.0,
+                  minWidth: 160.0,
+                ),
+                isSelected: _selectedDay,
+                children: opcionesDias
+                ),
                 const SizedBox(height: 30.0),
                 Text(
                   'Seleccionar hora esperada',
@@ -108,6 +103,7 @@ class _BodyState extends State<Body> {
                               height: 250,
                               child: SizedBox(
                                 child: CupertinoDatePicker(
+                                  key : Key("selectedTime"),
                                   initialDateTime: fechaVisita,
                                   mode: CupertinoDatePickerMode.time,
                                   onDateTimeChanged: (dateTime) =>
@@ -122,7 +118,8 @@ class _BodyState extends State<Body> {
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
-                   onPressed: () {
+                    key : Key("registerVisitButton"),
+                    onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('Ingrese nombre de la visita')));
@@ -134,11 +131,7 @@ class _BodyState extends State<Body> {
                             content: Text('Hora de visita no válida')));
                       } 
                       else {
-                        print("Nombre de visita: ${nombreVisitacontroller.text}");
-                        print("Dia" + _value.toString());
                         DateTime fechaVisita = DateTime.now();
-                        DateTime fechaCreacion = DateTime.now();
-                        
                         if(_value == 0){
                           setState((){
                             fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
@@ -150,11 +143,6 @@ class _BodyState extends State<Body> {
                           });
 
                         }
-                        print("Fecha visita: " + fechaVisita.toString());
-                        print("Fecha creacion: " + fechaCreacion.toString());
-                        setState(() {
-                          nombreVisita = nombreVisitacontroller.text;
-                        });
                         _widgetQRCode(context);
                       }
                     },
@@ -184,7 +172,7 @@ class _BodyState extends State<Body> {
 }
 
 
-  Future getTokenAndPostVisit() async {
+Future getTokenAndPostVisit() async {
   final apiClient = ApiGlobal.api;
   String _errorMessage = "";
    var reqParams = {
@@ -193,6 +181,7 @@ class _BodyState extends State<Body> {
   };
   try {
     var qriID = await apiClient.postVisit(reqParams);
+    await Future.delayed(Duration( seconds: 2));
     return qriID;
   } catch (error) {
     print('Error al obtener los datos del usuario: $error');
@@ -212,7 +201,8 @@ _widgetQRCode(BuildContext context) async {
       context: context,
       builder: (context) {
         return Container(
-            height: 650, // Establece la altura deseada aquí
+          key: Key("qrCode"),
+            height: 650,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

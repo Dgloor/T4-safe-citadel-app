@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:prueba/components/no_account_text.dart';
 import 'package:prueba/components/socal_card.dart';
 import 'package:prueba/screens/home/home_screen.dart';
-import 'package:prueba/screens/home/home_screenResidente.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
