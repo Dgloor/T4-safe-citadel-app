@@ -5,11 +5,11 @@ import 'package:prueba/screens/register/components/body.dart';
 
 void main() {
   testWidgets("Visitor name field is empty", (WidgetTester tester) async{
-    final visitorNameField = find.byKey(ValueKey("visitorNameField"));
-    final registerVisitButton = find.byKey(ValueKey("registerVisitButton"));
+    final visitorNameField = find.byKey(const ValueKey("visitorNameField"));
+    final registerVisitButton = find.byKey(const ValueKey("registerVisitButton"));
 
 
-    await tester.pumpWidget(MaterialApp(home: Body()));
+    await tester.pumpWidget(const MaterialApp(home: Body()));
     await tester.enterText(visitorNameField, "");
     await tester.tap(registerVisitButton);
     await tester.pump();
@@ -19,15 +19,15 @@ void main() {
 
 
   testWidgets("Visitor name field is not empty", (WidgetTester tester) async{
-    final visitorNameField = find.byKey(ValueKey("visitorNameField"));
-    final registerVisitButton = find.byKey(ValueKey("registerVisitButton"));
+    final visitorNameField = find.byKey(const ValueKey("visitorNameField"));
+    final registerVisitButton = find.byKey(const ValueKey("registerVisitButton"));
 
 
-    await tester.pumpWidget(MaterialApp(home: Body()));
+    await tester.pumpWidget(const MaterialApp(home: Body()));
     await tester.enterText(visitorNameField, "Juan Perez");
     await tester.tap(registerVisitButton);
-    await tester.pump(Duration(seconds: 10));   
-    expect(find.byKey(ValueKey("qrCode")), findsOneWidget);
+    await tester.pump(const Duration(seconds: 10));   
+    expect(find.byKey(const ValueKey("qrCode")), findsOneWidget);
   });
 
 }

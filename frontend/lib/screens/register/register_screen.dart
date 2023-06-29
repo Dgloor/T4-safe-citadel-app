@@ -6,14 +6,16 @@ import 'components/body.dart';
 
 class RegisterScreen extends StatelessWidget {
   static String routeName = "/register";
+
+  const RegisterScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registro de Visitas"),
+        title: const Text("Registro de Visitas"),
       ),
-      body: Body(),
-      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
+      body: const Body(),
+      bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.profile),
     );
   }
 }

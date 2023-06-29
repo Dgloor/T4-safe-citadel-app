@@ -113,18 +113,16 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                   child: TextButton(
                     onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Ingrese nombre de la visita')));
                       }
                       else if(_value == 0 
                               && (fechaVisita.hour < DateTime.now().hour 
                               && fechaVisita.minute < DateTime.now().minute)){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Hora de visita no válida')));
                       } 
                       else {
-                        print("Nombre de visita: ${nombreVisitacontroller.text}");
-                        print("Dia" + _value.toString());
                         DateTime fechaVisita = DateTime.now();
                         DateTime fechaCreacion = DateTime.now();
                         
@@ -139,13 +137,11 @@ class _RegistrarVisitaState extends State<RegistrarVisita> {
                             if (_value == 0) {
                               // No se realiza ningún cambio en la fecha
                             } else if (_value == 1) {
-                              newDate = newDate.add(Duration(days: 1));
+                              newDate = newDate.add(const Duration(days: 1));
                             }
                             nombreVisita = nombreVisitacontroller.text;
                             fechaVisita = newDate;
                           });
-                        print("Fecha visita: " + fechaVisita.toString());
-                        print("Fecha creacion: " + fechaCreacion.toString());
                         setState(() {
                           //nombreVisita = nombreVisitacontroller.text;
                         });
@@ -188,7 +184,7 @@ _widgetQRCode(BuildContext context) async {
       )),
       context: context,
       builder: (context) {
-        return Container(
+        return SizedBox(
             height: 650, // Establece la altura deseada aquí
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -239,6 +235,6 @@ Future registrarVisita() async{
     var jsonResponse = jsonDecode(response.body);
     return jsonResponse['qr_id'];
   }else{
-    print("Error al registrar visita");
+    return "Error";
   }
 }

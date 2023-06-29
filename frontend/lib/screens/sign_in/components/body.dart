@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/components/no_account_text.dart';
-import 'package:prueba/components/socal_card.dart';
-import 'package:prueba/screens/home/home_screen.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +25,7 @@ class Body extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   "Inicia Sesión con tu Usuario y contraseña",
                   textAlign: TextAlign.center,
                 ),

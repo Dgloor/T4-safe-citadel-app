@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:prueba/constants.dart';
-import 'package:prueba/screens/register/register_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../size_config.dart';
 import '../../../components/default_button.dart';
@@ -105,7 +104,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                             child: FutureBuilder(
                               future: controller?.getFlashStatus(),
                               builder: (context, snapshot) {
-                                return Text('Flash');
+                                return const Text('Flash');
                               },
                             )),
                       ),
@@ -121,7 +120,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                               future: controller?.getCameraInfo(),
                               builder: (context, snapshot) {
                                 if (snapshot.data != null) {
-                                  return Text(
+                                  return const Text(
                                       'Voltear cámara');
                                 } else {
                                   return const Text('loading');

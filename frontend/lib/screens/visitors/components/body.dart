@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:prueba/utils/Persistence.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:prueba/utils/Information.dart';
-import '../../../utils/Persistencia.dart';
 import '../../../size_config.dart';
 import '../../home/components/discount_banner.dart';
 class Body extends StatefulWidget {
@@ -154,8 +150,6 @@ String  qr_id = "";
 
 _widgetQRCode(BuildContext context, String visitID) async{
   //_getVisitID(visitID);
-  print("visita seleccionada: "+visitID);
-  print("Este es el QRid: " + qr_id);
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -165,7 +159,7 @@ _widgetQRCode(BuildContext context, String visitID) async{
       )),
       context: context,
       builder: (context) {
-        return Container(
+        return SizedBox(
             height: 650, // Establece la altura deseada aquí
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -225,7 +219,7 @@ class _Body extends State<Body>
 //         visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
 //       });
 //   } catch (error) {
-//     print('Error al obtener las visitas: $error');
+//    
 //   }
 // }
 
@@ -237,12 +231,12 @@ class _Body extends State<Body>
       body: SingleChildScrollView(
           child: Column(
         children: <Widget>[
-          Container(
+          SizedBox(
             width: getProportionateScreenWidth(450),
             //height: getProportionateScreenHeight(200),
             child: Column(
               children: [
-               WelcomeBanner(),
+               const WelcomeBanner(),
                 const SizedBox(height: 25),
                 Container(
                   child: TabBar(
@@ -265,7 +259,7 @@ class _Body extends State<Body>
                   ),
                 ),
                 const SizedBox(height: 40),
-                Container(
+                SizedBox(
                   width: getProportionateScreenWidth(500),
                   height: getProportionateScreenHeight(450),
                   child: SizedBox(

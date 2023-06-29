@@ -7,7 +7,6 @@ import 'package:prueba/utils/Persistence.dart';
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
-import 'package:prueba/utils/Authorization.dart';
 import 'package:prueba/utils/Persistencia.dart';
 import 'package:prueba/models/User.dart';
 
@@ -20,6 +19,8 @@ class SignForm extends StatelessWidget {
   bool? remember = false;
   String _errorMessage = '';
   final List<String?> errors = [];
+
+  SignForm({super.key});
   @override
   void initState() {
     initializeSharedPreferences();
@@ -55,12 +56,12 @@ class SignForm extends StatelessWidget {
                 remember = value;
               },
             ),
-            Text("Recordarme"),
-            Spacer(),
+            const Text("Recordarme"),
+            const Spacer(),
             GestureDetector(
               onTap: () =>
                   Navigator.pushNamed(context, ForgotPasswordScreen.routeName),
-              child: Text(
+              child: const Text(
                 "Olvidé mi contraseña",
                 style: TextStyle(decoration: TextDecoration.underline),
               ),
@@ -80,7 +81,7 @@ class SignForm extends StatelessWidget {
             apiClient.authenticate(email, password).then((_) {
               apiClient.getUserData().then((userData) {
                 UserSingleton.user = userData;
-                Future.delayed(Duration(seconds: 4), () {
+                Future.delayed(const Duration(seconds: 4), () {
                   Navigator.pushReplacementNamed(context, HomeScreen.routeName);
                 });
               }).catchError((error) {
@@ -95,7 +96,7 @@ class SignForm extends StatelessWidget {
         if (_errorMessage.isNotEmpty)
           Text(
             _errorMessage,
-            style: TextStyle(color: Colors.red),
+            style: const TextStyle(color: Colors.red),
           ),
       ]),
     );
@@ -113,7 +114,7 @@ class SignForm extends StatelessWidget {
         } else if (value.length >= 7) {
           removeError(error: kShortPassError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -147,7 +148,7 @@ class SignForm extends StatelessWidget {
         // else if (emailValidatorRegExp.hasMatch(value)) {
         //   removeError(error: kInvalidEmailError);
         // }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -160,13 +161,13 @@ class SignForm extends StatelessWidget {
         // }
         return null;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Usuario",
         hintText: "Ingrese su usuario",
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        prefixIcon: const Icon(Icons.person),
+        prefixIcon: Icon(Icons.person),
       ),
     );
   }

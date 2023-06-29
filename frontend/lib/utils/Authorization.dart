@@ -13,7 +13,7 @@ class ApiClient {
 
   ApiClient() {
     _dio = Dio();
-    _secureStorage = FlutterSecureStorage();
+    _secureStorage = const FlutterSecureStorage();
     _setupInterceptors();
   }
 
@@ -62,11 +62,11 @@ class ApiClient {
     final refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     // Send a request to the token refresh endpoint to get a new access token
-    final url = 'https://safecitadel-d78923a86078.herokuapp.com/api/refresh';
+    const url = 'https://safecitadel-d78923a86078.herokuapp.com/api/refresh';
     final queryParams = {
       'token': refreshToken,
     };
-    final basicAuth = 'Basic ' + base64Encode(utf8.encode('admin:password'));
+    final basicAuth = 'Basic ${base64Encode(utf8.encode('admin:password'))}';
 
     try {
       final response = await _dio.get(
@@ -113,7 +113,7 @@ class ApiClient {
       'username': username,
       'password': password,
     });
-    final basicAuth = 'Basic ' + base64Encode(utf8.encode('admin:password'));
+    final basicAuth = 'Basic ${base64Encode(utf8.encode('admin:password'))}';
 
     try {
       final response = await http.post(
@@ -151,13 +151,11 @@ class ApiClient {
     };
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
-      print(response.body);
       // La solicitud fue exitosa, puedes obtener la respuesta
       var responseData = jsonDecode( response.body);
       
       return User.fromJson(responseData['user']);
     } else {
-      print(response.body);
       // Ocurrió un error en la solicitud
       throw Exception('No es posible cargar los datos del usuario.');
     }
@@ -173,7 +171,6 @@ class ApiClient {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }else{
-      print("Error al registrar visita");
       throw Exception('No es posible registrar visita.');
     }
   }
@@ -188,7 +185,6 @@ class ApiClient {
       var jsonResponse = jsonDecode(response.body);
       return jsonResponse['qr_id'];
     }else{
-      print("Error al registrar visita");
       throw Exception('No es posible registrar visita.');
     }
   }

@@ -185,8 +185,6 @@ enum _MenuOptions { verQR, anular }
 String  qr_id = "";
 _widgetQRCode(BuildContext context, String visitID) async{
   _getVisitID(visitID);
-  print("visita seleccionada: "+visitID);
-  print("Este es el QRid: " + qr_id);
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -196,7 +194,7 @@ _widgetQRCode(BuildContext context, String visitID) async{
       )),
       context: context,
       builder: (context) {
-        return Container(
+        return SizedBox(
             height: 650, // Establece la altura deseada aquí
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -226,7 +224,6 @@ _widgetQRCode(BuildContext context, String visitID) async{
       });
 }
 Future _getUser() async{
-   print("entra getuser");
   String token = await getToken();
   var response = await http.get(Uri.parse(getUser),
           headers: {"Content-Type": "application/json",
@@ -279,7 +276,6 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
  
 }
   void setNombre() async{
-    print("entra setNombre");
     String nombreRes = await _getUser();
     setState(() {
       nombre = nombreRes;
@@ -328,7 +324,7 @@ class _VisitaScreenResidente extends State<VisitaScreenResidente>
                   ),
                 ),
                 const SizedBox(height: 40),
-                Container(
+                SizedBox(
                   width: double.maxFinite,
                   height: 450,
                   child: TabBarView(controller: tabController, children:const [

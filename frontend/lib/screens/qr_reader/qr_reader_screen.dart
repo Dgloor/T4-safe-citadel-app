@@ -6,9 +6,11 @@ import 'components/body.dart';
 
 class QRScreen extends StatelessWidget {
   static String routeName = "/qr_reader";
+
+  const QRScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Body(),
       bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
     );

@@ -1,12 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart';
-import 'package:prueba/constants.dart';
-import 'package:http/http.dart' as http;
-import 'package:prueba/utils/Information.dart';
 import '../../../utils/Persistence.dart';
 
 class Body extends StatefulWidget {
@@ -30,10 +24,10 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 248, 248),
+      backgroundColor: const Color.fromARGB(255, 250, 248, 248),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 30.0,
             vertical: 60.0,
           ),
@@ -47,17 +41,17 @@ class _BodyState extends State<Body> {
                   style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 TextField(
-                  key : Key("visitorNameField"),
+                  key : const Key("visitorNameField"),
                   controller: nombreVisitacontroller,
                   decoration: InputDecoration(
                       hintText: 'Nombre',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 /**Elección de día de visita */
                 Text(
                   'Día de visita',
@@ -65,7 +59,7 @@ class _BodyState extends State<Body> {
                   textAlign: TextAlign.left,
                 ),
                ToggleButtons(
-                key : Key("selectedDay"),
+                key : const Key("selectedDay"),
                 onPressed: (int index) {
                   setState(() {
                     for (int i = 0; i < _selectedDay.length; i++) {
@@ -103,7 +97,7 @@ class _BodyState extends State<Body> {
                               height: 250,
                               child: SizedBox(
                                 child: CupertinoDatePicker(
-                                  key : Key("selectedTime"),
+                                  key : const Key("selectedTime"),
                                   initialDateTime: fechaVisita,
                                   mode: CupertinoDatePickerMode.time,
                                   onDateTimeChanged: (dateTime) =>
@@ -114,20 +108,20 @@ class _BodyState extends State<Body> {
                               ),
                             ));
                   }),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
-                    key : Key("registerVisitButton"),
+                    key : const Key("registerVisitButton"),
                     onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Ingrese nombre de la visita')));
                       }
                       else if(_value == 0 
                               && (fechaVisita.hour < DateTime.now().hour 
                               && fechaVisita.minute < DateTime.now().minute)){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Hora de visita no válida')));
                       } 
                       else {
@@ -146,9 +140,8 @@ class _BodyState extends State<Body> {
                         _widgetQRCode(context);
                       }
                     },
-                    child: Text('Registrar Visita'),
                     style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all<Size>(Size(250, 50)),
+                      fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
                       backgroundColor:
@@ -159,9 +152,10 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
+                    child: const Text('Registrar Visita'),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
@@ -174,17 +168,17 @@ class _BodyState extends State<Body> {
 
 Future getTokenAndPostVisit() async {
   final apiClient = ApiGlobal.api;
-  String _errorMessage = "";
+  String errorMessage = "";
    var reqParams = {
     "name": nombreVisitacontroller.text,
     "date": fechaVisita.toString(),
   };
   try {
     var qriID = await apiClient.postVisit(reqParams);
-    await Future.delayed(Duration( seconds: 2));
+    await Future.delayed(const Duration( seconds: 2));
     return qriID;
   } catch (error) {
-    print('Error al obtener los datos del usuario: $error');
+    return  error.toString();
   }
 }
 
@@ -200,8 +194,8 @@ _widgetQRCode(BuildContext context) async {
       )),
       context: context,
       builder: (context) {
-        return Container(
-          key: Key("qrCode"),
+        return SizedBox(
+          key: const Key("qrCode"),
             height: 650,
             child: Column(
               mainAxisSize: MainAxisSize.min,

@@ -45,15 +45,15 @@ final otpInputDecoration = InputDecoration(
 OutlineInputBorder outlineInputBorder() {
   return OutlineInputBorder(
     borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
-    borderSide: BorderSide(color: kTextColor),
+    borderSide: const BorderSide(color: kTextColor),
   );
 }
 final buttonStyle= ButtonStyle(
     backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor), // Cambia el color de fondo del botón
     // Otros estilos opcionales que puedes personalizar:
     // foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Cambia el color del texto del botón
-    side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.green)), // Cambia el estilo de borde
-    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)), // Cambia el relleno interno del botón
+    side: MaterialStateProperty.all<BorderSide>(const BorderSide(color: Colors.green)), // Cambia el estilo de borde
+    padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(10)), // Cambia el relleno interno del botón
     // textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20)), // Cambia el estilo del texto del botón
   );
 

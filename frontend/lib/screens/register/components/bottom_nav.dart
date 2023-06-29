@@ -24,7 +24,7 @@ class _BottomNavigatorState extends State<BNavigator>{
         selectedItemColor: Colors.green ,
         iconSize: 25.0,
         selectedFontSize: 14.0,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedFontSize: 12.0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
