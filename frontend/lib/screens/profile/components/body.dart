@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/sign_in/sign_in_screen.dart';
+import 'package:safecitadel/screens/sign_in/sign_in_screen.dart';
 
 import 'profile_menu.dart';
 import 'profile_pic.dart';

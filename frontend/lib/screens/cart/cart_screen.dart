@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/models/Cart.dart';
+import 'package:safecitadel/models/Cart.dart';
 
 import 'components/body.dart';
 import 'components/check_out_card.dart';

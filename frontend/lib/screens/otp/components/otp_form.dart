@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/components/default_button.dart';
-import 'package:prueba/size_config.dart';
+import 'package:safecitadel/components/default_button.dart';
+import 'package:safecitadel/size_config.dart';
 
 import '../../../constants.dart';
 

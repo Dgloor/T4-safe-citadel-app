@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:prueba/screens/home/home_screen.dart';
-import 'package:prueba/screens/profile/profile_screen.dart';
-import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
+import 'package:safecitadel/screens/home/home_screen.dart';
+import 'package:safecitadel/screens/profile/profile_screen.dart';
+import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
 
 import '../constants.dart';
 import '../enums.dart';
 import '../screens/register/register_screen.dart';
-import 'package:prueba/models/User.dart'; 
+import 'package:safecitadel/models/User.dart'; 
 class CustomBottomNavBar extends StatelessWidget {
 
   const CustomBottomNavBar({

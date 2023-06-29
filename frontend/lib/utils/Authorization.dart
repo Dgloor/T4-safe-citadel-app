@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:prueba/constants.dart';
+import 'package:safecitadel/constants.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:prueba/models/User.dart';
+import 'package:safecitadel/models/User.dart';
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
 class ApiClient {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
-import 'package:prueba/models/User.dart';
+import 'package:safecitadel/models/User.dart';
 class WelcomeBanner extends StatelessWidget {
   const WelcomeBanner({
     Key? key,

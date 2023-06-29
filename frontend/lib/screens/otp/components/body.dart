@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/constants.dart';
-import 'package:prueba/size_config.dart';
+import 'package:safecitadel/constants.dart';
+import 'package:safecitadel/size_config.dart';
 
 import 'otp_form.dart';
 

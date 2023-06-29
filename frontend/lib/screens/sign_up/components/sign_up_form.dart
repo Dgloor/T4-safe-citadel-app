@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/components/custom_surfix_icon.dart';
-import 'package:prueba/components/default_button.dart';
-import 'package:prueba/components/form_error.dart';
-import 'package:prueba/screens/complete_profile/complete_profile_screen.dart';
+import 'package:safecitadel/components/custom_surfix_icon.dart';
+import 'package:safecitadel/components/default_button.dart';
+import 'package:safecitadel/components/form_error.dart';
+import 'package:safecitadel/screens/complete_profile/complete_profile_screen.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';

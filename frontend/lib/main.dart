@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/routes.dart';
-import 'package:prueba/screens/splash/splash_screen.dart';
-import 'package:prueba/theme.dart';
+import 'package:safecitadel/routes.dart';
+import 'package:safecitadel/screens/splash/splash_screen.dart';
+import 'package:safecitadel/theme.dart';
 
 void main() {
   runApp(const MyApp());

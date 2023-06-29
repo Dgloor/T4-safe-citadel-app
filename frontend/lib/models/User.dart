@@ -66,12 +66,12 @@ List<User> demoUsers = [
 ];
 
 const String description =
-    "Usuario de prueba";
+    "Usuario de safecitadel";
 class UserSingleton {
   static User user = User(
     id: "1",
     image: "assets/images/profile.png",
-    name: "PRUEBA",
+    name: "safecitadel",
     role: "RESIDENTE",
   );
 

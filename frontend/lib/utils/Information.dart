@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:prueba/constants.dart';
-import 'package:prueba/models/User.dart';
+import 'package:safecitadel/constants.dart';
+import 'package:safecitadel/models/User.dart';
 
 class Api {
   static Future<User> getUserData(String token) async {

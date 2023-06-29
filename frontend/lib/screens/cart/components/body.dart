@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:prueba/models/Cart.dart';
+import 'package:safecitadel/models/Cart.dart';
 
 import '../../../size_config.dart';
 import 'cart_card.dart';

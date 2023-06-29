@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
-import 'package:prueba/screens/cart/cart_screen.dart';
-import 'package:prueba/screens/complete_profile/complete_profile_screen.dart';
-import 'package:prueba/screens/details/details_screen.dart';
-import 'package:prueba/screens/forgot_password/forgot_password_screen.dart';
-import 'package:prueba/screens/home/home_screen.dart';
-import 'package:prueba/screens/otp/otp_screen.dart';
-import 'package:prueba/screens/profile/profile_screen.dart';
-import 'package:prueba/screens/qr_reader/qr_reader_screen.dart';
-import 'package:prueba/screens/register/register_screen.dart';
-import 'package:prueba/screens/sign_in/sign_in_screen.dart';
-import 'package:prueba/screens/splash/splash_screen.dart';
+import 'package:safecitadel/screens/cart/cart_screen.dart';
+import 'package:safecitadel/screens/complete_profile/complete_profile_screen.dart';
+import 'package:safecitadel/screens/details/details_screen.dart';
+import 'package:safecitadel/screens/forgot_password/forgot_password_screen.dart';
+import 'package:safecitadel/screens/home/home_screen.dart';
+import 'package:safecitadel/screens/otp/otp_screen.dart';
+import 'package:safecitadel/screens/profile/profile_screen.dart';
+import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
+import 'package:safecitadel/screens/register/register_screen.dart';
+import 'package:safecitadel/screens/sign_in/sign_in_screen.dart';
+import 'package:safecitadel/screens/splash/splash_screen.dart';
 
 import 'screens/sign_up/sign_up_screen.dart';
 

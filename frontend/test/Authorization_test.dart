@@ -1,7 +1,7 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
-import 'package:prueba/utils/Authorization.dart';
+import 'package:safecitadel/utils/Authorization.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 

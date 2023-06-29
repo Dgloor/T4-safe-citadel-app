@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/utils/Persistence.dart';
+import 'package:safecitadel/utils/Persistence.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../size_config.dart';
 import '../../home/components/discount_banner.dart';
