@@ -62,7 +62,7 @@ class ApiClient {
     final refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     // Send a request to the token refresh endpoint to get a new access token
-    const url = 'https://safecitadel-d78923a86078.herokuapp.com/api/refresh';
+    const url = 'http://localhost:8000/api/refresh';
     final queryParams = {
       'token': refreshToken,
     };
@@ -116,7 +116,7 @@ class ApiClient {
     final basicAuth = 'Basic ${base64Encode(utf8.encode('admin:password'))}';
 
     try {
-      final response = await http.post(
+      final response = await http. post(
         url,
         headers: {
           'Content-Type': 'application/json',

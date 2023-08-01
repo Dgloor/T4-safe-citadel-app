@@ -18,6 +18,7 @@ class SignForm extends StatelessWidget {
   String? password;
   bool? remember = false;
   String _errorMessage = '';
+  bool isLoading = false;
   final List<String?> errors = [];
 
   SignForm({super.key});
@@ -72,6 +73,7 @@ class SignForm extends StatelessWidget {
         SizedBox(height: getProportionateScreenHeight(20)),
         DefaultButton(
           press: () {
+            isLoading = true;
             final apiClient = ApiGlobal.api;
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
@@ -91,7 +93,7 @@ class SignForm extends StatelessWidget {
               _errorMessage = error.toString();
             });
           },
-          text: 'Iniciar sesión',
+          text: isLoading? 'Iniciando Sesión...' : 'Iniciar Sesion',
         ),
         if (_errorMessage.isNotEmpty)
           Text(
