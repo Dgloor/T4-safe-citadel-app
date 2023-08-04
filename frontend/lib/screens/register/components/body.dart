@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../utils/Persistence.dart';
+import '../../../utils/Persistencia.dart';
 
 class Body extends StatefulWidget {
   const Body({super.key});
@@ -13,13 +14,21 @@ class Body extends StatefulWidget {
 
 TextEditingController nombreVisitacontroller = TextEditingController();
 DateTime fechaVisita = DateTime.now();
+TimeOfDay visitTime = TimeOfDay.now();
 const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
 class _BodyState extends State<Body> {
   final _formKey = GlobalKey<FormState>();
   int _value = 0;
   
   final List<bool> _selectedDay = <bool>[true, false];
-
+  void _showTimePicker(){
+    showTimePicker(context: context, 
+    initialTime: visitTime)
+    .then((value) => 
+    setState((){
+      visitTime = value!;
+    }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,33 +91,41 @@ class _BodyState extends State<Body> {
                 ),
                 const SizedBox(height: 30.0),
                 Text(
-                  'Seleccionar hora esperada',
+                  'Hora esperada',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
                 /**Selección de hora */
-                CupertinoButton(
-                  color: Colors.green,
-                  child: Text('${fechaVisita.hour}:${fechaVisita.minute}'),
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (BuildContext context) => SizedBox(
-                              height: 250,
-                              child: SizedBox(
-                                child: CupertinoDatePicker(
-                                  key : const Key("selectedTime"),
-                                  initialDateTime: fechaVisita,
-                                  mode: CupertinoDatePickerMode.time,
-                                  onDateTimeChanged: (dateTime) =>
-                                      setState(() {
-                                    fechaVisita = dateTime;
-                                  }),
-                                ),
-                              ),
-                            ));
-                  }),
-                const SizedBox(height: 16.0),
+                Center(
+                  child: MaterialButton(
+                    color: Colors.green,
+                    child: Text('${visitTime.hour}:${visitTime.minute}',
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
+                    onPressed: _showTimePicker
+                  ),
+                ),
+                // CupertinoButton(
+                //   color: Colors.green,
+                //   child: Text('${fechaVisita.hour}:${fechaVisita.minute}'),
+                //   onPressed: () {
+                //     showCupertinoModalPopup(
+                //         context: context,
+                //         builder: (BuildContext context) => SizedBox(
+                //               height: 250,
+                //               child: SizedBox(
+                //                 child: CupertinoDatePicker(
+                //                   key : const Key("selectedTime"),
+                //                   initialDateTime: fechaVisita,
+                //                   mode: CupertinoDatePickerMode.time,
+                //                   onDateTimeChanged: (dateTime) =>
+                //                       setState(() {
+                //                     fechaVisita = dateTime;
+                //                   }),
+                //                 ),
+                //               ),
+                //             ));
+                //   }),
+                const SizedBox(height: 80.0),
                 /**Botón para enviar el registro de la visita */
                 Center(
                   child: TextButton(
@@ -125,18 +142,20 @@ class _BodyState extends State<Body> {
                             content: Text('Hora de visita no válida')));
                       } 
                       else {
-                        DateTime fechaVisita = DateTime.now();
-                        if(_value == 0){
-                          setState((){
-                            fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
-                          });
+                        setState((){
+                          fechaVisita = valideDateTime(visitTime, _value);
+                        });
+                        // if(_value == 0){
+                        //   setState((){
+                        //     fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
+                        //   });
                           
-                        }else if(_value == 1){
-                          setState((){
-                             fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
-                          });
-
-                        }
+                        // }else if(_value == 1){
+                        //   setState((){
+                        //      fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
+                        //   });
+                        // }
+                        
                         _widgetQRCode(context);
                       }
                     },
@@ -166,7 +185,7 @@ class _BodyState extends State<Body> {
 }
 
 
-Future getTokenAndPostVisit() async {
+Future getTokenAndPostVisit(BuildContext context) async {
   final apiClient = ApiGlobal.api;
   String errorMessage = "";
    var reqParams = {
@@ -174,7 +193,7 @@ Future getTokenAndPostVisit() async {
     "date": fechaVisita.toString(),
   };
   try {
-    var qriID = await apiClient.postVisit(reqParams);
+    var qriID = await apiClient.postVisit(reqParams,context);
     await Future.delayed(const Duration( seconds: 2));
     return qriID;
   } catch (error) {
@@ -184,7 +203,7 @@ Future getTokenAndPostVisit() async {
 
 
 _widgetQRCode(BuildContext context) async {
-  String qrData = await getTokenAndPostVisit();
+  String qrData = await getTokenAndPostVisit(context);
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,

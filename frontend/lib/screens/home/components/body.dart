@@ -24,20 +24,6 @@ class _Body extends State<Body> {
   Widget build(BuildContext context) {
     return const SafeArea(
       child: VisitaScreen()
-      // SingleChildScrollView(
-      //   child: Column(
-      //     children: [
-      //       SizedBox(height: getProportionateScreenHeight(20)),
-      //       HomeHeader(),
-      //       SizedBox(height: getProportionateScreenWidth(10)),
-      //       WelcomeBanner(),
-      //       //Categories(),
-      //       //SpecialOffers(),
-      //       SizedBox(height: getProportionateScreenWidth(30)),
-      //       SizedBox(height: getProportionateScreenWidth(30)),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

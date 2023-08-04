@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesUtil {
@@ -22,9 +23,18 @@ class SharedPreferencesUtil {
     await _prefs.setString('token', token);
   }
 
-  String getToken()  {
+  String getToken() {
     return _prefs.getString('token') ?? '';
   }
-
   // Otros métodos para guardar/recuperar otros datos de Shared Preferences
 }
+DateTime valideDateTime(TimeOfDay visitTime, int value) {
+    final now = DateTime.now();
+    if (value == 1) {
+      return DateTime(
+          now.year, now.month, now.day + 1, visitTime.hour, visitTime.minute);
+    } else {
+      return DateTime(
+          now.year, now.month, now.day, visitTime.hour, visitTime.minute);
+    }
+  }

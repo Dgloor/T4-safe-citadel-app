@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -107,7 +108,8 @@ class ApiClient {
   // }
 
 
-    Future<String> authenticate(String? username, String? password) async {
+    Future<String> authenticate(String? username, String? password, BuildContext context) async {
+    widgetLoading(context);
     final url = Uri.parse(APIAUTH);
     final requestBody = jsonEncode({
       'username': username,
@@ -142,7 +144,13 @@ class ApiClient {
 
     throw Exception('Failed to authenticate');
   }
-
+  Future widgetLoading(BuildContext context) async{
+    showDialog(
+      context: context,
+      builder: (context){
+        return Center(child: CircularProgressIndicator());
+      });
+  }
    Future<User> getUserData() async {
     final url = Uri.parse(APIUSER);
     String token = await _loadAccessToken();
@@ -174,7 +182,8 @@ class ApiClient {
       throw Exception('No es posible registrar visita.');
     }
   }
-  Future<dynamic> postVisit(Map<String, dynamic> reqParams) async {
+  Future<dynamic> postVisit(Map<String, dynamic> reqParams, BuildContext context) async {
+    widgetLoading(context);
    var uri = Uri.parse(APIPOSTVISIT);
     String token = await _loadAccessToken();
     var response = await http.post((uri)
