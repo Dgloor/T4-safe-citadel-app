@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:safecitadel/screens/register/components/widgetQR.dart';
+import '../../../models/User.dart';
 import '../../../utils/Persistence.dart';
 import '../../../utils/Persistencia.dart';
 
@@ -11,23 +12,21 @@ class Body extends StatefulWidget {
   State<Body> createState() => _BodyState();
 }
 
-
 TextEditingController nombreVisitacontroller = TextEditingController();
 DateTime fechaVisita = DateTime.now();
-TimeOfDay visitTime = TimeOfDay.now();
+
 const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
+
 class _BodyState extends State<Body> {
   final _formKey = GlobalKey<FormState>();
   int _value = 0;
-  
+  TimeOfDay visitTime = TimeOfDay.now();
   final List<bool> _selectedDay = <bool>[true, false];
-  void _showTimePicker(){
-    showTimePicker(context: context, 
-    initialTime: visitTime)
-    .then((value) => 
-    setState((){
-      visitTime = value!;
-    }));
+  void _showTimePicker() {
+    showTimePicker(context: context, initialTime: visitTime)
+        .then((value) => setState(() {
+              visitTime = value!;
+            }));
   }
 
   @override
@@ -46,16 +45,16 @@ class _BodyState extends State<Body> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Nueva Visita',
+                  'Información de la visita',
                   style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 30.0),
                 TextField(
-                  key : const Key("visitorNameField"),
+                  key: const Key("visitorNameField"),
                   controller: nombreVisitacontroller,
                   decoration: InputDecoration(
-                      hintText: 'Nombre',
+                      hintText: 'Nombre y apellido',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0))),
                   style: const TextStyle(fontSize: 14),
@@ -67,28 +66,27 @@ class _BodyState extends State<Body> {
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.left,
                 ),
-               ToggleButtons(
-                key : const Key("selectedDay"),
-                onPressed: (int index) {
-                  setState(() {
-                    for (int i = 0; i < _selectedDay.length; i++) {
-                      _selectedDay[i] = i == index;
-                    }
-                    _value = index;
-                  });
-                },
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
-                selectedColor: Colors.white,
-                fillColor: Colors.green,
-                color: Colors.black,
-                constraints: const BoxConstraints(
-                  minHeight: 40.0,
-                  minWidth: 160.0,
-                ),
-                isSelected: _selectedDay,
-                children: opcionesDias
-                ),
+                ToggleButtons(
+                    key: const Key("selectedDay"),
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < _selectedDay.length; i++) {
+                          _selectedDay[i] = i == index;
+                        }
+                        _value = index;
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
+                    selectedColor: Colors.white,
+                    fillColor: Colors.green,
+                    color: Colors.black,
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 160.0,
+                    ),
+                    isSelected: _selectedDay,
+                    children: opcionesDias),
                 const SizedBox(height: 30.0),
                 Text(
                   'Hora esperada',
@@ -98,73 +96,60 @@ class _BodyState extends State<Body> {
                 /**Selección de hora */
                 Center(
                   child: MaterialButton(
-                    color: Colors.green,
-                    child: Text('${visitTime.hour}:${visitTime.minute}',
-                    style: TextStyle(color: Colors.white, fontSize: 20)),
-                    onPressed: _showTimePicker
+                      color: Colors.green,
+                      child: Text(
+                          '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',
+                          style: TextStyle(color: Colors.white, fontSize: 20)),
+                      onPressed: _showTimePicker),
+                ),
+                const SizedBox(height: 30.0),
+                Visibility(
+                  visible: UserSingleton.isGUARD(),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Detalles',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.left,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Ingresar detalles de visita',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                // CupertinoButton(
-                //   color: Colors.green,
-                //   child: Text('${fechaVisita.hour}:${fechaVisita.minute}'),
-                //   onPressed: () {
-                //     showCupertinoModalPopup(
-                //         context: context,
-                //         builder: (BuildContext context) => SizedBox(
-                //               height: 250,
-                //               child: SizedBox(
-                //                 child: CupertinoDatePicker(
-                //                   key : const Key("selectedTime"),
-                //                   initialDateTime: fechaVisita,
-                //                   mode: CupertinoDatePickerMode.time,
-                //                   onDateTimeChanged: (dateTime) =>
-                //                       setState(() {
-                //                     fechaVisita = dateTime;
-                //                   }),
-                //                 ),
-                //               ),
-                //             ));
-                //   }),
-                const SizedBox(height: 80.0),
-                /**Botón para enviar el registro de la visita */
+                const SizedBox(height: 40.0),
                 Center(
                   child: TextButton(
-                    key : const Key("registerVisitButton"),
+                    key: const Key("registerVisitButton"),
                     onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Ingrese nombre de la visita')));
-                      }
-                      else if(_value == 0 
-                              && (fechaVisita.hour < DateTime.now().hour 
-                              && fechaVisita.minute < DateTime.now().minute)){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Hora de visita no válida')));
-                      } 
-                      else {
-                        setState((){
-                          fechaVisita = valideDateTime(visitTime, _value);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Ingrese nombre de la visita.')));
+                      } else if (_value == 0 &&
+                          (visitTime.hour <= DateTime.now().hour &&
+                              visitTime.minute <= DateTime.now().minute)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Hora de visita no válida.')));
+                      } else {
+                        setState(() {
+                          fechaVisita = visitDateTime(visitTime, _value);
                         });
-                        // if(_value == 0){
-                        //   setState((){
-                        //     fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day, fechaVisita.hour, fechaVisita.minute);                      
-                        //   });
-                          
-                        // }else if(_value == 1){
-                        //   setState((){
-                        //      fechaVisita = DateTime(fechaVisita.year, fechaVisita.month, fechaVisita.day+1, fechaVisita.hour, fechaVisita.minute);
-                        //   });
-                        // }
-                        
                         _widgetQRCode(context);
                       }
                     },
                     style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
+                      fixedSize:
+                          MaterialStateProperty.all<Size>(const Size(250, 50)),
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 56, 114, 58)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
@@ -184,26 +169,25 @@ class _BodyState extends State<Body> {
   }
 }
 
-
 Future getTokenAndPostVisit(BuildContext context) async {
+  // widgetLoading(context);
   final apiClient = ApiGlobal.api;
-  String errorMessage = "";
-   var reqParams = {
+  var reqParams = {
     "name": nombreVisitacontroller.text,
     "date": fechaVisita.toString(),
   };
   try {
-    var qriID = await apiClient.postVisit(reqParams,context);
-    await Future.delayed(const Duration( seconds: 2));
+    var qriID = await apiClient.postVisit(reqParams, context);
+    await Future.delayed(const Duration(seconds: 2));
     return qriID;
   } catch (error) {
-    return  error.toString();
+    return error.toString();
   }
 }
 
-
 _widgetQRCode(BuildContext context) async {
   String qrData = await getTokenAndPostVisit(context);
+  // ignore: use_build_context_synchronously
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
@@ -213,34 +197,8 @@ _widgetQRCode(BuildContext context) async {
       )),
       context: context,
       builder: (context) {
-        return SizedBox(
-          key: const Key("qrCode"),
-            height: 650,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: QrImageView(
-                      data: qrData,
-                      size: 300.0,
-                    )),
-                const Text(
-                  'Enviar código QR al visitante',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    //Share.share('');
-                  },
-                  child: const Text('Compartir'),
-                ),
-              ],
-            ));
+        //Navigator.of(context).pop();
+        return QRCodeModal(visitID: qrData);
       });
-      nombreVisitacontroller.text = "";
+  nombreVisitacontroller.text = "";
 }

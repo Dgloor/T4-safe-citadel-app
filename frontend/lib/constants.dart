@@ -25,7 +25,7 @@ const defaultDuration = Duration(milliseconds: 250);
 // Form Error
 final RegExp emailValidatorRegExp =
     RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-const String kEmailNullError = "Por favor ingrese su usuario";
+const String kUsernameNullError = "Por favor ingrese su usuario";
 const String kInvalidEmailError = "Usuario no valido";
 const String kPassNullError = "Ingrese su contraseña";
 const String kShortPassError = "contraseña es demasiado corto";

@@ -108,8 +108,7 @@ class ApiClient {
   // }
 
 
-    Future<String> authenticate(String? username, String? password, BuildContext context) async {
-    widgetLoading(context);
+  Future<String> authenticate(String? username, String? password, BuildContext context) async {
     final url = Uri.parse(APIAUTH);
     final requestBody = jsonEncode({
       'username': username,
@@ -139,13 +138,13 @@ class ApiClient {
         return accessToken;
       }
     } catch (e) {
-      throw Exception('Failed to authenticate');
+       throw Exception('Error de inicio de sesión');
     }
-
-    throw Exception('Failed to authenticate');
+    throw Exception('Error de conexión');
   }
   Future widgetLoading(BuildContext context) async{
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context){
         return Center(child: CircularProgressIndicator());
@@ -183,7 +182,6 @@ class ApiClient {
     }
   }
   Future<dynamic> postVisit(Map<String, dynamic> reqParams, BuildContext context) async {
-    widgetLoading(context);
    var uri = Uri.parse(APIPOSTVISIT);
     String token = await _loadAccessToken();
     var response = await http.post((uri)

@@ -35,7 +35,6 @@ class _BottomNavigatorState extends State<BNavigator>{
             icon: Icon(Icons.add),
             label: 'Registrar',
           ),
-          
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
             label: 'Perfil',

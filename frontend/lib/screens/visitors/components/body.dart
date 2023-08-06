@@ -147,7 +147,6 @@ class _ContainerVisitaPendiente extends StatelessWidget {
 
 enum _MenuOptions { verQR, anular }
 String  qr_id = "";
-
 _widgetQRCode(BuildContext context, String visitID) async{
   //_getVisitID(visitID);
   showModalBottomSheet(

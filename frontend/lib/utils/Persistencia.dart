@@ -28,7 +28,7 @@ class SharedPreferencesUtil {
   }
   // Otros métodos para guardar/recuperar otros datos de Shared Preferences
 }
-DateTime valideDateTime(TimeOfDay visitTime, int value) {
+DateTime visitDateTime(TimeOfDay visitTime, int value) {
     final now = DateTime.now();
     if (value == 1) {
       return DateTime(
@@ -37,4 +37,12 @@ DateTime valideDateTime(TimeOfDay visitTime, int value) {
       return DateTime(
           now.year, now.month, now.day, visitTime.hour, visitTime.minute);
     }
+  }
+Future widgetLoading(BuildContext context) async{
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context){
+        return Center(child: CircularProgressIndicator());
+      });
   }

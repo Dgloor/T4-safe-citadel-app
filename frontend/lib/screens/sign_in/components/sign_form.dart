@@ -10,17 +10,29 @@ import '../../../size_config.dart';
 import 'package:safecitadel/utils/Persistencia.dart';
 import 'package:safecitadel/models/User.dart';
 
-class SignForm extends StatelessWidget {
+class SignForm extends StatefulWidget {
+
+  SignForm({super.key});
+
+  @override
+  State<SignForm> createState() => _SignFormState();
+}
+
+class _SignFormState extends State<SignForm> {
   late SharedPreferencesUtil prefsUtil;
 
   final _formKey = GlobalKey<FormState>();
-  String? email;
-  String? password;
-  bool? remember = false;
-  String _errorMessage = '';
-  final List<String?> errors = [];
 
-  SignForm({super.key});
+  String? username;
+
+  String? password;
+
+  bool? remember = false;
+
+  String _errorMessage = '';
+
+  final List<String?> errors = [];
+  bool passToggle = false;
   @override
   void initState() {
     initializeSharedPreferences();
@@ -36,14 +48,14 @@ class SignForm extends StatelessWidget {
 
   void removeError({String? error}) {
     if (errors.contains(error)) errors.remove(error);
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(children: [
-        buildEmailFormField(),
+        buildUsernameFormField(),
         SizedBox(height: getProportionateScreenHeight(30)),
         buildPasswordFormField(),
         SizedBox(height: getProportionateScreenHeight(30)),
@@ -78,9 +90,11 @@ class SignForm extends StatelessWidget {
               // if all are valid then go to success screen
               KeyboardUtil.hideKeyboard(context);
             }
-            apiClient.authenticate(email, password,context).then((_) {
+            apiClient.authenticate(username, password,context).then((_) {
+              widgetLoading(context);
               apiClient.getUserData().then((userData) {
                 UserSingleton.user = userData;
+                widgetLoading(context);
                 Future.delayed(const Duration(seconds: 4), () {
                   Navigator.pushReplacementNamed(context, HomeScreen.routeName);
                 });
@@ -91,7 +105,7 @@ class SignForm extends StatelessWidget {
               _errorMessage = error.toString();
             });
           },
-          text: 'Iniciar Sesion',
+          text: 'Iniciar Sesión',
         ),
         if (_errorMessage.isNotEmpty)
           Text(
@@ -103,7 +117,7 @@ class SignForm extends StatelessWidget {
   }
 
   TextFormField buildPasswordFormField() {
-    bool passToggle = false;
+    
     return TextFormField(
       obscureText: !passToggle,
       enableInteractiveSelection: false,
@@ -126,46 +140,48 @@ class SignForm extends StatelessWidget {
         }
         return null;
       },
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "Contraseña",
-        hintText: "Ingrese su contraseña",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
+        hintText: "Ingresar contraseña",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         prefixIcon: Icon(Icons.lock),
-      ),
-    );
+        suffixIcon: IconButton(
+            icon: Icon(
+              // Based on passwordVisible state choose the icon
+               passToggle
+               ? Icons.visibility
+               : Icons.visibility_off,
+               ),
+            onPressed: () {
+               // Update the state i.e. toogle the state of passwordVisible variable
+              setState(() {
+                   passToggle = !passToggle;
+               });
+             },
+            ),
+          ),
+      );
   }
 
-  TextFormField buildEmailFormField() {
+  TextFormField buildUsernameFormField() {
     return TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      onSaved: (newValue) => email = newValue,
+      onSaved: (newValue) => username = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
-          removeError(error: kEmailNullError);
+          removeError(error: kUsernameNullError);
         }
-        // else if (emailValidatorRegExp.hasMatch(value)) {
-        //   removeError(error: kInvalidEmailError);
-        // }
         return;
       },
       validator: (value) {
         if (value!.isEmpty) {
-          addError(error: kEmailNullError);
+          addError(error: kUsernameNullError);
           return "";
         }
-        // else if (!emailValidatorRegExp.hasMatch(value)) {
-        //   addError(error: kInvalidEmailError);
-        //   return "";
-        // }
         return null;
       },
       decoration: const InputDecoration(
         labelText: "Usuario",
-        hintText: "Ingrese su usuario",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
+        hintText: "Ingresar usuario",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         prefixIcon: Icon(Icons.person),
       ),
