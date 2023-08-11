@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:safecitadel/components/custom_surfix_icon.dart';
-import 'package:safecitadel/components/default_button.dart';
-import 'package:safecitadel/components/form_error.dart';
-import 'package:safecitadel/components/no_account_text.dart';
-import 'package:safecitadel/size_config.dart';
 
-import '../../../constants.dart';
+import 'package:safecitadel/size_config.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});

@@ -43,6 +43,6 @@ Future widgetLoading(BuildContext context) async{
       barrierDismissible: false,
       context: context,
       builder: (context){
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       });
   }
