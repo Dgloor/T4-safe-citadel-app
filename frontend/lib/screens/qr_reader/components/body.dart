@@ -1,12 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:safecitadel/utils/Persistence.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safecitadel/constants.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../size_config.dart';
 import '../../../components/default_button.dart';
+import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
+
 void main() => runApp(const MaterialApp(home: Body()));
 
 class Body extends StatelessWidget {
@@ -60,8 +62,6 @@ class _QRViewExampleState extends State<QRViewExample> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
   @override
   void reassemble() {
     super.reassemble();
@@ -84,10 +84,6 @@ class _QRViewExampleState extends State<QRViewExample> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (result != null)
-                    Text(
-                        'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
-                  else
                     const Text('Escanea el código'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -140,13 +136,10 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   Widget _buildQrView(BuildContext context) {
-    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
         ? 300.0
         : 400.0;
-    // To ensure the Scanner view is properly sizes after rotation
-    // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
@@ -160,16 +153,54 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async {
       setState(() {
         result = scanData;
       });
+      try {
+        String code =result?.code ?? "00000";
+        var visitData = await ApiGlobal.api.getVisitByQRCode(code);
+        _showVisitInfoPopup(visitData,code);
+      } catch (error) {
+        print('Error obteniendo información de visita: $error');
+      }
     });
+}
+
+  void _showVisitInfoPopup(dynamic visitData,String code) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Información sobre la visita'),
+            content: Text('Nombre del visitante: ${visitData['visitor']['name']}.\nLa residencia a la que se dirige es ${visitData['residence']['address']}\n'),
+            
+            actions: [
+              TextButton(
+                child: Text('Aceptar'),
+                style: TextButton.styleFrom(foregroundColor: kPrimaryLightColor),  // Establece el color aquí
+                onPressed: () {
+                  ApiGlobal.api.registerVisit(code);
+                  Navigator.pushNamed(context, QRScreen.routeName);
+                },
+              ),
+              TextButton(
+                child: Text('Cancelar'),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                onPressed: () {
+                   ApiGlobal.api.cancelVisit(code);
+                   Navigator.pushNamed(context, QRScreen.routeName);
+                },
+              ),
+            ],
+          );
+        });
   }
+
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');

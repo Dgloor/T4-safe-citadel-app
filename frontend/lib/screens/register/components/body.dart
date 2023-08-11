@@ -88,20 +88,23 @@ class _BodyState extends State<Body> {
                     isSelected: _selectedDay,
                     children: opcionesDias),
                 const SizedBox(height: 30.0),
-                Text(
-                  'Hora esperada',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.left,
-                ),
-                /**Selección de hora */
-                Center(
-                  child: MaterialButton(
+                if (!UserSingleton.isGUARD()) ...[
+                  Text(
+                    'Hora esperada',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.left,
+                  ),
+                  Center(
+                    child: MaterialButton(
                       color: Colors.green,
                       child: Text(
-                          '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',
-                          style: TextStyle(color: Colors.white, fontSize: 20)),
-                      onPressed: _showTimePicker),
-                ),
+                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: _showTimePicker,
+                    ),
+                  ),
+                  const SizedBox(height: 30.0),
+                ],
                 const SizedBox(height: 30.0),
                 Visibility(
                   visible: UserSingleton.isGUARD(),
@@ -131,8 +134,8 @@ class _BodyState extends State<Body> {
                             const SnackBar(
                                 content: Text('Ingrese nombre de la visita.')));
                       } else if (_value == 0 &&
-                          (visitTime.hour <= DateTime.now().hour &&
-                              visitTime.minute <= DateTime.now().minute)) {
+                          (visitTime.hour < DateTime.now().hour &&
+                              visitTime.minute < DateTime.now().minute)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('Hora de visita no válida.')));

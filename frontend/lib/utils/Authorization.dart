@@ -195,4 +195,46 @@ class ApiClient {
       throw Exception('No es posible registrar visita.');
     }
   }
+  Future<dynamic> getVisitByQRCode(String qrCode) async {
+    final url = Uri.parse(APIQR+qrCode);
+    String token = await _loadAccessToken();
+    var headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('No es posible obtener la información de la visita.');
+    }
+  }
+  Future<bool> cancelVisit(String qrCode) async {
+    final url = Uri.parse(APICANCEL+qrCode);
+    String token = await _loadAccessToken();
+    var headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.patch(url, headers: headers);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('No es posible registrar la visita.');
+    }
+  }
+  Future<bool> registerVisit(String qrCode) async {
+    final url = Uri.parse(APIREGISTER+qrCode);
+    String token = await _loadAccessToken();
+    var headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    var response = await http.post(url, headers: headers);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('No es POSIBLE cancelar la visita.');
+    }
+  }
 }
