@@ -6,6 +6,7 @@ import '../../home/components/discount_banner.dart';
 import '../../home/home_screen.dart';
 import '../visitor_screen.dart';
 import './widgetQR.dart';
+import 'package:safecitadel/models/User.dart';
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
@@ -108,6 +109,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (!UserSingleton.isGUARD()) ...[
         Expanded(
           child: ListView.builder(
             itemCount: visitasPendientes.length,
@@ -143,7 +145,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                   ));
             },
           ),
-        ),
+        )],
       ]),
     );
   }
