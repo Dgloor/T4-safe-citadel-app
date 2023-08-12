@@ -182,6 +182,7 @@ Future getTokenAndPostVisit(BuildContext context) async {
   try {
     var qriID = await apiClient.postVisit(reqParams, context);
     await Future.delayed(const Duration(seconds: 2));
+    if(qriID==null) return "";
     return qriID;
   } catch (error) {
      throw Exception('Error interno del servidor.');
@@ -191,7 +192,10 @@ Future getTokenAndPostVisit(BuildContext context) async {
 _widgetQRCode(BuildContext context) async {
   try{
   String qrData = await getTokenAndPostVisit(context);
-  // ignore: use_build_context_synchronously
+  if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Guardado exitosamente.')));;
+        return;
+  }
   showModalBottomSheet(
       backgroundColor: const Color.fromARGB(255, 251, 250, 239),
       isScrollControlled: true,
