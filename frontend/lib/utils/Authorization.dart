@@ -248,7 +248,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('No es POSIBLE cancelar la visita.');
+      throw Exception('No es POSIBLE registrar la visita.');
     }
   }
 }

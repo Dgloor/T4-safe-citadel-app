@@ -180,21 +180,28 @@ void _onQRViewCreated(QRViewController controller) {
             content: Text('Nombre del visitante: ${visitData['visitor']['name']}.\nLa residencia a la que se dirige es ${visitData['residence']['address']}\n'),
             
             actions: [
-              TextButton(
-                child: Text('Aceptar'),
+              TextButton(      
                 style: TextButton.styleFrom(foregroundColor: kPrimaryLightColor),  // Establece el color aquí
                 onPressed: () {
                   ApiGlobal.api.registerVisit(code);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Registro exitoso!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                   Navigator.pushNamed(context, QRScreen.routeName);
                 },
+                child: const Text('Aceptar'),
               ),
               TextButton(
-                child: Text('Cancelar'),
+                
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
                 onPressed: () {
                    ApiGlobal.api.cancelVisit(code);
                    Navigator.pushNamed(context, QRScreen.routeName);
                 },
+                child: const Text('Cancelar'),
               ),
             ],
           );
