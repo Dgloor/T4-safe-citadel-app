@@ -242,7 +242,16 @@ _widgetQRCode(BuildContext context, String visitID) async{
   }
 }
 
-
+getVisits() async {
+  try {
+    var jsonResponse = await ApiGlobal.api.getVisits();
+    visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
+    visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
+    visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
+  } catch (error) {
+    throw Exception("Error al obtener visitas");
+  }
+}
 ///Widget   principal
 class _Body extends State<Body>
     with TickerProviderStateMixin {
@@ -251,15 +260,7 @@ class _Body extends State<Body>
   @override
   void initState() {
     super.initState();
-    apiClient.getVisits().then((jsonResponse) {
-      setState(() {
-        visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
-        visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
-        visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
-      });
-    }).catchError((error) {
-      _errorMessage = error.toString();
-    });
+    getVisits();
   }
 
 
