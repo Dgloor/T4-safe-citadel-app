@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:safecitadel/screens/register/components/widgetQR.dart';
 import '../../../models/User.dart';
@@ -97,10 +98,10 @@ class _BodyState extends State<Body> {
                   Center(
                     child: MaterialButton(
                       color: Colors.green,
-                      onPressed: _showTimePicker,
                       child: Text(
-                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: const TextStyle(color: Colors.white, fontSize: 20),
+                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
+                      onPressed: _showTimePicker,
                     ),
                   ),
                   const SizedBox(height: 30.0),
@@ -115,7 +116,7 @@ class _BodyState extends State<Body> {
                         style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.left,
                       ),
-                      const TextField(
+                      TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Ingresar detalles de visita',
@@ -193,24 +194,26 @@ Future getTokenAndPostVisit(BuildContext context) async {
 _widgetQRCode(BuildContext context) async {
   var nombreVisitaRegistro = nombreVisitacontroller.text;
   try{
-  String qrData = await getTokenAndPostVisit(context);
-  if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Guardado exitosamente.')));
-        return;
-  }
-  showModalBottomSheet(
-      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20),
-      )),
-      context: context,
-      builder: (context) {
-        //Navigator.of(context).pop();
-        return QRCodeModal(visitID: qrData);
-      });
-  nombreVisitacontroller.text = "";
+    String qrData = await getTokenAndPostVisit(context);
+    if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Guardado exitosamente.'),
+          backgroundColor: Colors.green,));;
+          return;
+    }
+    showModalBottomSheet(
+        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        )),
+        context: context,
+        builder: (context) {
+          //Navigator.of(context).pop();
+          return QRCodeModal(visitID: qrData, nombreVisita: nombreVisitaRegistro, fechaVisita: fechaVisita);
+          
+        });
+    nombreVisitacontroller.text = "";
   } catch(error){
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error interno del servidor.')));
