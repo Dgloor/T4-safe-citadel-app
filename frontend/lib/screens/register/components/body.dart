@@ -144,6 +144,7 @@ class _BodyState extends State<Body> {
                           fechaVisita = visitDateTime(visitTime, _value);
                         });
                         _widgetQRCode(context);
+                        //nombreVisitacontroller.text = "";
                       }
                     },
                     style: ButtonStyle(
@@ -190,25 +191,27 @@ Future getTokenAndPostVisit(BuildContext context) async {
 }
 
 _widgetQRCode(BuildContext context) async {
+  var nombreVisitaRegistro = nombreVisitacontroller.text;
   try{
-  String qrData = await getTokenAndPostVisit(context);
-  if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Guardado exitosamente.')));;
-        return;
-  }
-  showModalBottomSheet(
-      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20),
-      )),
-      context: context,
-      builder: (context) {
-        //Navigator.of(context).pop();
-        return QRCodeModal(visitID: qrData);
-      });
-  nombreVisitacontroller.text = "";
+    String qrData = await getTokenAndPostVisit(context);
+    if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Guardado exitosamente.')));;
+          return;
+    }
+    showModalBottomSheet(
+        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        )),
+        context: context,
+        builder: (context) {
+          //Navigator.of(context).pop();
+          return QRCodeModal(visitID: qrData, nombreVisita: nombreVisitaRegistro, fechaVisita: fechaVisita);
+          
+        });
+    nombreVisitacontroller.text = "";
   } catch(error){
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error interno del servidor.')));

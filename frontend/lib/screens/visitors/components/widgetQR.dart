@@ -1,17 +1,25 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_flutter/src/qr_image_view.dart';
-
+import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 
 class QRCodeModal extends StatefulWidget {
   final String visitID;
 
-  const QRCodeModal({required this.visitID});
-
+  const QRCodeModal(
+      {required this.visitID});
   @override
   _QRCodeModalState createState() => _QRCodeModalState();
 }
 
 class _QRCodeModalState extends State<QRCodeModal> {
+  GlobalKey globalkey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -20,12 +28,18 @@ class _QRCodeModalState extends State<QRCodeModal> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: QrImageView(
-              data: widget.visitID,
-              size: 300.0,
-            ),
-          ),
+              padding: const EdgeInsets.all(16.0),
+              child: RepaintBoundary(
+                key: globalkey,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: QrImageView(
+                    data: widget.visitID,
+                    size: 300.0,
+                  ),
+                ),
+              )),
+          const SizedBox(height: 60.0),
           const Text(
             'Enviar código QR al visitante',
             style: TextStyle(
@@ -36,8 +50,8 @@ class _QRCodeModalState extends State<QRCodeModal> {
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              // Aquí puedes implementar la lógica para compartir el código QR
-              // Puedes utilizar la función Share.share('') aquí
+              shareQR(context, widget.visitID);
+              // convertQRtoImage();
             },
             child: const Text('Compartir'),
           ),
@@ -45,4 +59,38 @@ class _QRCodeModalState extends State<QRCodeModal> {
       ),
     );
   }
+
+  void shareQR(BuildContext context, String visitID) async {
+    final qrImage = await QrPainter(
+      data: visitID,
+      version: QrVersions.auto,
+      eyeStyle:
+          QrEyeStyle(eyeShape: QrEyeShape.square, color: Color(0xFF000000)),
+      gapless: true,
+    ).toImageData(50.0);
+    final filename = 'qr_code.png';
+    final tmpDir = await getTemporaryDirectory();
+    final file = await File('${tmpDir.path}/$filename').create();
+    var bytes = qrImage!.buffer.asUint8List();
+    await file.writeAsBytes(bytes);
+    XFile img = XFile(file.path);
+    await Share.shareXFiles([img],
+        text:
+            'Hola! te comparto el Código QR para que tengas acceso a mi residencia.');
+  }
+
+  // Future<void> convertQRtoImage() async {
+  //   RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+  //   final boundary = globalkey.currentContext!.findRenderObject();
+  //   ui.Image image = await boundary.toImage();
+  //   final directory = (await getApplicationDocumentsDirectory()).path;
+  //   ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+  //   Uint8List pngBytes = byteData!.buffer.asUint8List();
+  //   File imgFile = File("$directory/qrCode.png");
+  //   await imgFile.writeAsBytes(pngBytes);
+  //   XFile img = XFile(imgFile.path);
+  //   await Share.shareXFiles([img],
+  //       text:
+  //           'Hola! te comparto el Código QR para que tengas acceso a mi residencia.');
+  // }
 }

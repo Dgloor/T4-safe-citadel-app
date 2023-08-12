@@ -186,7 +186,22 @@ class ApiClient {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('No es posible registrar visita.');
+      throw Exception('No es posible consultar visitas.');
+    }
+  }
+
+  Future<dynamic> getVisitbyID(String visitID) async {
+    var uri = Uri.parse(APIGETVISIT + visitID);
+    String token = await _loadAccessToken();
+    var header = {
+      "Content-Type": "application/json",
+      "Authorization": 'Bearer $token'
+    };
+    var response = await http.get(uri, headers: header);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('No es posible consultar visita.');
     }
   }
 
@@ -233,7 +248,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('No es posible registrar la visita.');
+        throw Exception('No es posible cancelar la visita.');
     }
   }
 
