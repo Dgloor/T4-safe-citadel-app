@@ -58,10 +58,10 @@ final buttonStyle= ButtonStyle(
   );
 
 const url = 'http://192.168.100.39:8000';
-const String APIAUTH =  url+"/api/login/";
-const String APIUSER =  url+"/api/user/";
-const String APIPOSTVISIT = url+"/api/visit/";
-const String APIGETVISITS =  url+"/api/user/visit";
-const String APIQR =  url+"/api/qr/";
-const String APIREGISTER =  url+"/api/visit/register/";
-const String APICANCEL =  url+"/api/visit/cancel/";
+const String APIAUTH =  "$url/api/login/";
+const String APIUSER =  "$url/api/user/";
+const String APIPOSTVISIT = "$url/api/visit/";
+const String APIGETVISITS =  "$url/api/user/visit";
+const String APIQR =  "$url/api/qr/";
+const String APIREGISTER =  "$url/api/visit/register/";
+const String APICANCEL =  "$url/api/visit/cancel/";

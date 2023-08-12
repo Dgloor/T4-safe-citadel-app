@@ -5,7 +5,7 @@ import 'package:qr_flutter/src/qr_image_view.dart';
 class QRCodeModal extends StatefulWidget {
   final String visitID;
 
-  const QRCodeModal({required this.visitID});
+  const QRCodeModal({super.key, required this.visitID});
 
   @override
   _QRCodeModalState createState() => _QRCodeModalState();

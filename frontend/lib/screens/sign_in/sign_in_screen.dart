@@ -8,8 +8,8 @@ class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Body(),
+    return const Scaffold(
+      body: Body(),
     );
   }
 }

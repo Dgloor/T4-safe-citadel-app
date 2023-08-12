@@ -1,16 +1,14 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:qr_flutter/src/qr_image_view.dart';
 import 'package:share_plus/share_plus.dart';
 
 
 class QRCodeModal extends StatefulWidget {
   final String visitID;
 
-  const QRCodeModal({required this.visitID});
+  const QRCodeModal({super.key, required this.visitID});
 
   @override
   _QRCodeModalState createState() => _QRCodeModalState();
@@ -56,7 +54,7 @@ class _QRCodeModalState extends State<QRCodeModal> {
       version: QrVersions.auto,
       gapless: false,
       ).toImageData(200.0);
-    final filename = 'qr_code.png';
+    const filename = 'qr_code.png';
     final tmpDir = await getTemporaryDirectory();
     final file = await File('${tmpDir.path}/$filename').create();
     var bytes = qrImage!.buffer.asUint8List();

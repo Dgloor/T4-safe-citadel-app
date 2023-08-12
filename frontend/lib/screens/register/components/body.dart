@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:safecitadel/screens/register/components/widgetQR.dart';
 import '../../../models/User.dart';
@@ -97,10 +96,10 @@ class _BodyState extends State<Body> {
                   Center(
                     child: MaterialButton(
                       color: Colors.green,
-                      child: Text(
-                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
                       onPressed: _showTimePicker,
+                      child: Text(
+                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: const TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30.0),
@@ -115,7 +114,7 @@ class _BodyState extends State<Body> {
                         style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.left,
                       ),
-                      TextField(
+                      const TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Ingresar detalles de visita',
@@ -193,7 +192,7 @@ _widgetQRCode(BuildContext context) async {
   try{
   String qrData = await getTokenAndPostVisit(context);
   if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Guardado exitosamente.')));;
+        const SnackBar(content: Text('Guardado exitosamente.')));
         return;
   }
   showModalBottomSheet(

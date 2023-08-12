@@ -7,8 +7,8 @@ class VisitaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Body()
+    return const Scaffold(
+      body: Body()
     );
   }
 }
