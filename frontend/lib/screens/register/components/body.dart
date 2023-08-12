@@ -59,6 +59,7 @@ class _BodyState extends State<Body> {
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 30.0),
+                if (!UserSingleton.isGUARD()) ...[
                 /**Elección de día de visita */
                 Text(
                   'Día de visita',
@@ -87,7 +88,7 @@ class _BodyState extends State<Body> {
                     isSelected: _selectedDay,
                     children: opcionesDias),
                 const SizedBox(height: 30.0),
-                if (!UserSingleton.isGUARD()) ...[
+                
                   Text(
                     'Hora esperada',
                     style: Theme.of(context).textTheme.titleMedium,

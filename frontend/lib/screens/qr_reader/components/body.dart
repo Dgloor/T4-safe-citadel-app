@@ -8,6 +8,8 @@ import '../../../size_config.dart';
 import '../../../components/default_button.dart';
 import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
 
+import '../../home/home_screen.dart';
+
 void main() => runApp(const MaterialApp(home: Body()));
 
 class Body extends StatelessWidget {
@@ -183,6 +185,7 @@ void _onQRViewCreated(QRViewController controller) {
                 style: TextButton.styleFrom(foregroundColor: kPrimaryLightColor),  // Establece el color aquí
                 onPressed: () {
                   ApiGlobal.api.registerVisit(code);
+                  //Navigator.pushNamed(context, HomeScreen.routeName);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Registro exitoso!'),

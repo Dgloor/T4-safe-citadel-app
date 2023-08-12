@@ -181,6 +181,15 @@ void errorAnular(BuildContext context){
                     ),
                   );
 }
+void errorGetVisits(BuildContext context){
+  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Problemas para obtener visitas."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+}
+
 
 void _showDialog (BuildContext context, String visitID) {
   showDialog(
@@ -260,7 +269,11 @@ class _Body extends State<Body>
   @override
   void initState() {
     super.initState();
-    getVisits();
+    try{
+      getVisits();
+    }catch(error){
+      errorGetVisits(context);
+    }
   }
 
 
