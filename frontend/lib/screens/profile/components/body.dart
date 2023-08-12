@@ -24,7 +24,7 @@ class Body extends StatelessWidget {
             press: () {},
           ),
           ProfileMenu(
-            text: "Log Out",
+            text: "Cerrar Sesión",
             icon: "assets/icons/Log out.svg",
             press: () {Navigator.pushNamed(context, SignInScreen.routeName);},
           ),

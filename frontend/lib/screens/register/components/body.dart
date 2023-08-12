@@ -60,6 +60,7 @@ class _BodyState extends State<Body> {
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 30.0),
+                if (!UserSingleton.isGUARD()) ...[
                 /**Elección de día de visita */
                 Text(
                   'Día de visita',
@@ -88,7 +89,7 @@ class _BodyState extends State<Body> {
                     isSelected: _selectedDay,
                     children: opcionesDias),
                 const SizedBox(height: 30.0),
-                if (!UserSingleton.isGUARD()) ...[
+                
                   Text(
                     'Hora esperada',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -195,7 +196,8 @@ _widgetQRCode(BuildContext context) async {
   try{
     String qrData = await getTokenAndPostVisit(context);
     if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Guardado exitosamente.')));;
+          const SnackBar(content: Text('Guardado exitosamente.'),
+          backgroundColor: Colors.green,));;
           return;
     }
     showModalBottomSheet(
