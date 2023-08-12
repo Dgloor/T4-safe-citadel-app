@@ -11,7 +11,6 @@ import 'package:safecitadel/utils/Persistencia.dart';
 import 'package:safecitadel/models/User.dart';
 
 class SignForm extends StatefulWidget {
-
   SignForm({super.key});
 
   @override
@@ -30,6 +29,8 @@ class _SignFormState extends State<SignForm> {
   bool? remember = false;
 
   String _errorMessage = '';
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final List<String?> errors = [];
   bool passToggle = false;
@@ -43,12 +44,20 @@ class _SignFormState extends State<SignForm> {
   }
 
   void addError({String? error}) {
-    if (!errors.contains(error)) errors.add(error);
+    if (!errors.contains(error)) {
+      setState(() {
+        errors.add(error);
+      });
+    }
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error)) errors.remove(error);
-  } 
+    if (errors.contains(error)) {
+      setState(() {
+        errors.remove(error);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,27 +92,24 @@ class _SignFormState extends State<SignForm> {
         FormError(errors: errors),
         SizedBox(height: getProportionateScreenHeight(20)),
         DefaultButton(
-          press: () {
+          press: () async {
             final apiClient = ApiGlobal.api;
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              // if all are valid then go to success screen
               KeyboardUtil.hideKeyboard(context);
             }
-            apiClient.authenticate(username, password,context).then((_) {
+            try {
+              await apiClient.authenticate(username, password, context);
               widgetLoading(context);
-              apiClient.getUserData().then((userData) {
-                UserSingleton.user = userData;
-                widgetLoading(context);
-                Future.delayed(const Duration(seconds: 4), () {
-                  Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-                });
-              }).catchError((error) {
+              UserSingleton.user = await apiClient.getUserData();
+              Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            } catch (error) {
+              setState(() {
                 _errorMessage = error.toString();
+                _usernameController.clear();
+                _passwordController.clear();
               });
-            }).catchError((error) {
-              _errorMessage = error.toString();
-            });
+            }
           },
           text: 'Iniciar Sesión',
         ),
@@ -117,8 +123,8 @@ class _SignFormState extends State<SignForm> {
   }
 
   TextFormField buildPasswordFormField() {
-    
     return TextFormField(
+      controller: _passwordController,
       obscureText: !passToggle,
       enableInteractiveSelection: false,
       onSaved: (newValue) => password = newValue,
@@ -146,25 +152,24 @@ class _SignFormState extends State<SignForm> {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         prefixIcon: Icon(Icons.lock),
         suffixIcon: IconButton(
-            icon: Icon(
-              // Based on passwordVisible state choose the icon
-               passToggle
-               ? Icons.visibility
-               : Icons.visibility_off,
-               ),
-            onPressed: () {
-               // Update the state i.e. toogle the state of passwordVisible variable
-              setState(() {
-                   passToggle = !passToggle;
-               });
-             },
-            ),
+          icon: Icon(
+            // Based on passwordVisible state choose the icon
+            passToggle ? Icons.visibility : Icons.visibility_off,
           ),
-      );
+          onPressed: () {
+            // Update the state i.e. toogle the state of passwordVisible variable
+            setState(() {
+              passToggle = !passToggle;
+            });
+          },
+        ),
+      ),
+    );
   }
 
   TextFormField buildUsernameFormField() {
     return TextFormField(
+      controller: _usernameController,
       onSaved: (newValue) => username = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {

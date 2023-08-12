@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:safecitadel/constants.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:safecitadel/models/User.dart';
+
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
 class ApiClient {
@@ -32,7 +33,8 @@ class ApiClient {
             final newAccessToken = await _refreshAccessToken();
             final options = response.requestOptions;
             options.headers['Authorization'] = 'Bearer $newAccessToken';
-            final refreshedResponse= await _dio.request(options.path, options: options.data);
+            final refreshedResponse =
+                await _dio.request(options.path, options: options.data);
             return handler.resolve(refreshedResponse);
           }
           return handler.next(response);
@@ -107,96 +109,106 @@ class ApiClient {
   //       options: options);
   // }
 
-
-  Future<String> authenticate(String? username, String? password, BuildContext context) async {
+  Future<String> authenticate(
+      String? username, String? password, BuildContext context) async {
     final url = Uri.parse(APIAUTH);
     final requestBody = jsonEncode({
       'username': username,
       'password': password,
     });
     final basicAuth = 'Basic ${base64Encode(utf8.encode('admin:password'))}';
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': basicAuth,
+      },
+      body: requestBody,
+    );
 
-    try {
-      final response = await http. post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': basicAuth,
-        },
-        body: requestBody,
-      );
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final accessToken = responseData['token'];
+      final refreshToken = responseData['refresh_token'];
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final accessToken = responseData['token'];
-        final refreshToken = responseData['refresh_token'];
+      // Store the access token and refresh token locally
+      await _secureStorage.write(key: 'access_token', value: accessToken);
+      await _secureStorage.write(key: 'refresh_token', value: refreshToken);
 
-        // Store the access token and refresh token locally
-        await _secureStorage.write(key: 'access_token', value: accessToken);
-        await _secureStorage.write(key: 'refresh_token', value: refreshToken);
-
-        return accessToken;
-      }
-    } catch (e) {
-       throw Exception('Error de inicio de sesión');
+      return accessToken;
+    } else if (response.statusCode == 401) {
+      throw AuthException('Credenciales incorrectas.');
+    } else if (response.statusCode == 500) {
+      throw ServerException('Error interno del servidor.');
+    } else {
+      throw ServerException('Error desconocido.');
     }
-    throw Exception('Error de conexión');
   }
-  Future widgetLoading(BuildContext context) async{
+
+  Future widgetLoading(BuildContext context) async {
     showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context){
-        return Center(child: CircularProgressIndicator());
-      });
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        });
   }
-   Future<User> getUserData() async {
+
+  Future<User> getUserData() async {
     final url = Uri.parse(APIUSER);
     String token = await _loadAccessToken();
-    var headers = {"Content-Type": "application/json",
+    var headers = {
+      "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
       // La solicitud fue exitosa, puedes obtener la respuesta
-      var responseData = jsonDecode( response.body);
-      
+      var responseData = jsonDecode(response.body);
       return User.fromJson(responseData['user']);
+    } else if (response.statusCode == 401) {
+      throw AuthException('No autorizado. Token inválido o expirado.');
+    } else if (response.statusCode == 500) {
+      throw ServerException('Error interno del servidor.');
     } else {
-      // Ocurrió un error en la solicitud
-      throw Exception('No es posible cargar los datos del usuario.');
+      throw ServerException('Error desconocido.');
     }
   }
+
   Future<dynamic> getVisits() async {
     var uri = Uri.parse(APIGETVISITS);
     String token = await _loadAccessToken();
-    var header =  {
+    var header = {
       "Content-Type": "application/json",
       "Authorization": 'Bearer $token'
     };
     var response = await http.get(uri, headers: header);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
-    }else{
+    } else {
       throw Exception('No es posible registrar visita.');
     }
   }
-  Future<dynamic> postVisit(Map<String, dynamic> reqParams, BuildContext context) async {
-   var uri = Uri.parse(APIPOSTVISIT);
+
+  Future<dynamic> postVisit(
+      Map<String, dynamic> reqParams, BuildContext context) async {
+    var uri = Uri.parse(APIPOSTVISIT);
     String token = await _loadAccessToken();
-    var response = await http.post((uri)
-    .replace(queryParameters: reqParams),headers: {"Content-Type": "application/json",
-                      "Authorization": 'Bearer $token'
-            });
-    if(response.statusCode == 200){
+    var response = await http.post((uri).replace(queryParameters: reqParams),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": 'Bearer $token'
+        });
+    if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       return jsonResponse['qr_id'];
-    }else{
+    } else {
       throw Exception('No es posible registrar visita.');
     }
   }
+
   Future<dynamic> getVisitByQRCode(String qrCode) async {
-    final url = Uri.parse(APIQR+qrCode);
+    final url = Uri.parse(APIQR + qrCode);
     String token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
@@ -209,8 +221,9 @@ class ApiClient {
       throw Exception('No es posible obtener la información de la visita.');
     }
   }
+
   Future<bool> cancelVisit(String qrCode) async {
-    final url = Uri.parse(APICANCEL+qrCode);
+    final url = Uri.parse(APICANCEL + qrCode);
     String token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
@@ -223,8 +236,9 @@ class ApiClient {
       throw Exception('No es posible registrar la visita.');
     }
   }
+
   Future<bool> registerVisit(String qrCode) async {
-    final url = Uri.parse(APIREGISTER+qrCode);
+    final url = Uri.parse(APIREGISTER + qrCode);
     String token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
@@ -237,4 +251,18 @@ class ApiClient {
       throw Exception('No es POSIBLE cancelar la visita.');
     }
   }
+}
+
+class AuthException implements Exception {
+  final String message;
+  AuthException(this.message);
+  @override
+  String toString() => message;
+}
+
+class ServerException implements Exception {
+  final String message;
+  ServerException(this.message);
+  @override
+  String toString() => message;
 }

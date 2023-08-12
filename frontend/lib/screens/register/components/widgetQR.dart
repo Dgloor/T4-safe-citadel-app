@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_flutter/src/qr_image_view.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class QRCodeModal extends StatefulWidget {
@@ -59,8 +61,8 @@ class _QRCodeModalState extends State<QRCodeModal> {
     final file = await File('${tmpDir.path}/$filename').create();
     var bytes = qrImage!.buffer.asUint8List();
     await file.writeAsBytes(bytes);
-   // XFile img = XFile(file.path);
-   // final path = await Share.shareXFiles([img], text: 'Código QR para la visita'); 
+    XFile img = XFile(file.path);
+    await Share.shareXFiles([img], text: 'Código QR para la visita'); 
 
   }
 }

@@ -184,11 +184,12 @@ Future getTokenAndPostVisit(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 2));
     return qriID;
   } catch (error) {
-    return error.toString();
+     throw Exception('Error interno del servidor.');
   }
 }
 
 _widgetQRCode(BuildContext context) async {
+  try{
   String qrData = await getTokenAndPostVisit(context);
   // ignore: use_build_context_synchronously
   showModalBottomSheet(
@@ -204,4 +205,8 @@ _widgetQRCode(BuildContext context) async {
         return QRCodeModal(visitID: qrData);
       });
   nombreVisitacontroller.text = "";
+  } catch(error){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error interno del servidor.')));
+  }
 }
