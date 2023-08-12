@@ -3,6 +3,9 @@ import 'package:safecitadel/utils/Persistence.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../size_config.dart';
 import '../../home/components/discount_banner.dart';
+import '../../home/home_screen.dart';
+import '../visitor_screen.dart';
+import './widgetQR.dart';
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
@@ -132,6 +135,8 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                       _widgetQRCode(context,visitID);
                       break;
                     case _MenuOptions.anular:
+                      _showDialog(context,visitID);
+                      
                       break;
                   }
                 }
@@ -147,48 +152,106 @@ class _ContainerVisitaPendiente extends StatelessWidget {
 
 enum _MenuOptions { verQR, anular }
 String  qr_id = "";
-_widgetQRCode(BuildContext context, String visitID) async{
-  //_getVisitID(visitID);
-  showModalBottomSheet(
-      backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-        top: Radius.circular(20),
-      )),
-      context: context,
-      builder: (context) {
-        return SizedBox(
-            height: 650, // Establece la altura deseada aquí
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: QrImageView(
-                      data: qr_id,
-                      size: 300.0,
-                    )),
-                const Text(
-                  'Enviar código QR al visitante',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    //Share.share('');
-                  },
-                  child: const Text('Compartir'),
-                ),
-              ],
-            ));
-      });
+
+cancelarVisita(BuildContext context, String visitID) async {
+  try{
+    var visitData = await ApiGlobal.api.getVisitbyID(visitID);
+    var qr_id = visitData["qr_id"];
+    bool success = await ApiGlobal.api.cancelVisit(qr_id);
+  }catch(error){
+    throw Exception("Error al anular visita");
+  }
+ 
 }
 
+void successDelete(BuildContext context){
+  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Visita anulada'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+}
 
+void errorAnular(BuildContext context){
+  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("No se pudo anular visita."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+}
+
+void _showDialog (BuildContext context, String visitID) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Anular visita"),
+        content: const Text("¿Está seguro que desea anular la visita?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () async {
+              try{
+                await cancelarVisita(context,visitID);
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, HomeScreen.routeName);
+                successDelete(context);
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                 
+              }catch(error){
+                Navigator.of(context).pop();
+                errorAnular(context);
+              }    
+            },
+            child: const Text("Aceptar"),
+          ),
+
+        ],
+      );
+    },
+  );
+}
+
+_widgetQRCode(BuildContext context, String visitID) async{
+  var visitData = await ApiGlobal.api.getVisitbyID(visitID);
+  var qr_id = visitData['qr_id'];
+  try{
+    showModalBottomSheet(
+        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        )),
+        context: context,
+        builder: (context) {
+          //Navigator.of(context).pop();
+          return QRCodeModal(visitID: qr_id);
+          
+        });
+  } catch(error){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error interno del servidor.')));
+  }
+}
+
+getVisits() async {
+  try {
+    var jsonResponse = await ApiGlobal.api.getVisits();
+    visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
+    visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
+    visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
+  } catch (error) {
+    throw Exception("Error al obtener visitas");
+  }
+}
 ///Widget   principal
 class _Body extends State<Body>
     with TickerProviderStateMixin {
@@ -197,32 +260,10 @@ class _Body extends State<Body>
   @override
   void initState() {
     super.initState();
-    apiClient.getVisits().then((jsonResponse) {
-      setState(() {
-        visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
-        visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
-        visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
-      });
-    }).catchError((error) {
-      _errorMessage = error.toString();
-    });
+    getVisits();
   }
-//   void getTokenAndGetVisits() async {
-//   SharedPreferencesUtil prefs = await SharedPreferencesUtil.getInstance();
-//   String token = prefs.getToken();
-//   try {
-//     var jsonResponse = await Api.getVisits(token);
-//     setState(() {
-//         visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
-//         visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
-//         visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
-//       });
-//   } catch (error) {
-//    
-//   }
-// }
 
-  String usuario = "";
+
   @override
   Widget build(BuildContext context) {
     TabController tabController = TabController(length: 3, vsync: this);

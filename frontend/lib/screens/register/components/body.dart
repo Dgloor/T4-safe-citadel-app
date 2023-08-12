@@ -143,6 +143,7 @@ class _BodyState extends State<Body> {
                           fechaVisita = visitDateTime(visitTime, _value);
                         });
                         _widgetQRCode(context);
+                        //nombreVisitacontroller.text = "";
                       }
                     },
                     style: ButtonStyle(
@@ -189,6 +190,7 @@ Future getTokenAndPostVisit(BuildContext context) async {
 }
 
 _widgetQRCode(BuildContext context) async {
+  var nombreVisitaRegistro = nombreVisitacontroller.text;
   try{
   String qrData = await getTokenAndPostVisit(context);
   if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
