@@ -57,6 +57,7 @@ final buttonStyle= ButtonStyle(
     // textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20)), // Cambia el estilo del texto del botón
   );
 
+//const url = 'http://192.168.100.39:8000';
 const url = 'http://192.168.100.60:8000';
 const String APIAUTH =  url+"/api/login/";
 const String APIUSER =  url+"/api/user/";

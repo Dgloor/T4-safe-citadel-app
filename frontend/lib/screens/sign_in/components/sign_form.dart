@@ -11,7 +11,7 @@ import 'package:safecitadel/utils/Persistencia.dart';
 import 'package:safecitadel/models/User.dart';
 
 class SignForm extends StatefulWidget {
-  SignForm({super.key});
+  const SignForm({super.key});
 
   @override
   State<SignForm> createState() => _SignFormState();
@@ -150,7 +150,7 @@ class _SignFormState extends State<SignForm> {
         labelText: "Contraseña",
         hintText: "Ingresar contraseña",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        prefixIcon: Icon(Icons.lock),
+        prefixIcon: const Icon(Icons.lock),
         suffixIcon: IconButton(
           icon: Icon(
             // Based on passwordVisible state choose the icon

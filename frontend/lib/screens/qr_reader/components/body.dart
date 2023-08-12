@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:safecitadel/utils/Persistence.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:safecitadel/constants.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -188,7 +187,7 @@ void _onQRViewCreated(QRViewController controller) {
                   ApiGlobal.api.registerVisit(code);
                   //Navigator.pushNamed(context, HomeScreen.routeName);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Registro exitoso!'),
                       backgroundColor: Colors.green,
                     ),
