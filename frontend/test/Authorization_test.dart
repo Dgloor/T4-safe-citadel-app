@@ -1,3 +1,4 @@
+import 'package:http/testing.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,7 @@ void main() {
     mockHttpClient = MockHttpClient();
     apiClient = ApiClient();
   });
+
  test('getVisits returns decoded response on successful request', () async {
     final mockResponse = http.Response('{"key": "value"}', 200);
     final expectedResponse = {"key": "value"};

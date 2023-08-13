@@ -145,7 +145,6 @@ class _BodyState extends State<Body> {
                           fechaVisita = visitDateTime(visitTime, _value);
                         });
                         _widgetQRCode(context);
-                        //nombreVisitacontroller.text = "";
                       }
                     },
                     style: ButtonStyle(
@@ -175,7 +174,6 @@ class _BodyState extends State<Body> {
 }
 
 Future getTokenAndPostVisit(BuildContext context) async {
-  // widgetLoading(context);
   final apiClient = ApiGlobal.api;
   var reqParams = {
     "name": nombreVisitacontroller.text,
