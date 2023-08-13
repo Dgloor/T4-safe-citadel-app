@@ -110,7 +110,7 @@ class ApiClient {
   // }
 
   Future<String> authenticate(
-      String? username, String? password, BuildContext context) async {
+    String? username, String? password, BuildContext context) async {
     final url = Uri.parse(APIAUTH);
     final requestBody = jsonEncode({
       'username': username,

@@ -92,6 +92,7 @@ class _SignFormState extends State<SignForm> {
         FormError(errors: errors),
         SizedBox(height: getProportionateScreenHeight(20)),
         DefaultButton(
+          key: Key('loginButton'),
           press: () async {
             final apiClient = ApiGlobal.api;
             if (_formKey.currentState!.validate()) {
@@ -124,6 +125,7 @@ class _SignFormState extends State<SignForm> {
 
   TextFormField buildPasswordFormField() {
     return TextFormField(
+      key: Key('passwordField'),
       controller: _passwordController,
       obscureText: !passToggle,
       enableInteractiveSelection: false,
@@ -169,6 +171,7 @@ class _SignFormState extends State<SignForm> {
 
   TextFormField buildUsernameFormField() {
     return TextFormField(
+      key: Key('usernameField'),
       controller: _usernameController,
       onSaved: (newValue) => username = newValue,
       onChanged: (value) {

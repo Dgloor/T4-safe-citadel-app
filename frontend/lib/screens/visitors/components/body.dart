@@ -128,6 +128,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                   ),
                   const PopupMenuItem(
                     value: _MenuOptions.anular,
+                    key: const Key("anularVisitbutton"),
                     child: Text('Anular'),
                   ),
                 ],
