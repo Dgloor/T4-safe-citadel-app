@@ -38,6 +38,21 @@ DateTime visitDateTime(TimeOfDay visitTime, int value) {
           now.year, now.month, now.day, visitTime.hour, visitTime.minute);
     }
   }
+bool validateNameVisitor(String value) {
+  if (value.trim().split(' ').length < 2) {
+    return false;
+  }
+  return true;
+}
+bool validateTimeVisit(TimeOfDay time){
+  if(time.hour < TimeOfDay.now().hour){
+    return false;
+  }else if(time.hour == TimeOfDay.now().hour && time.minute < TimeOfDay.now().minute){
+    return false;
+  }
+  return true;
+}
+
 Future widgetLoading(BuildContext context) async{
     showDialog(
       barrierDismissible: false,

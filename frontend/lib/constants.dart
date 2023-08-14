@@ -58,7 +58,7 @@ final buttonStyle= ButtonStyle(
   );
 
 //const url = 'http://192.168.100.39:8000';
-const url = 'http://192.168.100.60:8000';
+const url = 'https://citadel-gyg-b72af3d88c66.herokuapp.com';
 const String APIAUTH =  url+"/api/login/";
 const String APIUSER =  url+"/api/user/";
 const String APIPOSTVISIT = url+"/api/visit/";

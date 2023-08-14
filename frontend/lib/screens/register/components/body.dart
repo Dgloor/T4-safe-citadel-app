@@ -29,6 +29,12 @@ class _BodyState extends State<Body> {
             }));
   }
 
+
+  @override
+  void dispose() {
+    nombreVisitacontroller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +56,7 @@ class _BodyState extends State<Body> {
                   textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 30.0),
-                TextField(
+                TextFormField(
                   key: const Key("visitorNameField"),
                   controller: nombreVisitacontroller,
                   decoration: InputDecoration(
@@ -134,13 +140,16 @@ class _BodyState extends State<Body> {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('Ingrese nombre de la visita.')));
+                      }else if(!validateNameVisitor(nombreVisitacontroller.text)){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Ingresar nombre y apellido.')));
                       } else if (_value == 0 &&
-                          (visitTime.hour < DateTime.now().hour &&
-                              visitTime.minute < DateTime.now().minute)) {
+                          (!validateTimeVisit(visitTime))) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('Hora de visita no válida.')));
-                      } else {
+                      }else {
                         setState(() {
                           fechaVisita = visitDateTime(visitTime, _value);
                         });
@@ -188,6 +197,8 @@ Future getTokenAndPostVisit(BuildContext context) async {
      throw Exception('Error interno del servidor.');
   }
 }
+
+
 
 _widgetQRCode(BuildContext context) async {
   var nombreVisitaRegistro = nombreVisitacontroller.text;
