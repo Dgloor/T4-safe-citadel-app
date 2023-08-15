@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:safecitadel/utils/Persistence.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import '../../../size_config.dart';
 import '../../home/components/welcome_banner.dart';
 import '../../home/home_screen.dart';
-import '../visitor_screen.dart';
 import './widgetQR.dart';
 import 'package:safecitadel/models/User.dart';
 class Body extends StatefulWidget {
@@ -128,7 +126,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                   ),
                   const PopupMenuItem(
                     value: _MenuOptions.anular,
-                    key: const Key("anularVisitbutton"),
+                    key: Key("anularVisitbutton"),
                     child: Text('Anular'),
                   ),
                 ],
@@ -160,7 +158,7 @@ cancelarVisita(BuildContext context, String visitID) async {
   try{
     var visitData = await ApiGlobal.api.getVisitbyID(visitID);
     var qr_id = visitData["qr_id"];
-    bool success = await ApiGlobal.api.cancelVisit(qr_id);
+    await ApiGlobal.api.cancelVisit(qr_id);
   }catch(error){
     throw Exception("Error al anular visita");
   }
@@ -169,7 +167,7 @@ cancelarVisita(BuildContext context, String visitID) async {
 
 void successDelete(BuildContext context){
   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Visita anulada'),
                       backgroundColor: Colors.green,
                     ),
@@ -178,7 +176,7 @@ void successDelete(BuildContext context){
 
 void errorAnular(BuildContext context){
   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text("No se pudo anular visita."),
                       backgroundColor: Colors.red,
                     ),
@@ -186,7 +184,7 @@ void errorAnular(BuildContext context){
 }
 void errorGetVisits(BuildContext context){
   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text("Problemas para obtener visitas."),
                       backgroundColor: Colors.red,
                     ),
@@ -213,6 +211,7 @@ void _showDialog (BuildContext context, String visitID) {
               try{
                 await cancelarVisita(context,visitID);
                 Navigator.of(context).pop();
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, HomeScreen.routeName);
                 successDelete(context);
                 // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
@@ -268,7 +267,6 @@ getVisits() async {
 class _Body extends State<Body>
     with TickerProviderStateMixin {
   final apiClient = ApiGlobal.api;
-  String _errorMessage = '';
   @override
   void initState() {
     super.initState();

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
   _BodyState createState() => _BodyState();
 }

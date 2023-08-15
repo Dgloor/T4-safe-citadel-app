@@ -1,4 +1,3 @@
-import 'package:http/testing.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;

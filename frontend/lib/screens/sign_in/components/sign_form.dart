@@ -36,6 +36,7 @@ class _SignFormState extends State<SignForm> {
   bool passToggle = false;
   @override
   void initState() {
+    super.initState();
     initializeSharedPreferences();
   }
 
@@ -92,7 +93,7 @@ class _SignFormState extends State<SignForm> {
         FormError(errors: errors),
         SizedBox(height: getProportionateScreenHeight(20)),
         DefaultButton(
-          key: Key('loginButton'),
+          key: const Key('loginButton'),
           press: () async {
             final apiClient = ApiGlobal.api;
             if (_formKey.currentState!.validate()) {
@@ -101,6 +102,7 @@ class _SignFormState extends State<SignForm> {
             }
             try {
               await apiClient.authenticate(username, password, context);
+              // ignore: use_build_context_synchronously
               widgetLoading(context);
               UserSingleton.user = await apiClient.getUserData();
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
@@ -125,7 +127,7 @@ class _SignFormState extends State<SignForm> {
 
   TextFormField buildPasswordFormField() {
     return TextFormField(
-      key: Key('passwordField'),
+      key: const Key('passwordField'),
       controller: _passwordController,
       obscureText: !passToggle,
       enableInteractiveSelection: false,

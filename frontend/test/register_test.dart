@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:safecitadel/screens/register/components/body.dart';
-import 'package:safecitadel/screens/register/register_screen.dart';
-
 
 void main() {
   testWidgets("Visitor name field is empty", (WidgetTester tester) async{

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_flutter/src/qr_image_view.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:intl/intl.dart';
 
 class QRCodeModal extends StatefulWidget {
   final String visitID;
@@ -69,7 +67,7 @@ class _QRCodeModalState extends State<QRCodeModal> {
           QrEyeStyle(eyeShape: QrEyeShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
       gapless: true,
     ).toImageData(1200);
-    final filename = 'qr_code.png';
+    const filename = 'codigoQR.png';
     final tmpDir = await getTemporaryDirectory();
     final file = await File('${tmpDir.path}/$filename').create();
     var bytes = qrImage!.buffer.asUint8List();
