@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safecitadel/utils/Persistence.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../size_config.dart';
-import '../../home/components/discount_banner.dart';
+import '../../home/components/welcome_banner.dart';
 import '../../home/home_screen.dart';
 import '../visitor_screen.dart';
 import './widgetQR.dart';
@@ -109,7 +109,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
         ),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (!UserSingleton.isGUARD()) ...[
+        
         Expanded(
           child: ListView.builder(
             itemCount: visitasPendientes.length,
@@ -120,7 +120,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
               return ListTile(
                   title: Text(nombreVisita), 
                   leading: const Icon(Icons.person),
-                  trailing: PopupMenuButton<_MenuOptions>(
+                  trailing: !UserSingleton.isGUARD() ? PopupMenuButton<_MenuOptions>(
                    itemBuilder: (BuildContext context) => <PopupMenuEntry<_MenuOptions>>[
                   const PopupMenuItem(
                     value: _MenuOptions.verQR,
@@ -143,11 +143,11 @@ class _ContainerVisitaPendiente extends StatelessWidget {
                       break;
                   }
                 }
-                  ));
+                  ) : null);
             },
           ),
         )],
-      ]),
+      ),
     );
   }
 }

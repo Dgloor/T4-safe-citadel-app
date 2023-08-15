@@ -64,10 +64,11 @@ class _QRCodeModalState extends State<QRCodeModal> {
     final qrImage = await QrPainter(
       data: visitID,
       version: QrVersions.auto,
+      dataModuleStyle : QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
       eyeStyle:
-          QrEyeStyle(eyeShape: QrEyeShape.square, color: Color(0xFF000000)),
+          QrEyeStyle(eyeShape: QrEyeShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
       gapless: true,
-    ).toImageData(50.0);
+    ).toImageData(1200);
     final filename = 'qr_code.png';
     final tmpDir = await getTemporaryDirectory();
     final file = await File('${tmpDir.path}/$filename').create();

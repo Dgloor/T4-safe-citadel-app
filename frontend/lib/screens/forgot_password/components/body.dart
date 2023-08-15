@@ -19,11 +19,12 @@ class Body extends StatelessWidget {
               Text(
                 "¿Olvidaste tu contraseña?",
                 style: TextStyle(
-                  fontSize: getProportionateScreenWidth(28),
+                  fontSize: 20,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(height: 50),
               const Text(
                 "Por favor, comunicarse con la administración de Samanes 7 para brindarle ayuda.",
                 textAlign: TextAlign.center,

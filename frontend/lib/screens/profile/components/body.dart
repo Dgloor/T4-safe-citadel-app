@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safecitadel/screens/sign_in/sign_in_screen.dart';
+import 'package:safecitadel/screens/update_password/update_password_screen.dart';
 
 import 'profile_menu.dart';
 
@@ -16,7 +17,9 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Cambiar la contraseña",
             icon: "assets/icons/Settings.svg",
-            press: () {},
+            press: () {
+              Navigator.pushNamed(context, UpdatePasswordScreen.routeName);
+            },
           ),
           ProfileMenu(
             text: "Manual de usuario",
