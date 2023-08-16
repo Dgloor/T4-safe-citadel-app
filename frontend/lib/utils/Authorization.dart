@@ -98,17 +98,6 @@ class ApiClient {
     throw Exception('Failed to refresh access token');
   }
 
-  // Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
-  //   final options = Options(
-  //     method: requestOptions.method,
-  //     headers: requestOptions.headers,
-  //   );
-  //   return ApiClient.request<dynamic>(requestOptions.path,
-  //       data: requestOptions.data,
-  //       queryParameters: requestOptions.queryParameters,
-  //       options: options);
-  // }
-
   Future<String> authenticate(
     String? username, String? password, BuildContext context) async {
     final url = Uri.parse(APIAUTH);
@@ -144,6 +133,42 @@ class ApiClient {
       throw ServerException('Error desconocido.');
     }
   }
+  Future setUserName(String username) async {
+    await _secureStorage.write(key: '_username', value: username);
+  }
+  Future setResidentName(String name) async {
+    await _secureStorage.write(key: 'name_residente', value: name);
+  }
+  Future getName() async{
+    return await _secureStorage.read(key: 'name_residente');    
+  }
+  Future saveUser(String username, String password) async{
+    await setUserName(username);
+    await setPassWord(password);  
+  }
+  Future<String?> getUserName() async {
+    return await _secureStorage.read(key: '_username');
+  }
+  Future setRole(String role) async{
+    return _secureStorage.write(key: 'role', value: role);
+  }
+  Future<String?> getRole() async{
+    return await _secureStorage.read(key: 'role');
+  }
+  Future<bool> isGuard() async{
+    String role =  await getRole() ?? '';
+    return role == "GUARD";
+  }
+  Future setPassWord(String password) async {
+    await _secureStorage.write(key: '_password', value: password);
+  }
+
+  Future<String?> getPassWord() async {
+    return await _secureStorage.read(key: '_password');
+  }
+  Future<String?> getToken() async {
+    return await _secureStorage.read(key: 'access_token');
+  }
 
   Future widgetLoading(BuildContext context) async {
     showDialog(
@@ -165,6 +190,8 @@ class ApiClient {
     if (response.statusCode == 200) {
       // La solicitud fue exitosa, puedes obtener la respuesta
       var responseData = jsonDecode(response.body);
+      setResidentName(responseData['user']['name']);
+      setRole(responseData['user']['role']);
       return User.fromJson(responseData['user']);
     } else if (response.statusCode == 401) {
       throw AuthException('No autorizado. Token inválido o expirado.');

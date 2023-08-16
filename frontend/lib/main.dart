@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safecitadel/routes.dart';
 import 'package:safecitadel/screens/splash/splash_screen.dart';
 import 'package:safecitadel/theme.dart';
+import '../../../utils/Persistencia.dart';
 
 void main() {
   runApp(const MyApp());

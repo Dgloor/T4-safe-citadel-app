@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:safecitadel/screens/sign_in/sign_in_screen.dart';
 import 'package:safecitadel/screens/update_password/update_password_screen.dart';
 
+import '../../../utils/Persistence.dart';
 import 'profile_menu.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -29,7 +30,10 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Cerrar Sesión",
             icon: "assets/icons/Log out.svg",
-            press: () {Navigator.pushNamed(context, SignInScreen.routeName);},
+            press: () {
+              final apiClient = ApiGlobal.api;
+              apiClient.saveUser('', '');
+              Navigator.pushNamed(context, SignInScreen.routeName);},
           ),
         ],
       ),

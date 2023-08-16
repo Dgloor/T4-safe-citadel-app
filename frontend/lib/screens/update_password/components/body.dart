@@ -31,7 +31,7 @@ class _BodyState extends State<Body> {
             children: [
               TextFormField(
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Contraseña Actual'),
+                decoration: const InputDecoration(labelText: 'Contraseña Actual'),
                 onChanged: (value) {
                   _currentPassword = value;
                 },
@@ -42,10 +42,10 @@ class _BodyState extends State<Body> {
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Contraseña Nueva'),
+                decoration: const InputDecoration(labelText: 'Contraseña Nueva'),
                 onChanged: (value) {
                   _newPassword = value;
                 },
@@ -58,10 +58,10 @@ class _BodyState extends State<Body> {
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 obscureText: true,
-                decoration: InputDecoration(labelText: 'Confirmar contraseña nueva'),
+                decoration: const InputDecoration(labelText: 'Confirmar contraseña nueva'),
                 onChanged: (value) {
                   _confirmPassword = value;
                 },
@@ -75,15 +75,14 @@ class _BodyState extends State<Body> {
                   return null;
                 },
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 '*La contraseña debe tener al menos 7 caracteres.',
                 style: TextStyle(color: Color.fromARGB(255, 26, 155, 28)),
               ),
-              SizedBox(height: 50),            
+              const SizedBox(height: 50),            
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Cambiar Contraseña'),
                  style: ButtonStyle(
                       fixedSize:
                           MaterialStateProperty.all<Size>(const Size(250, 50)),
@@ -97,6 +96,7 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
+                child: const Text('Cambiar Contraseña'),
               ),
             ],
           ),

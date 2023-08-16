@@ -22,14 +22,30 @@ class _BodyState extends State<Body> {
   int _value = 0;
   TimeOfDay visitTime = TimeOfDay.now();
   final List<bool> _selectedDay = <bool>[true, false];
+  final apiClient = ApiGlobal.api;
+  bool isGuard = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadisGuard();
+  }
+  Future<void> _loadisGuard() async {
+    try {
+      bool guard = await apiClient.isGuard();
+      setState(() {
+        isGuard = guard;
+      });
+    } catch (e) {
+      print("Error fetching user name: $e");
+    }
+  }
   void _showTimePicker() {
     showTimePicker(context: context, initialTime: visitTime)
         .then((value) => setState(() {
               visitTime = value!;
             }));
   }
-
-
   @override
   void dispose() {
     nombreVisitacontroller.dispose();
@@ -66,7 +82,7 @@ class _BodyState extends State<Body> {
                   style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 30.0),
-                if (!UserSingleton.isGUARD()) ...[
+                if (!isGuard) ...[
                 /**Elección de día de visita */
                 Text(
                   'Día de visita',
@@ -114,7 +130,7 @@ class _BodyState extends State<Body> {
                 ],
                 const SizedBox(height: 30.0),
                 Visibility(
-                  visible: UserSingleton.isGUARD(),
+                  visible: isGuard,
                   child: Column(
                     children: [
                       Text(

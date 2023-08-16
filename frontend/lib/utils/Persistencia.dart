@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:qr_flutter/qr_flutter.dart';
 
 class SharedPreferencesUtil {
   static SharedPreferencesUtil? _instance;
@@ -60,4 +65,24 @@ Future widgetLoading(BuildContext context) async{
       builder: (context){
         return const Center(child: CircularProgressIndicator());
       });
+  }
+
+  void shareQR(BuildContext context, String visitID) async {
+    final qrImage = await QrPainter(
+      data: visitID,
+      version: QrVersions.auto,
+      dataModuleStyle : QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
+      eyeStyle:
+          QrEyeStyle(eyeShape: QrEyeShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
+      gapless: true,
+    ).toImageData(1200);
+    const filename = 'codigoQR.png';
+    final tmpDir = await getTemporaryDirectory();
+    final file = await File('${tmpDir.path}/$filename').create();
+    var bytes = qrImage!.buffer.asUint8List();
+    await file.writeAsBytes(bytes);
+    XFile img = XFile(file.path);
+    await Share.shareXFiles([img],
+        text:
+            'Hola! te comparto el Código QR para que tengas acceso a mi residencia en Samanes 7.');
   }

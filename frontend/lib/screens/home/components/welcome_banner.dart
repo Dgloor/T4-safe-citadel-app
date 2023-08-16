@@ -2,11 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
 import 'package:safecitadel/models/User.dart';
-class WelcomeBanner extends StatelessWidget {
+
+import '../../../utils/Persistence.dart';
+class WelcomeBanner extends StatefulWidget {
   const WelcomeBanner({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<WelcomeBanner> createState() => _WelcomeBannerState();
+}
+
+class _WelcomeBannerState extends State<WelcomeBanner> {
+  String residentName = "";
+  final apiClient = ApiGlobal.api;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+  Future<void> _loadUserName() async {
+    try {
+      String name = await apiClient.getName();
+      setState(() {
+        residentName = name;
+      });
+    } catch (e) {
+      print("Error fetching user name: $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +51,7 @@ class WelcomeBanner extends StatelessWidget {
           children: [
             const TextSpan(text: "Bienvenido,\n"),
             TextSpan(
-              text: UserSingleton.user.name,
+              text: residentName,
               style: TextStyle(
                 fontSize: getProportionateScreenWidth(24),
                 fontWeight: FontWeight.bold,

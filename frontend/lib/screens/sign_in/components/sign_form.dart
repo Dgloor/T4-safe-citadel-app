@@ -18,8 +18,6 @@ class SignForm extends StatefulWidget {
 }
 
 class _SignFormState extends State<SignForm> {
-  late SharedPreferencesUtil prefsUtil;
-
   final _formKey = GlobalKey<FormState>();
 
   String? username;
@@ -31,19 +29,18 @@ class _SignFormState extends State<SignForm> {
   String _errorMessage = '';
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final apiClient = ApiGlobal.api;
   final List<String?> errors = [];
   bool passToggle = false;
   @override
   void initState() {
     super.initState();
-    initializeSharedPreferences();
+    fetchSecureStorageData();
   }
-
-  void initializeSharedPreferences() async {
-    prefsUtil = await SharedPreferencesUtil.getInstance();
+  Future<void> fetchSecureStorageData() async {
+    _usernameController.text = await apiClient.getUserName() ?? '';
+    _passwordController.text = await apiClient.getPassWord() ?? '';
   }
-
   void addError({String? error}) {
     if (!errors.contains(error)) {
       setState(() {
@@ -95,7 +92,7 @@ class _SignFormState extends State<SignForm> {
         DefaultButton(
           key: const Key('loginButton'),
           press: () async {
-            final apiClient = ApiGlobal.api;
+              final apiClient = ApiGlobal.api;
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
               KeyboardUtil.hideKeyboard(context);
@@ -105,6 +102,7 @@ class _SignFormState extends State<SignForm> {
               // ignore: use_build_context_synchronously
               widgetLoading(context);
               UserSingleton.user = await apiClient.getUserData();
+              apiClient.saveUser(username!,password!);
               Navigator.pushReplacementNamed(context, HomeScreen.routeName);
             } catch (error) {
               setState(() {

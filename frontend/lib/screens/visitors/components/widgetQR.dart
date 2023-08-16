@@ -1,11 +1,12 @@
-import 'dart:io';
-import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_flutter/src/qr_image_view.dart';
-import 'package:share_plus/share_plus.dart';
+
+import '../../../utils/Persistencia.dart';
+
 
 class QRCodeModal extends StatefulWidget {
   final String visitID;
@@ -49,7 +50,6 @@ class _QRCodeModalState extends State<QRCodeModal> {
           ElevatedButton(
             onPressed: () {
               shareQR(context, widget.visitID);
-              // convertQRtoImage();
             },
             child: const Text('Compartir'),
           ),
@@ -58,38 +58,5 @@ class _QRCodeModalState extends State<QRCodeModal> {
     );
   }
 
-  void shareQR(BuildContext context, String visitID) async {
-    final qrImage = await QrPainter(
-      data: visitID,
-      version: QrVersions.auto,
-      dataModuleStyle : QrDataModuleStyle(dataModuleShape: QrDataModuleShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
-      eyeStyle:
-          QrEyeStyle(eyeShape: QrEyeShape.square, color: ui.Color.fromARGB(255, 255, 255, 255)),
-      gapless: true,
-    ).toImageData(1200);
-    const filename = 'codigoQR.png';
-    final tmpDir = await getTemporaryDirectory();
-    final file = await File('${tmpDir.path}/$filename').create();
-    var bytes = qrImage!.buffer.asUint8List();
-    await file.writeAsBytes(bytes);
-    XFile img = XFile(file.path);
-    await Share.shareXFiles([img],
-        text:
-            'Hola! te comparto el Código QR para que tengas acceso a mi residencia.');
-  }
-
-  // Future<void> convertQRtoImage() async {
-  //   RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  //   final boundary = globalkey.currentContext!.findRenderObject();
-  //   ui.Image image = await boundary.toImage();
-  //   final directory = (await getApplicationDocumentsDirectory()).path;
-  //   ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  //   Uint8List pngBytes = byteData!.buffer.asUint8List();
-  //   File imgFile = File("$directory/qrCode.png");
-  //   await imgFile.writeAsBytes(pngBytes);
-  //   XFile img = XFile(imgFile.path);
-  //   await Share.shareXFiles([img],
-  //       text:
-  //           'Hola! te comparto el Código QR para que tengas acceso a mi residencia.');
-  // }
+  
 }

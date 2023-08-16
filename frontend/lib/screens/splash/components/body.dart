@@ -4,6 +4,8 @@ import 'package:safecitadel/screens/sign_in/sign_in_screen.dart';
 import 'package:safecitadel/size_config.dart';
 
 // This is the best practice
+import '../../../utils/Persistence.dart';
+import '../../home/home_screen.dart';
 import '../components/splash_content.dart';
 import '../../../components/default_button.dart';
 
@@ -31,6 +33,28 @@ class _BodyState extends State<Body> {
       "image": "assets/images/img2.jpg"
     },
   ];
+  @override
+  void initState() {
+    super.initState();
+    checkUserIsLogged();
+  }
+
+
+  void checkUserIsLogged() async {
+  final apiClient = ApiGlobal.api;
+    if ((await apiClient.getToken() != null)) {
+      String username = await apiClient.getUserName() as String;
+      String password = await apiClient.getPassWord() as String;
+      await apiClient.authenticate(username, password, context).then((response) {
+        if (response != null) {
+          Navigator.pushNamed(context, HomeScreen.routeName);
+        }
+      }).catchError((error) {
+          
+      });
+    } 
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

@@ -86,8 +86,32 @@ class _ContainerVisitaAnulada extends StatelessWidget {
   }
 }
 
-class _ContainerVisitaPendiente extends StatelessWidget {
+class _ContainerVisitaPendiente extends StatefulWidget {
   const _ContainerVisitaPendiente({Key? key}) : super(key: key);
+
+  @override
+  State<_ContainerVisitaPendiente> createState() => _ContainerVisitaPendienteState();
+}
+
+class _ContainerVisitaPendienteState extends State<_ContainerVisitaPendiente> {
+  final apiClient = ApiGlobal.api;
+  bool isGuard = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadisGuard();
+  }
+  Future<void> _loadisGuard() async {
+    try {
+      bool guard = await apiClient.isGuard();
+      setState(() {
+        isGuard = guard;
+      });
+    } catch (e) {
+      print("Error fetching user name: $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,7 +142,7 @@ class _ContainerVisitaPendiente extends StatelessWidget {
               return ListTile(
                   title: Text(nombreVisita), 
                   leading: const Icon(Icons.person),
-                  trailing: !UserSingleton.isGUARD() ? PopupMenuButton<_MenuOptions>(
+                  trailing: !isGuard ? PopupMenuButton<_MenuOptions>(
                    itemBuilder: (BuildContext context) => <PopupMenuEntry<_MenuOptions>>[
                   const PopupMenuItem(
                     value: _MenuOptions.verQR,

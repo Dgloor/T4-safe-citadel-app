@@ -7,8 +7,10 @@ import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
 import '../constants.dart';
 import '../enums.dart';
 import '../screens/register/register_screen.dart';
-import 'package:safecitadel/models/User.dart'; 
-class CustomBottomNavBar extends StatelessWidget {
+import 'package:safecitadel/models/User.dart';
+
+import '../utils/Persistence.dart'; 
+class CustomBottomNavBar extends StatefulWidget {
 
   const CustomBottomNavBar({
     Key? key,
@@ -17,6 +19,29 @@ class CustomBottomNavBar extends StatelessWidget {
 
   final MenuState selectedMenu;
 
+  @override
+  State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
+}
+
+class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+  final apiClient = ApiGlobal.api;
+  bool isGuard = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadisGuard();
+  }
+  Future<void> _loadisGuard() async {
+    try {
+      bool guard = await apiClient.isGuard();
+      setState(() {
+        isGuard = guard;
+      });
+    } catch (e) {
+      print("Error fetching user name: $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     const Color inActiveIconColor = Color(0xFFB6B6B6);
@@ -44,7 +69,7 @@ class CustomBottomNavBar extends StatelessWidget {
               IconButton(
                 icon: SvgPicture.asset(
                   "assets/icons/Shop Icon.svg",
-                  color: MenuState.home == selectedMenu
+                  color: MenuState.home == widget.selectedMenu
                       ? kPrimaryColor
                       : inActiveIconColor,
                 ),
@@ -52,7 +77,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     Navigator.pushNamed(context, HomeScreen.routeName),
               ),
               Visibility(
-                visible: UserSingleton.isGUARD(),
+                visible: isGuard,
                 child: IconButton(
                 icon: const Icon(Icons.qr_code_scanner_rounded),
                 onPressed:() =>
@@ -67,7 +92,7 @@ class CustomBottomNavBar extends StatelessWidget {
               IconButton(
                 icon: SvgPicture.asset(
                   "assets/icons/User Icon.svg",
-                  color: MenuState.profile == selectedMenu
+                  color: MenuState.profile == widget.selectedMenu
                       ? kPrimaryColor
                       : inActiveIconColor,
                 ),
