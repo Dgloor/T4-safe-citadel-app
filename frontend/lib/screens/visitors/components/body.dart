@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:safecitadel/utils/Persistence.dart';
 import '../../../size_config.dart';
+import '../../../utils/widgetQR.dart';
 import '../../home/components/welcome_banner.dart';
 import '../../home/home_screen.dart';
-import './widgetQR.dart';
-import 'package:safecitadel/models/User.dart';
+import '../components/visitsPending.dart';
+import '../components/visitsRegistered.dart';
+import '../components/visitsCancelled.dart';
+
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
@@ -12,296 +15,48 @@ class Body extends StatefulWidget {
   State<Body> createState() => _Body();
 }
 
-List<dynamic> visitasIngresadas = [];
-List<dynamic> visitasPendientes = [];
-List<dynamic> visitasAnuladas = [];
-
-class _ContainerVisitaIngresada extends StatelessWidget {
-   const _ContainerVisitaIngresada({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
-            ), 
-          ],
-          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 5),
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: visitasIngresadas.length,
-              itemBuilder: (BuildContext context, int index) {
-              final visita = visitasIngresadas[index]; 
-              final nombreVisita = visita['visitor']['name'];
-                return ListTile(
-                    title: Text(nombreVisita), leading: const Icon(Icons.person));
-              },
-            ),
-          ),
-        ]));
-  }
-}
-
-class _ContainerVisitaAnulada extends StatelessWidget {
-  const _ContainerVisitaAnulada({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.5),
-          width: 5,
-        ),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: visitasAnuladas.length,
-            itemBuilder: (BuildContext context, int index) {
-              final visita = visitasAnuladas[index]; 
-              final nombreVisita = visita['visitor']['name'];
-              return ListTile(
-                  title: Text(nombreVisita), leading: const Icon(Icons.person));
-            },
-          ),
-        ),
-      ]),
-    );
-  }
-}
-
-class _ContainerVisitaPendiente extends StatefulWidget {
-  const _ContainerVisitaPendiente({Key? key}) : super(key: key);
-
-  @override
-  State<_ContainerVisitaPendiente> createState() => _ContainerVisitaPendienteState();
-}
-
-class _ContainerVisitaPendienteState extends State<_ContainerVisitaPendiente> {
-  final apiClient = ApiGlobal.api;
-  bool isGuard = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadisGuard();
-  }
-  Future<void> _loadisGuard() async {
-    try {
-      bool guard = await apiClient.isGuard();
-      setState(() {
-        isGuard = guard;
-      });
-    } catch (e) {
-      print("Error fetching user name: $e");
-    }
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.5),
-          width: 5,
-        ),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        
-        Expanded(
-          child: ListView.builder(
-            itemCount: visitasPendientes.length,
-            itemBuilder: (BuildContext context, int index) {
-              final visita = visitasPendientes[index]; 
-              final nombreVisita = visita['visitor']['name'];
-              final visitID = visita['id'];
-              return ListTile(
-                  title: Text(nombreVisita), 
-                  leading: const Icon(Icons.person),
-                  trailing: !isGuard ? PopupMenuButton<_MenuOptions>(
-                   itemBuilder: (BuildContext context) => <PopupMenuEntry<_MenuOptions>>[
-                  const PopupMenuItem(
-                    value: _MenuOptions.verQR,
-                    child: Text('Ver QR')
-                  ),
-                  const PopupMenuItem(
-                    value: _MenuOptions.anular,
-                    key: Key("anularVisitbutton"),
-                    child: Text('Anular'),
-                  ),
-                ],
-                onSelected: (value) {
-                  switch(value){
-                    case _MenuOptions.verQR:
-                      _widgetQRCode(context,visitID);
-                      break;
-                    case _MenuOptions.anular:
-                      _showDialog(context,visitID);
-                      
-                      break;
-                  }
-                }
-                  ) : null);
-            },
-          ),
-        )],
-      ),
-    );
-  }
-}
-
-
-enum _MenuOptions { verQR, anular }
-String  qr_id = "";
-
-cancelarVisita(BuildContext context, String visitID) async {
-  try{
-    var visitData = await ApiGlobal.api.getVisitbyID(visitID);
-    var qr_id = visitData["qr_id"];
-    await ApiGlobal.api.cancelVisit(qr_id);
-  }catch(error){
-    throw Exception("Error al anular visita");
-  }
- 
-}
-
-void successDelete(BuildContext context){
+void errorGetVisits(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Visita anulada'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-}
-
-void errorAnular(BuildContext context){
-  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("No se pudo anular visita."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-}
-void errorGetVisits(BuildContext context){
-  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Problemas para obtener visitas."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-}
-
-
-void _showDialog (BuildContext context, String visitID) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Anular visita"),
-        content: const Text("¿Está seguro que desea anular la visita?"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("Cancelar"),
-          ),
-          TextButton(
-            onPressed: () async {
-              try{
-                await cancelarVisita(context,visitID);
-                Navigator.of(context).pop();
-                // ignore: use_build_context_synchronously
-                Navigator.pushNamed(context, HomeScreen.routeName);
-                successDelete(context);
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                 
-              }catch(error){
-                Navigator.of(context).pop();
-                errorAnular(context);
-              }    
-            },
-            child: const Text("Aceptar"),
-          ),
-
-        ],
-      );
-    },
+    const SnackBar(
+      content: Text("Problemas para obtener visitas."),
+      backgroundColor: Colors.red,
+    ),
   );
 }
 
-_widgetQRCode(BuildContext context, String visitID) async{
-  var visitData = await ApiGlobal.api.getVisitbyID(visitID);
-  var qr_id = visitData['qr_id'];
-  try{
-    showModalBottomSheet(
-        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        )),
-        context: context,
-        builder: (context) {
-          //Navigator.of(context).pop();
-          return QRCodeModal(visitID: qr_id);
-          
-        });
-  } catch(error){
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error interno del servidor.')));
-  }
-}
+List<dynamic> visitasPendientes = [];
+List<dynamic> visitasIngresadas = [];
+List<dynamic> visitasAnuladas = [];
 
-getVisits() async {
-  try {
-    var jsonResponse = await ApiGlobal.api.getVisits();
-    visitasPendientes = jsonResponse['visits']['PENDING'] ?? [];
-    visitasIngresadas = jsonResponse['visits']['REGISTERED'] ?? [];
-    visitasAnuladas = jsonResponse['visits']['CANCELLED'] ?? [];
-  } catch (error) {
-    throw Exception("Error al obtener visitas");
-  }
-}
 ///Widget   principal
-class _Body extends State<Body>
-    with TickerProviderStateMixin {
+class _Body extends State<Body> with TickerProviderStateMixin {
   final apiClient = ApiGlobal.api;
   @override
   void initState() {
     super.initState();
-    try{
-      getVisits();
-    }catch(error){
+    _loadData();
+  }
+
+  void _loadData() {
+    try {
+      apiClient.fillVisits().then((updatedVisits) {
+        setState(() {
+          visitasPendientes = updatedVisits['pending']!;
+          visitasIngresadas = updatedVisits['registered']!;
+          visitasAnuladas = updatedVisits['cancelled']!;
+        });
+      }).catchError((error) {
+        errorGetVisits(context);
+      });
+    } catch (error) {
       errorGetVisits(context);
     }
   }
-
-
+  @override
+  void didUpdateWidget(Body oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadData(); // Reinicia la carga de datos cada vez que el widget se actualiza
+  }
   @override
   Widget build(BuildContext context) {
     TabController tabController = TabController(length: 3, vsync: this);
@@ -314,7 +69,7 @@ class _Body extends State<Body>
             //height: getProportionateScreenHeight(200),
             child: Column(
               children: [
-               const WelcomeBanner(),
+                const WelcomeBanner(),
                 const SizedBox(height: 25),
                 Container(
                   child: TabBar(
@@ -332,7 +87,8 @@ class _Body extends State<Body>
                       Tab(text: "Anulada")
                     ],
                     labelColor: const Color.fromARGB(255, 214, 221, 214),
-                    unselectedLabelColor: const Color.fromARGB(255, 81, 173, 85),
+                    unselectedLabelColor:
+                        const Color.fromARGB(255, 81, 173, 85),
                     labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -341,17 +97,19 @@ class _Body extends State<Body>
                   width: getProportionateScreenWidth(500),
                   height: getProportionateScreenHeight(450),
                   child: SizedBox(
-                    height: getProportionateScreenHeight(450),
-                    child: TabBarView(controller: tabController, children:const [
-                    _ContainerVisitaIngresada(),
-                    _ContainerVisitaPendiente(),
-                    _ContainerVisitaAnulada()
-                  ])),
+                      height: getProportionateScreenHeight(450),
+                      child: TabBarView(controller: tabController, children: [
+                        ContainerVisitaIngresada(
+                            visitasIngresadas: visitasIngresadas),
+                        ContainerVisitaPendiente(
+                            visitasPendientes: visitasPendientes),
+                        ContainerVisitaAnulada(visitasAnuladas: visitasAnuladas)
+                      ])),
                 ),
               ],
             ),
           )
-                  ],
+        ],
       )),
     );
   }

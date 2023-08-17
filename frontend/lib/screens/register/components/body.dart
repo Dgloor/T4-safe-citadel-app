@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:safecitadel/screens/register/components/widgetQR.dart';
 import '../../../models/User.dart';
 import '../../../utils/Persistence.dart';
 import '../../../utils/Persistencia.dart';
+import '../../../utils/widgetQR.dart';
 
 class Body extends StatefulWidget {
   const Body({super.key});

@@ -216,6 +216,22 @@ class ApiClient {
       throw Exception('No es posible consultar visitas.');
     }
   }
+  Future<Map<String, List<dynamic>>> fillVisits() async {
+  try {
+    var jsonResponse = await getVisits();
+    List<dynamic> arrayPending = jsonResponse['visits']['PENDING'] ?? [];
+    List<dynamic> arrayRegistered = jsonResponse['visits']['REGISTERED'] ?? [];
+    List<dynamic> arrayCancelled = jsonResponse['visits']['CANCELLED'] ?? [];
+
+    return {
+      'pending': arrayPending,
+      'registered': arrayRegistered,
+      'cancelled': arrayCancelled,
+    };
+  } catch (error) {
+    throw Exception("Error al obtener visitas");
+  }
+}
 
   Future<dynamic> getVisitbyID(String visitID) async {
     var uri = Uri.parse(APIGETVISIT + visitID);
@@ -231,6 +247,7 @@ class ApiClient {
       throw Exception('No es posible consultar visita.');
     }
   }
+
 
   Future<dynamic> postVisit(
       Map<String, dynamic> reqParams, BuildContext context) async {

@@ -42,17 +42,31 @@ class _BodyState extends State<Body> {
 
   void checkUserIsLogged() async {
   final apiClient = ApiGlobal.api;
-    if ((await apiClient.getToken() != null)) {
-      String username = await apiClient.getUserName() as String;
-      String password = await apiClient.getPassWord() as String;
-      await apiClient.authenticate(username, password, context).then((response) {
+
+  String? token = await apiClient.getToken();
+
+  if (token != null) {
+    String? username = await apiClient.getUserName();
+    String? password = await apiClient.getPassWord();
+
+    if (username != null && password != null) {
+      try {
+        final response = await apiClient.authenticate(username, password, context);
+        
         if (response != null) {
           Navigator.pushNamed(context, HomeScreen.routeName);
+        } else {
+          // Handle authentication failure if necessary
         }
-      }).catchError((error) {
-          
-      });
-    } 
+      } catch (error) {
+        // Handle authentication error if necessary
+      }
+    } else {
+      // Handle missing username or password
+    }
+  } else {
+    // Handle token being null
+  }
   }
 
   @override
