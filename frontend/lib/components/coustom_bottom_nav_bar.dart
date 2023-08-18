@@ -9,9 +9,9 @@ import '../enums.dart';
 import '../screens/register/register_screen.dart';
 import 'package:safecitadel/models/User.dart';
 
-import '../utils/Persistence.dart'; 
-class CustomBottomNavBar extends StatefulWidget {
+import '../utils/Persistence.dart';
 
+class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({
     Key? key,
     required this.selectedMenu,
@@ -32,6 +32,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     super.initState();
     _loadisGuard();
   }
+
   Future<void> _loadisGuard() async {
     try {
       bool guard = await apiClient.isGuard();
@@ -42,6 +43,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       print("Error fetching user name: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     const Color inActiveIconColor = Color(0xFFB6B6B6);
@@ -79,19 +81,24 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
               Visibility(
                 visible: isGuard,
                 child: IconButton(
-                icon: const Icon(Icons.qr_code_scanner_rounded),
-                onPressed:() =>
-                    Navigator.pushNamed(context, QRScreen.routeName),
-              ),)
-              ,
+                  icon: const Icon(Icons.qr_code_scanner_rounded),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, QRScreen.routeName),
+                ),
+              ),
               IconButton(
-                icon: const Icon(Icons.app_registration),
-                onPressed:() =>
+                icon: SvgPicture.asset(
+                  "assets/icons/Plus Icon.svg",
+                  color: MenuState.register == widget.selectedMenu
+                      ? kPrimaryColor
+                      : inActiveIconColor,
+                ),
+                onPressed: () =>
                     Navigator.pushNamed(context, RegisterScreen.routeName),
               ),
               IconButton(
                 icon: SvgPicture.asset(
-                  "assets/icons/User Icon.svg",
+                  "assets/icons/Settings.svg",
                   color: MenuState.profile == widget.selectedMenu
                       ? kPrimaryColor
                       : inActiveIconColor,

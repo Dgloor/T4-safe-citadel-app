@@ -63,7 +63,7 @@ class _QRCodeModalState extends State<QRCodeModal> {
           const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              shareQR(context, widget.visitID);
+              shareQR(context, widget.visitID, widget.nombreVisita!,fechaVisita);
             },
             child: const Text('Compartir'),
           ),

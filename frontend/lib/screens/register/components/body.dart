@@ -24,9 +24,12 @@ class _BodyState extends State<Body> {
   final List<bool> _selectedDay = <bool>[true, false];
   final apiClient = ApiGlobal.api;
   bool isGuard = false;
+  bool _isButtonDisabled = false; 
+  String _textButton = "Registrar Visita";
 
   @override
   void initState() {
+    _isButtonDisabled = false;
     super.initState();
     _loadisGuard();
   }
@@ -46,11 +49,55 @@ class _BodyState extends State<Body> {
               visitTime = value!;
             }));
   }
-  @override
-  void dispose() {
-    nombreVisitacontroller.dispose();
-    super.dispose();
+
+  Function? _registerButtonPressed(){
+    if(_isButtonDisabled){
+      return null;
+    }else{
+       setState(() {
+      fechaVisita = visitDateTime(visitTime, _value);
+    });
+      _widgetQRCode(context);
+    }
   }
+  _widgetQRCode(BuildContext context) async {
+  setState((){
+    _isButtonDisabled = true;
+    _textButton = "Registrando...";
+  });
+  var nombreVisitaRegistro = nombreVisitacontroller.text;
+  try{
+    String qrData = await getTokenAndPostVisit(context);
+    if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Guardado exitosamente.'),
+          backgroundColor: Colors.green,));;
+          return;
+    }
+    showModalBottomSheet(
+        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        )),
+        context: context,
+        builder: (context) {
+          //Navigator.of(context).pop();
+          return QRCodeModal(visitID: qrData, nombreVisita: nombreVisitaRegistro, fechaVisita: fechaVisita);
+          
+        });
+    setState((){
+    _isButtonDisabled = false;
+    _textButton = "Registrar Visita";
+    nombreVisitacontroller.text = "";
+    
+  });
+  } catch(error){
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error interno del servidor.')));
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,7 +160,7 @@ class _BodyState extends State<Body> {
                 const SizedBox(height: 30.0),
                 
                   Text(
-                    'Hora esperada',
+                    'Seleccionar hora esperada',
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.left,
                   ),
@@ -150,6 +197,7 @@ class _BodyState extends State<Body> {
                 const SizedBox(height: 40.0),
                 Center(
                   child: TextButton(
+                    child: Text(_textButton),
                     key: const Key("registerVisitButton"),
                     onPressed: () {
                       if (nombreVisitacontroller.text.isEmpty) {
@@ -166,10 +214,7 @@ class _BodyState extends State<Body> {
                             const SnackBar(
                                 content: Text('Hora de visita no válida.')));
                       }else {
-                        setState(() {
-                          fechaVisita = visitDateTime(visitTime, _value);
-                        });
-                        _widgetQRCode(context);
+                         _registerButtonPressed();
                       }
                     },
                     style: ButtonStyle(
@@ -185,7 +230,7 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
-                    child: const Text('Registrar Visita'),
+                    
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -216,31 +261,3 @@ Future getTokenAndPostVisit(BuildContext context) async {
 
 
 
-_widgetQRCode(BuildContext context) async {
-  var nombreVisitaRegistro = nombreVisitacontroller.text;
-  try{
-    String qrData = await getTokenAndPostVisit(context);
-    if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Guardado exitosamente.'),
-          backgroundColor: Colors.green,));;
-          return;
-    }
-    showModalBottomSheet(
-        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        )),
-        context: context,
-        builder: (context) {
-          //Navigator.of(context).pop();
-          return QRCodeModal(visitID: qrData, nombreVisita: nombreVisitaRegistro, fechaVisita: fechaVisita);
-          
-        });
-    nombreVisitacontroller.text = "";
-  } catch(error){
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error interno del servidor.')));
-  }
-}

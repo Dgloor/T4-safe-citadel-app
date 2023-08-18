@@ -67,7 +67,7 @@ Future widgetLoading(BuildContext context) async{
       });
   }
 
-  void shareQR(BuildContext context, String visitID) async {
+  void shareQR(BuildContext context, String visitID, String nameVisit, String dateVisit) async {
     final qrImage = await QrPainter(
       data: visitID,
       version: QrVersions.auto,
@@ -84,5 +84,5 @@ Future widgetLoading(BuildContext context) async{
     XFile img = XFile(file.path);
     await Share.shareXFiles([img],
         text:
-            'Hola! te comparto el Código QR para que tengas acceso a mi residencia en Samanes 7.');
+            'Código QR generado para *$nameVisit*, para la visita del día *$dateVisit* a S7. Por favor, no compartir con nadie.');
   }
