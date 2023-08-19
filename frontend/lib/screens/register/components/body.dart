@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../models/User.dart';
 import '../../../utils/Persistence.dart';
 import '../../../utils/Persistencia.dart';
 import '../../../utils/widgetQR.dart';
@@ -13,6 +12,8 @@ class Body extends StatefulWidget {
 }
 
 TextEditingController nombreVisitacontroller = TextEditingController();
+TextEditingController detailController = TextEditingController();
+
 DateTime fechaVisita = DateTime.now();
 
 const List<Widget> opcionesDias = <Widget>[Text('Hoy'), Text('Mañana')];
@@ -24,7 +25,7 @@ class _BodyState extends State<Body> {
   final List<bool> _selectedDay = <bool>[true, false];
   final apiClient = ApiGlobal.api;
   bool isGuard = false;
-  bool _isButtonDisabled = false; 
+  bool _isButtonDisabled = false;
   String _textButton = "Registrar Visita";
 
   @override
@@ -33,6 +34,7 @@ class _BodyState extends State<Body> {
     super.initState();
     _loadisGuard();
   }
+
   Future<void> _loadisGuard() async {
     try {
       bool guard = await apiClient.isGuard();
@@ -43,6 +45,7 @@ class _BodyState extends State<Body> {
       print("Error fetching user name: $e");
     }
   }
+
   void _showTimePicker() {
     showTimePicker(context: context, initialTime: visitTime)
         .then((value) => setState(() {
@@ -50,53 +53,100 @@ class _BodyState extends State<Body> {
             }));
   }
 
-  Function? _registerButtonPressed(){
-    if(_isButtonDisabled){
+  // ignore: body_might_complete_normally_nullable
+  Function? _registerButtonPressed() {
+    if (_isButtonDisabled) {
       return null;
-    }else{
-       setState(() {
-      fechaVisita = visitDateTime(visitTime, _value);
-    });
+    } else {
+      setState(() {
+        fechaVisita = visitDateTime(visitTime, _value);
+      });
       _widgetQRCode(context);
     }
   }
+
   _widgetQRCode(BuildContext context) async {
-  setState((){
-    _isButtonDisabled = true;
-    _textButton = "Registrando...";
-  });
-  var nombreVisitaRegistro = nombreVisitacontroller.text;
-  try{
-    String qrData = await getTokenAndPostVisit(context);
-    if(qrData=="")   {  ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Guardado exitosamente.'),
-          backgroundColor: Colors.green,));;
-          return;
-    }
-    showModalBottomSheet(
-        backgroundColor: const Color.fromARGB(255, 251, 250, 239),
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        )),
-        context: context,
-        builder: (context) {
-          //Navigator.of(context).pop();
-          return QRCodeModal(visitID: qrData, nombreVisita: nombreVisitaRegistro, fechaVisita: fechaVisita);
+    setState(() {
+      _isButtonDisabled = true;
+      _textButton = "Registrando...";
+    });
+    var nombreVisitaRegistro = nombreVisitacontroller.text;
+    try {
+      String qrData = await getTokenAndPostVisit(context);
+      if (qrData == "") {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Guardado exitosamente.'),
+          backgroundColor: Colors.green,
           
+        ));
+        setState(() {
+        _isButtonDisabled = false;
+        _textButton = "Registrar Visita";
         });
-    setState((){
-    _isButtonDisabled = false;
-    _textButton = "Registrar Visita";
-    nombreVisitacontroller.text = "";
-    
-  });
-  } catch(error){
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error interno del servidor.')));
+        return;
+      }
+      showModalBottomSheet(
+          backgroundColor: const Color.fromARGB(255, 251, 250, 239),
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20),
+          )),
+          context: context,
+          builder: (context) {
+            return QRCodeModal(
+                visitID: qrData,
+                nombreVisita: nombreVisitaRegistro,
+                fechaVisita: fechaVisita);
+          });
+      setState(() {
+        _isButtonDisabled = false;
+        _textButton = "Registrar Visita";
+        nombreVisitacontroller.text = "";
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error interno del servidor.')));
+    }
   }
-}
+
+   _validateNameVisit() {
+    if (nombreVisitacontroller.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ingrese nombre de la visita.')));
+          return false;
+    } else if (!validateNameVisitor(nombreVisitacontroller.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ingresar nombre y apellido.')));
+                    return false;
+    }else{
+      return true;
+    }
+  }
+  __validateRegisterGuard() {
+    if (_validateNameVisit()) {
+      if (detailController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Ingrese detalles de la visita.')));
+      } else {
+        _registerButtonPressed();
+      }
+    }
+  }
+  _validateRegister() {
+    if (_validateNameVisit()) {
+      if (_value == 0 && (!validateTimeVisit(visitTime))) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Hora de visita no válida.')));
+      } else {
+        _registerButtonPressed();
+        setState(() {
+          _isButtonDisabled = true;
+          _textButton = "Registrando...";
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,35 +180,35 @@ class _BodyState extends State<Body> {
                 ),
                 const SizedBox(height: 30.0),
                 if (!isGuard) ...[
-                /**Elección de día de visita */
-                Text(
-                  'Día de visita',
-                  style: Theme.of(context).textTheme.titleMedium,
-                  textAlign: TextAlign.left,
-                ),
-                ToggleButtons(
-                    key: const Key("selectedDay"),
-                    onPressed: (int index) {
-                      setState(() {
-                        for (int i = 0; i < _selectedDay.length; i++) {
-                          _selectedDay[i] = i == index;
-                        }
-                        _value = index;
-                      });
-                    },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    selectedBorderColor: const Color.fromARGB(255, 31, 89, 42),
-                    selectedColor: Colors.white,
-                    fillColor: Colors.green,
-                    color: Colors.black,
-                    constraints: const BoxConstraints(
-                      minHeight: 40.0,
-                      minWidth: 160.0,
-                    ),
-                    isSelected: _selectedDay,
-                    children: opcionesDias),
-                const SizedBox(height: 30.0),
-                
+                  /**Elección de día de visita */
+                  Text(
+                    'Día de visita',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.left,
+                  ),
+                  ToggleButtons(
+                      key: const Key("selectedDay"),
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < _selectedDay.length; i++) {
+                            _selectedDay[i] = i == index;
+                          }
+                          _value = index;
+                        });
+                      },
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      selectedBorderColor:
+                          const Color.fromARGB(255, 31, 89, 42),
+                      selectedColor: Colors.white,
+                      fillColor: Colors.green,
+                      color: Colors.black,
+                      constraints: const BoxConstraints(
+                        minHeight: 40.0,
+                        minWidth: 160.0,
+                      ),
+                      isSelected: _selectedDay,
+                      children: opcionesDias),
+                  const SizedBox(height: 30.0),
                   Text(
                     'Seleccionar hora esperada',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -168,7 +218,8 @@ class _BodyState extends State<Body> {
                     child: MaterialButton(
                       color: Colors.green,
                       child: Text(
-                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',style: TextStyle(color: Colors.white, fontSize: 20),
+                        '${visitTime.hour.toString().padLeft(2, "0")}:${visitTime.minute.toString().padLeft(2, "0")}',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                       onPressed: _showTimePicker,
                     ),
@@ -185,11 +236,13 @@ class _BodyState extends State<Body> {
                         style: Theme.of(context).textTheme.titleMedium,
                         textAlign: TextAlign.left,
                       ),
-                      TextField(
+                      TextFormField(
+                        controller: detailController,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Ingresar detalles de visita',
-                        ),
+                            hintText: 'Ingresar detalles de visita',
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0))),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
@@ -200,21 +253,10 @@ class _BodyState extends State<Body> {
                     child: Text(_textButton),
                     key: const Key("registerVisitButton"),
                     onPressed: () {
-                      if (nombreVisitacontroller.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Ingrese nombre de la visita.')));
-                      }else if(!validateNameVisitor(nombreVisitacontroller.text)){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Ingresar nombre y apellido.')));
-                      } else if (_value == 0 &&
-                          (!validateTimeVisit(visitTime))) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Hora de visita no válida.')));
-                      }else {
-                         _registerButtonPressed();
+                      if (!isGuard) {
+                        _validateRegister();
+                      } else {
+                        __validateRegisterGuard(); 
                       }
                     },
                     style: ButtonStyle(
@@ -230,7 +272,6 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
-                    
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -244,20 +285,22 @@ class _BodyState extends State<Body> {
 }
 
 Future getTokenAndPostVisit(BuildContext context) async {
+  int timestamp = 1692401435;
+  DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+
+  print("Fecha de expiración: $expirationDate");
   final apiClient = ApiGlobal.api;
   var reqParams = {
     "name": nombreVisitacontroller.text,
     "date": fechaVisita.toString(),
+    "additional_info": detailController.text,
   };
   try {
     var qriID = await apiClient.postVisit(reqParams, context);
     await Future.delayed(const Duration(seconds: 2));
-    if(qriID==null) return "";
+    if (qriID == null) return "";
     return qriID;
   } catch (error) {
-     throw Exception('Error interno del servidor.');
+    throw Exception('Error interno del servidor.');
   }
 }
-
-
-

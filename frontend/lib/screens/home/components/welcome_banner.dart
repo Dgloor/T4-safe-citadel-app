@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
-import 'package:safecitadel/models/User.dart';
 
 import '../../../utils/Persistence.dart';
 class WelcomeBanner extends StatefulWidget {

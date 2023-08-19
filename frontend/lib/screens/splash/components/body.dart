@@ -53,6 +53,7 @@ class _BodyState extends State<Body> {
       try {
         final response = await apiClient.authenticate(username, password, context);
         
+        // ignore: unnecessary_null_comparison
         if (response != null) {
           Navigator.pushNamed(context, HomeScreen.routeName);
         } else {

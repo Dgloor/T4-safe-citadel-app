@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:safecitadel/routes.dart';
 import 'package:safecitadel/screens/splash/splash_screen.dart';
 import 'package:safecitadel/theme.dart';
-import '../../../utils/Persistencia.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 

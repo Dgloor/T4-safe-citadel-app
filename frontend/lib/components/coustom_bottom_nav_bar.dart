@@ -7,7 +7,6 @@ import 'package:safecitadel/screens/qr_reader/qr_reader_screen.dart';
 import '../constants.dart';
 import '../enums.dart';
 import '../screens/register/register_screen.dart';
-import 'package:safecitadel/models/User.dart';
 
 import '../utils/Persistence.dart';
 

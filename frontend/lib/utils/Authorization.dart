@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:safecitadel/constants.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:safecitadel/models/User.dart';
-
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
 class ApiClient {
@@ -46,26 +46,24 @@ class ApiClient {
     );
   }
 
-  Future<String> _loadAccessToken() async {
+  Future<String?> _loadAccessToken() async {
     // Check if the access token is stored locally
-    final localAccessToken = await _secureStorage.read(key: 'access_token');
+    String? localAccessToken = await _secureStorage.read(key: 'access_token');
 
-    if (localAccessToken != null) {
+    if (JwtDecoder.isExpired(localAccessToken!)) {
+      final newAccessToken = await _refreshAccessToken();
+      return newAccessToken;    
+    } else{
       return localAccessToken;
     }
-
-    // Request a new access token
-    final newAccessToken = await _refreshAccessToken();
-
-    return newAccessToken;
   }
 
-  Future<String> _refreshAccessToken() async {
+  Future<String?> _refreshAccessToken() async {
     // Get the refresh token from cache or local storage
-    final refreshToken = await _secureStorage.read(key: 'refresh_token');
+    String? refreshToken = await _secureStorage.read(key: 'refresh_token');
 
     // Send a request to the token refresh endpoint to get a new access token
-    const url = 'http://localhost:8000/api/refresh';
+    String url = APIREFRESHTOKEN +refreshToken!;
     final queryParams = {
       'token': refreshToken,
     };
@@ -85,11 +83,11 @@ class ApiClient {
         final responseData = jsonDecode(response.data);
         final newAccessToken = responseData['access_token'];
         final tokenType = responseData['token_type'];
-
         // Store the new access token locally
         await _secureStorage.write(key: 'access_token', value: newAccessToken);
-
         return newAccessToken;
+      }else if(response.statusCode == 401){
+        return null;
       }
     } catch (e) {
       throw Exception('Failed to refresh access token');
@@ -181,7 +179,7 @@ class ApiClient {
 
   Future<User> getUserData() async {
     final url = Uri.parse(APIUSER);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
@@ -204,7 +202,7 @@ class ApiClient {
 
   Future<dynamic> getVisits() async {
     var uri = Uri.parse(APIGETVISITS);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var header = {
       "Content-Type": "application/json",
       "Authorization": 'Bearer $token'
@@ -235,7 +233,7 @@ class ApiClient {
 
   Future<dynamic> getVisitbyID(String visitID) async {
     var uri = Uri.parse(APIGETVISIT + visitID);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var header = {
       "Content-Type": "application/json",
       "Authorization": 'Bearer $token'
@@ -252,7 +250,7 @@ class ApiClient {
   Future<dynamic> postVisit(
       Map<String, dynamic> reqParams, BuildContext context) async {
     var uri = Uri.parse(APIPOSTVISIT);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var response = await http.post((uri).replace(queryParameters: reqParams),
         headers: {
           "Content-Type": "application/json",
@@ -268,7 +266,7 @@ class ApiClient {
 
   Future<dynamic> getVisitByQRCode(String qrCode) async {
     final url = Uri.parse(APIQR + qrCode);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
@@ -283,7 +281,7 @@ class ApiClient {
 
   Future<bool> cancelVisit(String qrCode) async {
     final url = Uri.parse(APICANCEL + qrCode);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
@@ -298,7 +296,7 @@ class ApiClient {
 
   Future<bool> registerVisit(String qrCode) async {
     final url = Uri.parse(APIREGISTER + qrCode);
-    String token = await _loadAccessToken();
+    String? token = await _loadAccessToken();
     var headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',

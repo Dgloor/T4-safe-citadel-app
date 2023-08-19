@@ -57,8 +57,7 @@ final buttonStyle= ButtonStyle(
     // textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20)), // Cambia el estilo del texto del botón
   );
 
-//const url = 'http://192.168.100.39:8000';
-const url = 'https://citadel-gyg-b72af3d88c66.herokuapp.com';
+const url = 'https://www.safecitadelgye.com';
 const String APIAUTH =  url+"/api/login/";
 const String APIUSER =  url+"/api/user/";
 const String APIPOSTVISIT = url+"/api/visit/";
@@ -67,3 +66,4 @@ const String APIQR =  url+"/api/qr/";
 const String APIREGISTER =  url+"/api/visit/register?qr_id=";
 const String APICANCEL =  url+"/api/visit/cancel?qr_id=";
 const String APIGETVISIT = url+"/api/visit/";
+const String APIREFRESHTOKEN = url+"/api/refresh?token=";
