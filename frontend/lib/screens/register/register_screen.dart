@@ -12,7 +12,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Registro de Visitas"),
+        title: const Text("Registro de Visita"),
       ),
       body: const Body(),
       bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.profile),

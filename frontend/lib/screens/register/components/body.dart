@@ -249,7 +249,7 @@ class _BodyState extends State<Body> {
                 ),
                 const SizedBox(height: 40.0),
                 Center(
-                  child: TextButton(
+                  child: ElevatedButton(
                     child: Text(_textButton),
                     key: const Key("registerVisitButton"),
                     onPressed: () {

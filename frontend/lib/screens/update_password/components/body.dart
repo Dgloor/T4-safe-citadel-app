@@ -13,7 +13,9 @@ class _BodyState extends State<Body> {
   String _currentPassword = '';
   String _newPassword = '';
   String _confirmPassword = '';
-
+  bool passToggle1 = false;
+  bool passToggle2 = false;
+  bool passToggle3 = false;
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       print('Updated password: $_newPassword');
@@ -30,8 +32,21 @@ class _BodyState extends State<Body> {
           child: Column(
             children: [
               TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Contraseña Actual'),
+                obscureText: !passToggle2,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña Actual',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      passToggle2 ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        passToggle2 = !passToggle2;
+                      });
+                    },
+                  )
+                  ),
                 onChanged: (value) {
                   _currentPassword = value;
                 },
@@ -44,8 +59,20 @@ class _BodyState extends State<Body> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Contraseña Nueva'),
+                obscureText: !passToggle1,
+                decoration: InputDecoration(
+                  labelText: 'Contraseña Nueva',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      passToggle1 ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        passToggle1 = !passToggle1;
+                      });
+                    },
+                  )),
                 onChanged: (value) {
                   _newPassword = value;
                 },
@@ -60,8 +87,21 @@ class _BodyState extends State<Body> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Confirmar contraseña nueva'),
+                obscureText: !passToggle3,
+                decoration: InputDecoration(
+                  labelText: 'Confirmar contraseña nueva',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      passToggle3 ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        passToggle3 = !passToggle3;
+                      });
+                    },
+                  )
+                ),
                 onChanged: (value) {
                   _confirmPassword = value;
                 },
@@ -103,5 +143,15 @@ class _BodyState extends State<Body> {
         ),
       ),
     );
+  }
+
+
+  Future<bool> confirmarPassword() async{
+    try{
+      
+    }catch(e){
+      return false;
+    }
+    return false;
   }
 }

@@ -27,7 +27,7 @@ class _QRCodeModalState extends State<QRCodeModal> {
     String fechaVisita =
         DateFormat('dd/MM/yyyy HH:mm').format(widget.fechaVisita);
     return SizedBox(
-       key: const Key("qrCodeModal"),
+      key: const Key("qrCodeModal"),
       height: 650,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -44,28 +44,61 @@ class _QRCodeModalState extends State<QRCodeModal> {
                   ),
                 ),
               )),
-          Center(
-              child: Text(
-            'Visita: ${widget.nombreVisita}\n Fecha y hora de visita: ${fechaVisita}',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
-          )),
-          const SizedBox(height: 60.0),
-          const Text(
-            'Enviar código QR al visitante',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
+          const SizedBox(height: 16.0),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Visitante: ',
+                style: TextStyle(
+                  fontSize: 21.0,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(204, 141, 38, 1)
+                ),
+              ),
+              Text(
+                '${widget.nombreVisita}',
+                style: TextStyle(
+                  fontSize: 21.0,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16.0),
-          ElevatedButton(
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Fecha y hora: ',
+                style: TextStyle(
+                  fontSize: 21.0,
+                  fontWeight: FontWeight.bold,
+                  color:  Color.fromRGBO(204, 141, 38, 1)
+                ),
+              ),
+              Text(
+                '${fechaVisita}',
+                style: TextStyle(
+                  fontSize: 21.0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40.0),
+          ElevatedButton.icon(
             onPressed: () {
-              shareQR(context, widget.visitID, widget.nombreVisita!,fechaVisita);
+              shareQR(
+                  context, widget.visitID, widget.nombreVisita!, fechaVisita);
             },
-            child: const Text('Compartir'),
+            icon: const Icon(Icons.share),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromRGBO(2, 69, 1, 1), // Background color
+            ),
+            label: const Text('Compartir QR', style: TextStyle(color: Color.fromRGBO(255, 254, 254, 1)))
           ),
         ],
       ),

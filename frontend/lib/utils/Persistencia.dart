@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'dart:core';
 import 'dart:ui' as ui;
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -34,13 +35,14 @@ class SharedPreferencesUtil {
   // Otros métodos para guardar/recuperar otros datos de Shared Preferences
 }
 DateTime visitDateTime(TimeOfDay visitTime, int value) {
-    final now = DateTime.now();
+    DateTime now = DateTime.now();
     if (value == 1) {
+      DateTime result = now.add(Duration(days: 1));
       return DateTime(
-          now.year, now.month, now.day + 1, visitTime.hour, visitTime.minute);
-    } else {
+        result.year, result.month, result.day, visitTime.hour, visitTime.minute);
+    }else {
       return DateTime(
-          now.year, now.month, now.day, visitTime.hour, visitTime.minute);
+        now.year, now.month, now.day, visitTime.hour, visitTime.minute);
     }
   }
 bool validateNameVisitor(String value) {
@@ -84,5 +86,5 @@ Future widgetLoading(BuildContext context) async{
     XFile img = XFile(file.path);
     await Share.shareXFiles([img],
         text:
-            'Código QR generado para *$nameVisit*, para la visita del día *$dateVisit* a S7. Por favor, no compartir con nadie.');
+            'Código QR generado para *$nameVisit*, para la visita del día *$dateVisit* a S7 con duración de 24 hs. Por favor, no compartir con nadie.');
   }

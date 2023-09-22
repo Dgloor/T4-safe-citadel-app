@@ -36,6 +36,7 @@ dependencies:
   qr_flutter: ^4.1.0
   share_plus: ^7.0.2
   http: ^0.13.3
+  url_launcher: ^6.0.13 
   flutter_svg: ^0.22.0 # help us to use SVG in our 
 
   # The following adds the Cupertino Icons font to your application.

@@ -51,8 +51,7 @@ class ApiClient {
     String? localAccessToken = await _secureStorage.read(key: 'access_token');
 
     if (JwtDecoder.isExpired(localAccessToken!)) {
-      final newAccessToken = await _refreshAccessToken();
-      return newAccessToken;    
+      return await _refreshAccessToken();    
     } else{
       return localAccessToken;
     }
@@ -121,7 +120,6 @@ class ApiClient {
       // Store the access token and refresh token locally
       await _secureStorage.write(key: 'access_token', value: accessToken);
       await _secureStorage.write(key: 'refresh_token', value: refreshToken);
-
       return accessToken;
     } else if (response.statusCode == 401) {
       throw AuthException('Credenciales incorrectas.');
@@ -165,7 +163,7 @@ class ApiClient {
     return await _secureStorage.read(key: '_password');
   }
   Future<String?> getToken() async {
-    return await _secureStorage.read(key: 'access_token');
+    return await _loadAccessToken();
   }
 
   Future widgetLoading(BuildContext context) async {

@@ -56,20 +56,21 @@ class _BodyState extends State<Body> {
         // ignore: unnecessary_null_comparison
         if (response != null) {
           Navigator.pushNamed(context, HomeScreen.routeName);
-        } else {
-          // Handle authentication failure if necessary
         }
       } catch (error) {
-        // Handle authentication error if necessary
+        errorMessage();
       }
-    } else {
-      // Handle missing username or password
     }
-  } else {
-    // Handle token being null
   }
   }
-
+  void errorMessage() {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("Problemas de servidor."),
+      backgroundColor: Colors.red,
+    ),
+  );
+ }
   @override
   Widget build(BuildContext context) {
     return SafeArea(

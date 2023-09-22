@@ -155,11 +155,9 @@ class _SignFormState extends State<SignForm> {
         prefixIcon: const Icon(Icons.lock),
         suffixIcon: IconButton(
           icon: Icon(
-            // Based on passwordVisible state choose the icon
             passToggle ? Icons.visibility : Icons.visibility_off,
           ),
           onPressed: () {
-            // Update the state i.e. toogle the state of passwordVisible variable
             setState(() {
               passToggle = !passToggle;
             });
