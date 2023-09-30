@@ -152,7 +152,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
-
+bool isRequestInProgress = false;
 void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
@@ -161,13 +161,18 @@ void _onQRViewCreated(QRViewController controller) {
       setState(() {
         result = scanData;
       });
+    if (!isRequestInProgress) { // Verifica si la petición no está en curso
       try {
-        String code =result?.code ?? "00000";
+        isRequestInProgress = true; // Marca que la petición está en curso
+        String code = result?.code ?? "00000";
         var visitData = await ApiGlobal.api.getVisitByQRCode(code);
-        _showVisitInfoPopup(visitData,code);
+        _showVisitInfoPopup(visitData, code);
       } catch (error) {
         print('Error obteniendo información de visita: $error');
+      } finally {
+        isRequestInProgress = false; // Marca que la petición ha terminado
       }
+    }
     });
 }
 
@@ -178,13 +183,12 @@ void _onQRViewCreated(QRViewController controller) {
           return AlertDialog(
             title: const Text('Información sobre la visita'),
             content: Text('Nombre del visitante: ${visitData['visitor']['name']}.\nLa residencia a la que se dirige es ${visitData['residence']['address']}\n'),
-            
+
             actions: [
               TextButton(      
-                style: TextButton.styleFrom(foregroundColor: kPrimaryLightColor),  // Establece el color aquí
+                style: TextButton.styleFrom(foregroundColor: kPrimaryLightColor),
                 onPressed: () {
                   ApiGlobal.api.registerVisit(code);
-                  //Navigator.pushNamed(context, HomeScreen.routeName);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Registro exitoso!'),
@@ -195,18 +199,10 @@ void _onQRViewCreated(QRViewController controller) {
                 },
                 child: const Text('Aceptar'),
               ),
-              TextButton(
-                
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                onPressed: () {
-                   ApiGlobal.api.cancelVisit(code);
-                   Navigator.pushNamed(context, QRScreen.routeName);
-                },
-                child: const Text('Cancelar'),
-              ),
             ],
           );
         });
+      controller!.pauseCamera();
   }
 
 

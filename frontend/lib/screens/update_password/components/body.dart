@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/Persistence.dart';
 
 
 class Body extends StatefulWidget {
@@ -10,7 +11,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _currentPassword = '';
+  final apiClient = ApiGlobal.api;
   String _newPassword = '';
   String _confirmPassword = '';
   bool passToggle1 = false;
@@ -18,7 +19,8 @@ class _BodyState extends State<Body> {
   bool passToggle3 = false;
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      print('Updated password: $_newPassword');
+      print('La nueva contra es: $_newPassword');
+      changePassword(_newPassword);
     }
   }
 
@@ -31,33 +33,6 @@ class _BodyState extends State<Body> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
-                obscureText: !passToggle2,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña Actual',
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      passToggle2 ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        passToggle2 = !passToggle2;
-                      });
-                    },
-                  )
-                  ),
-                onChanged: (value) {
-                  _currentPassword = value;
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Por favor ingrese su contraseña actual.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
               TextFormField(
                 obscureText: !passToggle1,
                 decoration: InputDecoration(
@@ -136,7 +111,7 @@ class _BodyState extends State<Body> {
                         ),
                       ),
                     ),
-                child: const Text('Cambiar Contraseña'),
+                child: const Text('Confirmar'),
               ),
             ],
           ),
@@ -145,13 +120,31 @@ class _BodyState extends State<Body> {
     );
   }
 
-
-  Future<bool> confirmarPassword() async{
+  Future<void> changePassword(String password) async{
+    final apiClient = ApiGlobal.api;
+    String? username = await apiClient.getUserName();
     try{
-      
+      await apiClient.changePassword(username!,password);
+      _showConfirmPopUp();
     }catch(e){
-      return false;
+      print("Error: $e");
     }
-    return false;
+  }
+
+  void _showConfirmPopUp(){
+    showDialog(
+      context: context,
+      builder:(BuildContext context){
+        return AlertDialog(
+        title: const Text('Contraseña'),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Contraseña cambiada con éxito.'),
+            ],
+          ),
+        )
+        );
+      });
   }
 }

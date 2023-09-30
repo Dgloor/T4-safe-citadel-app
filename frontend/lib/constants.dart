@@ -66,4 +66,5 @@ const String APIQR =  url+"/api/qr/";
 const String APIREGISTER =  url+"/api/visit/register?qr_id=";
 const String APICANCEL =  url+"/api/visit/cancel?qr_id=";
 const String APIGETVISIT = url+"/api/visit/";
+const String APIPOSTPASSWORD = url+"/api/user/update-password";
 const String APIREFRESHTOKEN = url+"/api/refresh?token=";

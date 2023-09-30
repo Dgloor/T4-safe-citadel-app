@@ -72,13 +72,13 @@ class _BodyState extends State<Body> {
 }
 
 void _abrirManualUsuarioResidente() async {
-  final Uri url = Uri.parse('https://drive.google.com/file/d/1dY-l6SIRUo4UhJQF13LLGf83Tfts8rFm/view?usp=sharing');
+  final Uri url = Uri.parse('https://drive.google.com/file/d/1wkOweEEomVQwE7iPZq559CJi0jQWw4ma/view?usp=sharing');
   if (!await launchUrl(url)) {
         throw Exception('No se pudo abrir');
   }
 }
 void _abrirManualUsuarioGuardia() async {
-  final Uri url = Uri.parse('https://drive.google.com/file/d/1r_fpoMwHYh_fCkIE1YK_OQ29gTPEBc_i/view?usp=sharing');
+  final Uri url = Uri.parse('https://drive.google.com/file/d/1_TS4POJLCMxrpVe5Zt3u3-aVVMla93LT/view?usp=sharing');
   if (!await launchUrl(url)) {
         throw Exception('No se pudo abrir');
   }

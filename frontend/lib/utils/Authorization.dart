@@ -272,7 +272,10 @@ class ApiClient {
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
-    } else {
+    }else if(response.statusCode == 409){
+      throw Exception('No es posible obtener la información de la visita.');
+    } 
+    else {
       throw Exception('No es posible obtener la información de la visita.');
     }
   }
@@ -289,6 +292,30 @@ class ApiClient {
       return true;
     } else {
         throw Exception('No es posible cancelar la visita.');
+    }
+  }
+
+  Future<bool> changePassword(String username, String password) async{
+    final url = Uri.parse(APIPOSTPASSWORD);
+    final requestBody = jsonEncode({
+      'username': username,
+      'password': password,
+    });
+    final basicAuth = 'Basic ${base64Encode(utf8.encode('admin:password'))}';
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': basicAuth,
+      },
+      body: requestBody,
+    );
+    if(response.statusCode == 201){
+      return true;
+    }else if (response.statusCode == 500) {
+      throw ServerException('Error interno del servidor.');
+    } else {
+      throw ServerException('Error desconocido.');
     }
   }
 
